@@ -7,7 +7,9 @@ Builder de Slider
       Shortcode: [slider_morbriant id="1"]
 1.3.1:Corregido el bug que no mostraba los cambios de las propiedades de los objetos en las vistas de tablet y móviles.
 	  Cambiado el nombre del shortcode por [slider_morbriant_item id="1"].
-Versión: 1.3.1
+2.0:  Hacemos que el programa tenga más de un slide dentro de pestañas.
+	  Hay un apartado global con los parámetros del slider completo que usa las pestañas como slides.
+Versión: 2.0
 Autor: MorBriant
 ==========================================
 Responsive Editing & Device-Aware Design
@@ -59,3 +61,26 @@ Versión 1.3.1:
 	  El uso del shortcode queda como: [slider_morbriant_item id="1"]
 
 Todo lo demás intacto — Sistema de breakpoints, herencia por dispositivo, drag & drop, efectos de animación, exportación JSON/HTML/Shortcode y controles de fondo siguen funcionando exactamente igual.
+
+Versión 2.0:
+Pestañas (items)
+
+1.    Barra de pestañas item-1, item-2… con botón + para añadir nuevas. Cada pestaña tiene su propio contenido (fondo por dispositivo + objetos) pero comparten las dimensiones de lienzo y breakpoints.
+
+2.    Cada pestaña exporta su propio JSON, HTML y shortcode ([slider_morbriant_item id="N"]).
+
+3.    Al importar un JSON en una pestaña se comparan las dimensiones y breakpoints del archivo con los globales; si difieren, se avisa antes de importar.
+
+Configuración global (⚙ Slider)
+
+    A)	Modal con: nombre obligatorio, tipo de transición, tiempo de transición, breakpoints y las tres parejas de dimensiones (escritorio/tablet/móvil).
+
+    B)	Botones para importar/exportar la configuración del slider en JSON.
+
+Shortcode principal
+
+    A)	Botón ⬇ Shortcode slider en la barra superior. Genera un archivo .shortcode que registra [slider_morbriant nombre="..." items="1,2,3"].
+
+    B)	La función del shortcode busca cada item en $GLOBALS['slider_morbriant_data'] y muestra sólo los que existan. Si falta nombre o no encuentra items, no genera nada.
+
+    C)	El contenedor del slider muestra los items con la transición elegida (fade, slide-izq/der/arriba/abajo, zoom) y cicla automáticamente según el tiempo configurado.
