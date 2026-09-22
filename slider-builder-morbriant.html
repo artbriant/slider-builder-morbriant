@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Slide Builder MorBriant — Editor Responsive (Versión 1.1)</title>
+<title>Slider Builder MorBriant</title>
 <style>
 :root{
   --bg:#0b1020; --panel:#121a2e; --panel2:#1a2440; --line:#26314f;
@@ -139,6 +139,11 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
   padding:8px 10px;border-radius:8px;line-height:1.5;margin-bottom:10px;}
 .info-banner b{color:#bfd8ff;}
 
+/* breakpoints preview pill */
+.bp-preview{font-size:10.5px;color:#9fb1dd;background:#0d1428;border:1px solid var(--line);
+  border-radius:8px;padding:7px 9px;line-height:1.6;margin-top:8px;}
+.bp-preview span{color:#8fc0ff;font-weight:600;}
+
 /* ---------- MOBILE ---------- */
 @media (max-width:900px){
   .sidebar,.props{position:fixed;top:0;bottom:0;z-index:200;box-shadow:0 0 50px rgba(0,0,0,.7);}
@@ -159,7 +164,7 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
 <body>
 
 <header class="topbar">
-  <div class="brand">🎬 Slide Builder</div>
+  <div class="brand">🎬 Slider Builder MorBriant</div>
   <button class="mob" id="btnSidebar">☰</button>
   <button class="mob" id="btnPropsPanel">⚙</button>
 
@@ -211,6 +216,18 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
       </div>
     </div>
 
+    <!-- BREAKPOINTS -->
+    <div class="sec">
+      <h3>Breakpoints</h3>
+      <p class="hint">Puntos de ruptura para tablet y móvil (en píxeles). El escritorio es la base.</p>
+      <div class="two">
+        <div><label class="lbl">Tablet ≤</label><input type="number" id="bpTablet" value="1024" step="1" min="320"></div>
+        <div><label class="lbl">Móvil ≤</label><input type="number" id="bpMobile" value="767" step="1" min="240"></div>
+      </div>
+      <div class="bp-preview" id="bpPreview"></div>
+      <button id="btnResetBp" style="width:100%;margin-top:8px;font-size:11.5px;">↺ Valores por defecto</button>
+    </div>
+
     <div class="sec">
       <h3>Fondo <span class="devtag" id="bgDevTag">escritorio</span></h3>
       <p class="hint" id="bgHint">Cada dispositivo puede tener su propio fondo.</p>
@@ -237,6 +254,8 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
       <span>Viendo: <b id="devbarName">Escritorio</b></span>
       <span>·</span>
       <span id="devbarSize">1280 × 720</span>
+      <span>·</span>
+      <span id="devbarBp">Breakpoints: T ≤ 1024 · M ≤ 767</span>
     </div>
     <div class="slide-wrap" id="slideWrap">
       <div class="slide" id="slide">
@@ -346,7 +365,6 @@ function deviceChain(device){
   if(device === 'tablet')  return ['desktop', 'tablet'];
   return ['desktop', 'tablet', 'mobile'];
 }
-function isDesktopOrUp(device){ return device === 'desktop'; }
 
 /* =========================================================
    3. ESTADO
@@ -369,6 +387,7 @@ const sidebar      = $('#sidebar');
 function blankProject(){
   return {
     current: 'desktop',
+    breakpoints: { tablet: 1024, mobile: 767 },
     devices: {
       desktop: { width:1280, height:720,  bg:{ color:'#0f172a', image:'', fit:'cover', overlay:0 } },
       tablet:  { width:768,  height:1024, bg:{} },
@@ -487,10 +506,8 @@ function makeObject(type, cx, cy, device){
   const d  = project.devices[device];
   const dd = project.devices.desktop;
 
-  /* Normalizamos la posición en el dispositivo actual */
   const nx = cx / d.width;
   const ny = cy / d.height;
-  /* Centro equivalente en escritorio (base) */
   const dx = nx * dd.width;
   const dy = ny * dd.height;
 
@@ -529,7 +546,6 @@ function makeObject(type, cx, cy, device){
   base.x = Math.round(dx - w/2);
   base.y = Math.round(dy - h/2);
 
-  /* Si estamos en otro dispositivo, escalamos tamaño y fijamos posición */
   if(device !== 'desktop'){
     const ratio = d.width / dd.width;
     const cw = Math.max(20, Math.round(w * ratio));
@@ -664,10 +680,12 @@ function updateDeviceUI(){
   const dev = curDevice();
   const meta = DEVICE_META[dev];
   const d = project.devices[dev];
+  const bp = project.breakpoints;
   $('#devbarName').textContent = meta.label;
   $('#devbarSize').textContent = d.width + ' × ' + d.height;
   $('#cvDevTag').textContent = meta.short;
   $('#bgDevTag').textContent = meta.short;
+  $('#devbarBp').textContent = `Breakpoints: T ≤ ${bp.tablet} · M ≤ ${bp.mobile}`;
   $$('.devswitch button').forEach(b => b.classList.toggle('active', b.dataset.device === dev));
 }
 
@@ -735,7 +753,6 @@ function addObject(type, x, y){
   return o;
 }
 
-/* Paleta: drag & drop + clic */
 $$('.pal').forEach(pal => {
   pal.addEventListener('dragstart', e => {
     e.dataTransfer.setData('text/plain', pal.dataset.type);
@@ -828,7 +845,7 @@ function startInteraction(e, o, dir, el){
     document.removeEventListener('pointermove', onMove);
     document.removeEventListener('pointerup', onUp);
     document.body.style.cursor = '';
-    renderProps(); /* refresca dots de dispositivo */
+    renderProps();
   }
 
   document.addEventListener('pointermove', onMove);
@@ -856,21 +873,14 @@ function escHTML(s){
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-/* Devuelve el "dot" para indicar override + botón de reset */
 function devDot(o, path){
   if(curDevice() === 'desktop') return '';
   if(!isOverridden(o, path)) return '';
   return `<button type="button" class="devdot" data-reset="${path}" title="Personalizado para ${DEVICE_META[curDevice()].label}. Clic para heredar."></button>`;
 }
-function devDotHTML(o, path){
-  const d = devDot(o, path);
-  return d ? `<span class="devdots"></span>` : '';
-}
-/* Etiqueta con dot de reset */
 function lblWith(o, path, label){
   return `<label>${label}${devDot(o, path)}</label>`;
 }
-
 function rowCtrl(o, path, label, ctrl){
   return `<div class="row">${lblWith(o, path, label)}<div class="ctrl">${ctrl}</div></div>`;
 }
@@ -921,7 +931,6 @@ function renderProps(){
     easing: g('animation.easing')
   };
 
-  /* Banner informativo si no estamos en desktop */
   let banner = '';
   if(dev !== 'desktop'){
     banner = `<div class="info-banner">
@@ -933,7 +942,6 @@ function renderProps(){
 
   let h = banner;
 
-  /* Cabecera */
   h += `<div class="ptitle">
     <span class="badge">${TYPE_LABEL[o.type]}</span>
     <div class="mini-actions">
@@ -944,7 +952,6 @@ function renderProps(){
       <button data-act="del" class="danger" title="Eliminar">🗑</button>
     </div></div>`;
 
-  /* Posición y tamaño */
   h += `<div class="sec"><h3>Posición y tamaño</h3>
     <div class="grid2">
       <div>${lblWith(o, 'x', 'X')}<input type="number" data-prop="x" value="${Math.round(g('x'))}"></div>
@@ -958,7 +965,6 @@ function renderProps(){
       <input type="number" data-prop="z" value="${o.z}"></div></div>
   </div>`;
 
-  /* Apariencia */
   h += `<div class="sec"><h3>Apariencia</h3>`;
 
   if(o.type === 'box'){
@@ -1009,7 +1015,6 @@ function renderProps(){
 
   h += `</div>`;
 
-  /* Animación */
   h += `<div class="sec"><h3>Animación de entrada</h3>
     ${rowCtrl(o, 'animation.effect', 'Efecto', selectHTML('animation.effect', [
       ['none','Ninguno'],
@@ -1060,7 +1065,6 @@ function onPropChange(e){
     val = inp.value;
   }
 
-  /* z es común a todos los dispositivos */
   if(path === 'z'){
     o.z = Math.round(val) || 1;
   } else {
@@ -1075,17 +1079,12 @@ function onPropChange(e){
   renderObjects();
 }
 
-propsPanel.addEventListener('input', e => {
-  /* Ignoramos el re-render del panel durante el input para no perder foco */
-  onPropChange(e);
-});
+propsPanel.addEventListener('input', e => { onPropChange(e); });
 propsPanel.addEventListener('change', e => {
   onPropChange(e);
-  /* re-render para mostrar/actualizar dots de dispositivo */
   if(e.target.closest('[data-prop]')) renderProps();
 });
 
-/* Reset de override individual */
 propsPanel.addEventListener('click', e => {
   const btn = e.target.closest('[data-reset]');
   if(!btn) return;
@@ -1096,7 +1095,6 @@ propsPanel.addEventListener('click', e => {
   renderProps();
 });
 
-/* Carga de archivo para imágenes */
 propsPanel.addEventListener('change', e => {
   const f = e.target.closest('[data-imgfile]');
   if(!f || !f.files || !f.files[0]) return;
@@ -1111,7 +1109,6 @@ propsPanel.addEventListener('change', e => {
   reader.readAsDataURL(f.files[0]);
 });
 
-/* Botones de acción */
 propsPanel.addEventListener('click', e => {
   const btn = e.target.closest('[data-act]');
   if(!btn) return;
@@ -1150,7 +1147,6 @@ propsPanel.addEventListener('click', e => {
     renderObjects(); renderProps();
   }
   if(act === 'reset'){
-    /* Resetear TODOS los overrides del dispositivo actual para este objeto */
     if(curDevice() !== 'desktop'){
       if(o.r) o.r[curDevice()] = {};
       renderObjects(); renderProps();
@@ -1161,6 +1157,16 @@ propsPanel.addEventListener('click', e => {
 /* =========================================================
    15. CONTROLES DEL SIDEBAR
    ========================================================= */
+function updateBreakpointPreview(){
+  const bp = project.breakpoints;
+  const tabletRange = (bp.mobile + 1) + '–' + bp.tablet;
+  $('#bpPreview').innerHTML =
+    `Escritorio: &gt; <span>${bp.tablet}</span>px<br>` +
+    `Tablet: <span>${tabletRange}</span>px<br>` +
+    `Móvil: ≤ <span>${bp.mobile}</span>px`;
+  $('#devbarBp').textContent = `Breakpoints: T ≤ ${bp.tablet} · M ≤ ${bp.mobile}`;
+}
+
 function syncSidebar(){
   const d = project.devices[curDevice()];
   const bg = getBg(curDevice());
@@ -1171,16 +1177,44 @@ function syncSidebar(){
   $('#bgFit').value     = bg.fit || 'cover';
   $('#bgOverlay').value = bg.overlay || 0;
   $('#ovVal').textContent = (bg.overlay || 0) + '%';
+  $('#bpTablet').value = project.breakpoints.tablet;
+  $('#bpMobile').value = project.breakpoints.mobile;
+  updateBreakpointPreview();
   updateDeviceUI();
 
-  /* Indicadores de override en el sidebar */
   const dev = curDevice();
-  const isOv = k => isBgOverridden(k, dev);
   $('#bgHint').innerHTML = dev === 'desktop'
     ? 'El fondo del escritorio es la base para todos los dispositivos.'
     : `El fondo de <b>${DEVICE_META[dev].label}</b> hereda del escritorio. Los cambios aquí solo afectan a este dispositivo.`;
 }
 
+/* ---------- Breakpoints ---------- */
+$('#bpTablet').addEventListener('change', e => {
+  let v = parseInt(e.target.value);
+  if(isNaN(v)) v = 1024;
+  v = Math.max(320, Math.min(5000, v));
+  const mobile = project.breakpoints.mobile;
+  if(v <= mobile) v = mobile + 1;
+  project.breakpoints.tablet = v;
+  e.target.value = v;
+  updateBreakpointPreview();
+});
+$('#bpMobile').addEventListener('change', e => {
+  let v = parseInt(e.target.value);
+  if(isNaN(v)) v = 767;
+  v = Math.max(240, Math.min(4999, v));
+  const tablet = project.breakpoints.tablet;
+  if(v >= tablet) v = tablet - 1;
+  project.breakpoints.mobile = v;
+  e.target.value = v;
+  updateBreakpointPreview();
+});
+$('#btnResetBp').addEventListener('click', () => {
+  project.breakpoints = { tablet: 1024, mobile: 767 };
+  syncSidebar();
+});
+
+/* ---------- Fondo ---------- */
 $('#bgColor').addEventListener('input', e => {
   setBg('color', e.target.value, curDevice());
   renderBg();
@@ -1304,7 +1338,6 @@ $('#fileImport').addEventListener('change', e => {
       const data = JSON.parse(ev.target.result);
       if(!data || !Array.isArray(data.objects)) throw new Error('Formato inválido');
 
-      /* Normalizar: si viene del formato antiguo (sin devices) lo migramos */
       if(!data.devices){
         data.devices = blankProject().devices;
         data.devices.desktop.width  = data.width  || 1280;
@@ -1312,8 +1345,8 @@ $('#fileImport').addEventListener('change', e => {
         data.devices.desktop.bg     = data.background || blankProject().devices.desktop.bg;
       }
       if(!data.current || !data.devices[data.current]) data.current = 'desktop';
+      if(!data.breakpoints) data.breakpoints = { tablet: 1024, mobile: 767 };
 
-      /* Asegurar estructura responsive en objetos */
       data.objects.forEach(o => {
         if(!o.r) o.r = { tablet:{}, mobile:{} };
         if(!o.r.tablet) o.r.tablet = {};
@@ -1322,7 +1355,6 @@ $('#fileImport').addEventListener('change', e => {
           { effect:'none', duration:800, delay:0, easing:'ease-out', distance:150 },
           o.animation || {}
         );
-        /* Migración: fondo del objeto */
         if(o.type === 'box' && o.props && o.props.borderColor === undefined){
           o.props.borderColor = '#ffffff';
           o.props.borderW = o.props.borderW || 0;
@@ -1343,11 +1375,11 @@ $('#fileImport').addEventListener('change', e => {
 });
 
 $('#btnExportJson').addEventListener('click', () => {
-  download('slide.json', JSON.stringify(project, null, 2), 'application/json');
+  download('slider-morbriant.json', JSON.stringify(project, null, 2), 'application/json');
 });
 
 $('#btnExportHtml').addEventListener('click', () => {
-  download('slide.html', generateHTML(), 'text/html');
+  download('slider-morbriant.html', generateHTML(), 'text/html');
 });
 
 function download(filename, content, mime){
@@ -1374,7 +1406,6 @@ function detectUsedFonts(){
       }
     }
   });
-  /* Botones usan Inter por defecto */
   if(project.objects.some(o => o.type === 'button')){
     used.add('Inter:wght@300;400;500;600;700;800;900');
   }
@@ -1389,7 +1420,6 @@ function generateHTML(){
 <link href="https://fonts.googleapis.com/css2?${usedFonts.map(f => 'family=' + f).join('&')}&display=swap" rel="stylesheet">`
     : '';
 
-  /* Serializamos el proyecto tal cual (ya contiene los datos por dispositivo) */
   const dataJSON = JSON.stringify(project);
 
   return `<!DOCTYPE html>
@@ -1397,7 +1427,7 @@ function generateHTML(){
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Slide</title>
+<title>Slider Builder MorBriant</title>
 ${fontLink}
 <style>
   *{box-sizing:border-box;}
@@ -1419,8 +1449,9 @@ const EFFECTS = ${JSON.stringify(EFFECTS)};
   var currentDevice = null;
 
   function pickDevice(w){
-    if(w >= 1025) return 'desktop';
-    if(w >= 768)  return 'tablet';
+    var bp = DATA.breakpoints || { tablet:1024, mobile:767 };
+    if(w > bp.tablet) return 'desktop';
+    if(w > bp.mobile) return 'tablet';
     return 'mobile';
   }
   function deviceChain(d){
@@ -1600,10 +1631,9 @@ $('#btnPropsPanel').addEventListener('click', () => {
    21. INICIALIZACIÓN
    ========================================================= */
 (function init(){
-  /* Slide de ejemplo (todo en escritorio, se hereda al resto) */
   const t = makeObject('text', 640, 220, 'desktop');
   t.w = 900; t.h = 110; t.x = (1280 - 900)/2; t.y = 180;
-  t.props.text = 'Bienvenido a Slide Builder';
+  t.props.text = 'Bienvenido a Slider Builder MorBriant';
   t.props.fontSize = 62;
   t.animation = { effect:'down', duration:900, delay:0, easing:'ease-out', distance:120 };
   t.z = 2;
