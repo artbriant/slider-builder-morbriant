@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slide Builder MorBriant — Editor de slides (Versión 1.0)</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#121a2e; --panel2:#1a2440; --line:#26314f;
+  --txt:#e6ecff; --muted:#8b9ac4; --accent:#6366f1; --accent2:#22c55e;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg);color:var(--txt);overflow:hidden;}
+body{display:flex;flex-direction:column;height:100vh;}
+
+/* ---------- TOPBAR ---------- */
+.topbar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--panel);
+  border-bottom:1px solid var(--line);flex-wrap:wrap;flex:0 0 auto;z-index:120;}
+.brand{font-weight:800;letter-spacing:.3px;font-size:15px;margin-right:6px;
+  background:linear-gradient(90deg,#818cf8,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.spacer{flex:1;}
+button{font:inherit;font-size:13px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);
+  background:var(--panel2);color:var(--txt);cursor:pointer;transition:.15s;white-space:nowrap;}
+button:hover{background:#243356;border-color:#3a4a78;}
+button.primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);border-color:transparent;font-weight:600;}
+button.primary:hover{filter:brightness(1.12);}
+button.mob{display:none;}
+
+/* ---------- LAYOUT ---------- */
+.layout{flex:1;display:flex;min-height:0;position:relative;}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{width:238px;flex:0 0 238px;background:var(--panel);border-right:1px solid var(--line);
+  overflow-y:auto;padding:12px;z-index:60;}
+.props{width:300px;flex:0 0 300px;background:var(--panel);border-left:1px solid var(--line);
+  overflow-y:auto;padding:12px;z-index:60;}
+.sec{margin-bottom:16px;}
+.sec h3{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);
+  margin:0 0 8px;font-weight:700;}
+.hint{font-size:11px;color:var(--muted);margin:-4px 0 8px;}
+.lbl{display:block;font-size:11px;color:var(--muted);margin:8px 0 4px;}
+input[type=text],input[type=number],select,textarea{
+  width:100%;background:#0d1428;border:1px solid var(--line);color:var(--txt);
+  border-radius:7px;padding:7px 9px;font:inherit;font-size:12.5px;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,102,241,.25);}
+input[type=color]{width:100%;height:34px;padding:2px;background:#0d1428;border:1px solid var(--line);
+  border-radius:7px;cursor:pointer;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+input[type=file]{font-size:11px;color:var(--muted);margin-top:6px;width:100%;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* ---------- PALETTE ---------- */
+.palette{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pal{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;
+  background:var(--panel2);border:1px dashed #35446b;border-radius:10px;cursor:grab;
+  font-size:11.5px;color:#cbd5ff;user-select:none;transition:.15s;}
+.pal:hover{background:#22305a;border-color:var(--accent);transform:translateY(-1px);}
+.pal:active{cursor:grabbing;}
+.pal .ic{font-size:19px;line-height:1;}
+
+/* ---------- STAGE ---------- */
+.stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;min-width:0;
+  background-image:
+    linear-gradient(45deg,#0e1428 25%,transparent 25%,transparent 75%,#0e1428 75%),
+    linear-gradient(45deg,#0e1428 25%,#0a0f1f 25%,#0a0f1f 75%,#0e1428 75%);
+  background-size:26px 26px;background-position:0 0,13px 13px;}
+.slide-wrap{position:relative;box-shadow:0 24px 70px rgba(0,0,0,.65);}
+.slide{position:relative;overflow:hidden;transform-origin:top left;background:#0f172a;}
+.bg-layer{position:absolute;inset:0;pointer-events:none;}
+.objects-layer{position:absolute;inset:0;}
+
+/* ---------- OBJECTS ---------- */
+.obj{position:absolute;user-select:none;-webkit-user-select:none;}
+.objects-layer:not(.previewing) .obj{cursor:move;}
+.obj.selected{outline:2px dashed #6366f1;outline-offset:0;}
+.handle{position:absolute;width:11px;height:11px;background:#fff;border:2px solid #6366f1;
+  border-radius:3px;box-sizing:border-box;z-index:20;transform:scale(var(--hs,1));
+  box-shadow:0 1px 4px rgba(0,0,0,.4);}
+.handle[data-dir="nw"]{left:-6px;top:-6px;cursor:nwse-resize;}
+.handle[data-dir="n"]{left:calc(50% - 5.5px);top:-6px;cursor:ns-resize;}
+.handle[data-dir="ne"]{right:-6px;top:-6px;cursor:nesw-resize;}
+.handle[data-dir="e"]{right:-6px;top:calc(50% - 5.5px);cursor:ew-resize;}
+.handle[data-dir="se"]{right:-6px;bottom:-6px;cursor:nwse-resize;}
+.handle[data-dir="s"]{left:calc(50% - 5.5px);bottom:-6px;cursor:ns-resize;}
+.handle[data-dir="sw"]{left:-6px;bottom:-6px;cursor:nesw-resize;}
+.handle[data-dir="w"]{left:-6px;top:calc(50% - 5.5px);cursor:ew-resize;}
+
+/* ---------- PROPS PANEL ---------- */
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:40px 10px;line-height:1.6;}
+.ptitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;
+  padding-bottom:10px;border-bottom:1px solid var(--line);}
+.badge{background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:4px 10px;border-radius:20px;
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;}
+.mini-actions{display:flex;gap:4px;}
+.mini-actions button{padding:5px 8px;font-size:13px;line-height:1;border-radius:7px;}
+.mini-actions button.danger{background:#3b1220;border-color:#6b2038;color:#ff9db1;}
+.mini-actions button.danger:hover{background:#5a1a2e;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.grid2 label{display:block;font-size:10.5px;color:var(--muted);margin-bottom:3px;}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.row>label{font-size:11.5px;color:var(--muted);flex:0 0 74px;}
+.row .ctrl{flex:1;min-width:0;}
+.ctrl.range{display:flex;align-items:center;gap:8px;}
+.ctrl.range .val{font-size:11px;color:#a9b8e8;flex:0 0 48px;text-align:right;font-variant-numeric:tabular-nums;}
+.chk{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#cbd5ff;cursor:pointer;margin:4px 0;}
+.chk input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;}
+textarea{resize:vertical;min-height:62px;line-height:1.4;}
+
+/* ---------- MOBILE ---------- */
+@media (max-width:900px){
+  .sidebar,.props{position:fixed;top:0;bottom:0;z-index:200;box-shadow:0 0 50px rgba(0,0,0,.7);}
+  .sidebar{left:0;transform:translateX(-102%);transition:transform .25s ease;}
+  .props{right:0;transform:translateX(102%);transition:transform .25s ease;}
+  .sidebar.open,.props.open{transform:translateX(0);}
+  button.mob{display:inline-block;}
+  .brand{font-size:13px;}
+  .topbar button{font-size:12px;padding:6px 9px;}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">🎬 Slide Builder</div>
+  <button class="mob" id="btnSidebar">☰ Objetos</button>
+  <button class="mob" id="btnPropsPanel">⚙ Propiedades</button>
+  <div class="spacer"></div>
+  <button id="btnNew">✨ Nuevo</button>
+  <button id="btnImport">📂 Importar</button>
+  <button id="btnExportJson">⬇ JSON</button>
+  <button id="btnPreview">▶ Previsualizar</button>
+  <button id="btnExportHtml" class="primary">⬇ Exportar HTML</button>
+  <input type="file" id="fileImport" accept=".json,application/json" hidden>
+</header>
+
+<div class="layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sec">
+      <h3>Objetos</h3>
+      <p class="hint">Arrastra al lienzo o haz clic para añadir</p>
+      <div class="palette">
+        <div class="pal" draggable="true" data-type="box"><span class="ic">▭</span>Caja</div>
+        <div class="pal" draggable="true" data-type="text"><span class="ic">T</span>Texto</div>
+        <div class="pal" draggable="true" data-type="image"><span class="ic">🖼️</span>Imagen</div>
+        <div class="pal" draggable="true" data-type="button"><span class="ic">⬭</span>Botón</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>Fondo del slide</h3>
+      <label class="lbl">Color</label>
+      <input type="color" id="bgColor" value="#0f172a">
+      <label class="lbl">Imagen de fondo (URL)</label>
+      <input type="text" id="bgImage" placeholder="https://...">
+      <input type="file" id="bgFile" accept="image/*">
+      <label class="lbl">Ajuste</label>
+      <select id="bgFit">
+        <option value="cover">Cubrir (cover)</option>
+        <option value="contain">Contener (contain)</option>
+        <option value="fill">Estirar (fill)</option>
+      </select>
+      <label class="lbl">Oscurecer: <span id="ovVal">0%</span></label>
+      <input type="range" id="bgOverlay" min="0" max="100" value="0">
+    </div>
+
+    <div class="sec">
+      <h3>Lienzo</h3>
+      <div class="two">
+        <div><label class="lbl">Ancho</label><input type="number" id="cvW" value="1280" step="10"></div>
+        <div><label class="lbl">Alto</label><input type="number" id="cvH" value="720" step="10"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ STAGE ============ -->
+  <main class="stage" id="stage">
+    <div class="slide-wrap" id="slideWrap">
+      <div class="slide" id="slide">
+        <div class="bg-layer" id="bgLayer"></div>
+        <div class="objects-layer" id="objectsLayer"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ PROPS ============ -->
+  <aside class="props" id="propsPanel"></aside>
+</div>
+
+<script>
+/* =========================================================
+   CONSTANTES
+   ========================================================= */
+const TYPE_LABEL = { box:'Caja', text:'Texto', image:'Imagen', button:'Botón' };
+
+const EFFECTS = {
+  none:null, fade:'kFade', left:'kLeft', right:'kRight',
+  up:'kUp', down:'kDown', zoom:'kZoom', rotate:'kRotate', flip:'kFlip'
+};
+
+const KEYFRAMES = `
+@keyframes kFade{from{opacity:0}to{opacity:var(--op,1)}}
+@keyframes kLeft{from{opacity:0;transform:translateX(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}
+                 to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
+@keyframes kRight{from{opacity:0;transform:translateX(var(--dist,150px)) rotate(var(--rot,0deg))}
+                  to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
+@keyframes kUp{from{opacity:0;transform:translateY(var(--dist,150px)) rotate(var(--rot,0deg))}
+               to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
+@keyframes kDown{from{opacity:0;transform:translateY(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}
+                 to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
+@keyframes kZoom{from{opacity:0;transform:scale(.5) rotate(var(--rot,0deg))}
+                 to{opacity:var(--op,1);transform:scale(1) rotate(var(--rot,0deg))}}
+@keyframes kRotate{from{opacity:0;transform:rotate(calc(var(--rot,0deg) - 30deg)) scale(.8)}
+                   to{opacity:var(--op,1);transform:rotate(var(--rot,0deg)) scale(1)}}
+@keyframes kFlip{from{opacity:0;transform:perspective(900px) rotateY(90deg)}
+                 to{opacity:var(--op,1);transform:perspective(900px) rotateY(0deg) rotate(var(--rot,0deg))}}
+`;
+(function injectKeyframes(){
+  const s = document.createElement('style');
+  s.textContent = KEYFRAMES;
+  document.head.appendChild(s);
+})();
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+let project   = blankProject();
+let selectedId = null;
+let scale      = 1;
+let previewing = false;
+
+const $ = s => document.querySelector(s);
+const stage        = $('#stage');
+const slideWrap    = $('#slideWrap');
+const slide        = $('#slide');
+const bgLayer      = $('#bgLayer');
+const objectsLayer = $('#objectsLayer');
+const propsPanel   = $('#propsPanel');
+const sidebar      = $('#sidebar');
+
+function blankProject(){
+  return {
+    width: 1280,
+    height: 720,
+    background: { color:'#0f172a', image:'', fit:'cover', overlay:0 },
+    objects: []
+  };
+}
+
+const uid = () => 'obj_' + Math.random().toString(36).slice(2, 9);
+
+/* =========================================================
+   FÁBRICA DE OBJETOS
+   ========================================================= */
+function makeObject(type, cx, cy){
+  const base = {
+    id: uid(), type, x:0, y:0, w:200, h:120, rot:0, opacity:1, z:1,
+    animation: { effect:'none', duration:800, delay:0, easing:'ease-out', distance:150 },
+    props: {}
+  };
+  let w = 200, h = 120;
+
+  if(type === 'box'){
+    w = 260; h = 170;
+    base.props = { bg:'#3b82f6', radius:16, borderW:0, borderColor:'#ffffff', shadow:true };
+  }
+  if(type === 'text'){
+    w = 440; h = 96;
+    base.props = {
+      text:'Tu texto aquí', color:'#ffffff', fontSize:56, bold:true, italic:false,
+      align:'center', family:'Inter, system-ui, sans-serif', lineHeight:1.2,
+      letterSpacing:0, padding:8
+    };
+  }
+  if(type === 'image'){
+    w = 320; h = 220;
+    base.props = { src:'https://picsum.photos/640/440', fit:'cover', radius:12, shadow:true };
+  }
+  if(type === 'button'){
+    w = 220; h = 64;
+    base.props = { text:'Comenzar', href:'#', bg:'#22c55e', color:'#04121f',
+                   fontSize:20, radius:32, shadow:true };
+  }
+
+  base.w = w; base.h = h;
+  base.x = Math.round(cx - w/2);
+  base.y = Math.round(cy - h/2);
+  return base;
+}
+
+/* =========================================================
+   ESTILOS DE OBJETO
+   ========================================================= */
+const cssUrl = u => `url('${String(u).replace(/'/g, '%27')}')`;
+
+function objStyleString(o, animate){
+  let s = `position:absolute;left:${o.x}px;top:${o.y}px;width:${o.w}px;height:${o.h}px;`
+        + `z-index:${o.z};opacity:${o.opacity};--rot:${o.rot}deg;--op:${o.opacity};`
+        + `transform:rotate(${o.rot}deg);box-sizing:border-box;`;
+  const p = o.props;
+
+  if(o.type === 'box'){
+    s += `background:${p.bg};border-radius:${p.radius}px;`
+      +  `border:${p.borderW}px solid ${p.borderColor};`
+      +  `box-shadow:${p.shadow ? '0 14px 34px rgba(0,0,0,.4)' : 'none'};`;
+  }
+  if(o.type === 'text'){
+    s += `display:flex;flex-direction:column;justify-content:center;text-align:${p.align};`
+      +  `color:${p.color};font-size:${p.fontSize}px;font-weight:${p.bold ? 700 : 400};`
+      +  `font-style:${p.italic ? 'italic' : 'normal'};font-family:${p.family};`
+      +  `line-height:${p.lineHeight};letter-spacing:${p.letterSpacing}px;padding:${p.padding}px;`
+      +  `white-space:pre-wrap;word-break:break-word;overflow:hidden;`;
+  }
+  if(o.type === 'image'){
+    s += `background-image:${cssUrl(p.src)};background-size:${p.fit};background-position:center;`
+      +  `background-repeat:no-repeat;border-radius:${p.radius}px;`
+      +  `box-shadow:${p.shadow ? '0 14px 34px rgba(0,0,0,.4)' : 'none'};`;
+  }
+  if(o.type === 'button'){
+    s += `display:flex;align-items:center;justify-content:center;background:${p.bg};color:${p.color};`
+      +  `font-size:${p.fontSize}px;font-weight:600;border-radius:${p.radius}px;`
+      +  `text-decoration:none;font-family:Inter,system-ui,sans-serif;cursor:pointer;`
+      +  `border:none;overflow:hidden;`
+      +  `box-shadow:${p.shadow ? '0 12px 28px rgba(0,0,0,.38)' : 'none'};`;
+  }
+
+  if(animate && o.animation.effect !== 'none'){
+    const kf = EFFECTS[o.animation.effect];
+    s += `--dist:${o.animation.distance}px;`
+      +  `animation:${kf} ${o.animation.duration}ms ${o.animation.easing} ${o.animation.delay}ms both;`;
+  }
+  return s;
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function renderObjects(){
+  objectsLayer.classList.toggle('previewing', previewing);
+  objectsLayer.style.setProperty('--hs', (1/scale).toFixed(3));
+  objectsLayer.innerHTML = '';
+
+  project.objects
+    .slice()
+    .sort((a,b) => a.z - b.z)
+    .forEach(o => {
+      const el = document.createElement('div');
+      el.className = 'obj';
+      el.dataset.id = o.id;
+      el.dataset.type = o.type;
+      el.setAttribute('style', objStyleString(o, previewing));
+
+      if(o.type === 'text' || o.type === 'button') el.textContent = o.props.text;
+
+      if(!previewing && o.id === selectedId){
+        el.classList.add('selected');
+        ['nw','n','ne','e','se','s','sw','w'].forEach(d => {
+          const h = document.createElement('div');
+          h.className = 'handle';
+          h.dataset.dir = d;
+          el.appendChild(h);
+        });
+      }
+      objectsLayer.appendChild(el);
+    });
+}
+
+function renderBg(){
+  const bg = project.background;
+  let html = '';
+  if(bg.image){
+    html += `<div style="position:absolute;inset:0;background-image:${cssUrl(bg.image)};`
+          + `background-size:${bg.fit};background-position:center;background-repeat:no-repeat;"></div>`;
+  }
+  if(bg.overlay > 0){
+    html += `<div style="position:absolute;inset:0;background:rgba(0,0,0,${(bg.overlay/100).toFixed(2)});"></div>`;
+  }
+  bgLayer.innerHTML = html;
+  slide.style.background = bg.color;
+}
+
+function renderAll(){
+  slide.style.width  = project.width  + 'px';
+  slide.style.height = project.height + 'px';
+  renderBg();
+  renderObjects();
+  fitSlide();
+}
+
+/* =========================================================
+   AJUSTE AL VIEWPORT
+   ========================================================= */
+function fitSlide(){
+  const padX = 56, padY = 56;
+  const aw = Math.max(120, stage.clientWidth  - padX);
+  const ah = Math.max(120, stage.clientHeight - padY);
+  scale = Math.min(aw / project.width, ah / project.height);
+  scale = Math.max(0.05, Math.min(scale, 2));
+
+  slide.style.width  = project.width  + 'px';
+  slide.style.height = project.height + 'px';
+  slide.style.transform = `scale(${scale})`;
+  slideWrap.style.width  = (project.width  * scale) + 'px';
+  slideWrap.style.height = (project.height * scale) + 'px';
+  objectsLayer.style.setProperty('--hs', (1/scale).toFixed(3));
+}
+
+window.addEventListener('resize', fitSlide);
+if(window.ResizeObserver) new ResizeObserver(fitSlide).observe(stage);
+
+/* =========================================================
+   SELECCIÓN
+   ========================================================= */
+function select(id){
+  selectedId = id;
+  renderObjects();
+  renderProps();
+}
+
+/* =========================================================
+   AÑADIR OBJETOS
+   ========================================================= */
+function addObject(type, x, y){
+  const o = makeObject(type, x, y);
+  o.z = project.objects.reduce((m, x) => Math.max(m, x.z), 0) + 1;
+  project.objects.push(o);
+  select(o.id);
+  if(window.innerWidth <= 900) sidebar.classList.remove('open');
+  return o;
+}
+
+// Drag & drop desde la paleta
+document.querySelectorAll('.pal').forEach(pal => {
+  pal.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', pal.dataset.type);
+    e.dataTransfer.effectAllowed = 'copy';
+  });
+  // Fallback táctil: clic añade al centro
+  pal.addEventListener('click', () => {
+    addObject(pal.dataset.type, project.width/2, project.height/2);
+  });
+});
+
+stage.addEventListener('dragover', e => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
+});
+
+stage.addEventListener('drop', e => {
+  e.preventDefault();
+  const type = e.dataTransfer.getData('text/plain');
+  if(!type || !TYPE_LABEL[type]) return;
+  const rect = slide.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / scale;
+  const y = (e.clientY - rect.top) / scale;
+  addObject(type, x, y);
+});
+
+/* =========================================================
+   INTERACCIÓN: MOVER / REDIMENSIONAR
+   ========================================================= */
+objectsLayer.addEventListener('pointerdown', e => {
+  if(previewing) return;
+
+  const objEl = e.target.closest('.obj');
+  if(!objEl){ select(null); return; }
+
+  e.preventDefault();
+  const id = objEl.dataset.id;
+  const o  = project.objects.find(x => x.id === id);
+  if(!o) return;
+
+  if(selectedId !== id){
+    select(id);
+  }
+  const freshEl = objectsLayer.querySelector(`.obj[data-id="${id}"]`);
+  const handleEl = e.target.closest('.handle');
+  startInteraction(e, o, handleEl ? handleEl.dataset.dir : null, freshEl);
+});
+
+function startInteraction(e, o, dir, el){
+  const startX = e.clientX, startY = e.clientY;
+  const o0 = { x:o.x, y:o.y, w:o.w, h:o.h };
+  const mode = dir ? 'resize' : 'move';
+  const MIN = 24;
+
+  if(mode === 'move') document.body.style.cursor = 'move';
+
+  function onMove(ev){
+    const dx = (ev.clientX - startX) / scale;
+    const dy = (ev.clientY - startY) / scale;
+
+    if(mode === 'move'){
+      o.x = Math.round(o0.x + dx);
+      o.y = Math.round(o0.y + dy);
+    } else {
+      let x = o0.x, y = o0.y, w = o0.w, h = o0.h;
+      if(dir.includes('e')) w = o0.w + dx;
+      if(dir.includes('w')){ w = o0.w - dx; x = o0.x + dx; }
+      if(dir.includes('s')) h = o0.h + dy;
+      if(dir.includes('n')){ h = o0.h - dy; y = o0.y + dy; }
+
+      if(w < MIN){ if(dir.includes('w')) x = o0.x + o0.w - MIN; w = MIN; }
+      if(h < MIN){ if(dir.includes('n')) y = o0.y + o0.h - MIN; h = MIN; }
+
+      o.x = Math.round(x); o.y = Math.round(y);
+      o.w = Math.round(w); o.h = Math.round(h);
+    }
+
+    if(el){
+      el.style.left   = o.x + 'px';
+      el.style.top    = o.y + 'px';
+      el.style.width  = o.w + 'px';
+      el.style.height = o.h + 'px';
+    }
+    syncGeometry(o);
+  }
+
+  function onUp(){
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    document.body.style.cursor = '';
+  }
+
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp);
+}
+
+function syncGeometry(o){
+  ['x','y','w','h'].forEach(k => {
+    const inp = propsPanel.querySelector(`[data-prop="${k}"]`);
+    if(inp) inp.value = o[k];
+  });
+}
+
+/* =========================================================
+   PANEL DE PROPIEDADES
+   ========================================================= */
+function escAttr(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escHTML(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function rowCtrl(label, ctrl){
+  return `<div class="row"><label>${label}</label><div class="ctrl">${ctrl}</div></div>`;
+}
+function rangeRow(label, prop, val, min, max, step, suffix){
+  suffix = suffix || '';
+  return `<div class="row"><label>${label}</label><div class="ctrl range">
+    <input type="range" data-prop="${prop}" data-suffix="${suffix}"
+           min="${min}" max="${max}" step="${step}" value="${val}">
+    <span class="val" data-valfor="${prop}">${val}${suffix}</span></div></div>`;
+}
+function selectHTML(prop, opts, cur){
+  return `<select data-prop="${prop}">` + opts.map(([v,l]) =>
+    `<option value="${v}"${String(v) === String(cur) ? ' selected' : ''}>${l}</option>`
+  ).join('') + `</select>`;
+}
+function chkHTML(prop, checked, label){
+  return `<label class="chk"><input type="checkbox" data-prop="${prop}"${checked ? ' checked' : ''}> ${label}</label>`;
+}
+
+function renderProps(){
+  const o = project.objects.find(x => x.id === selectedId);
+  if(!o){
+    propsPanel.innerHTML = '<div class="empty">Selecciona un objeto en el lienzo<br>para editar sus propiedades.</div>';
+    return;
+  }
+  const P = o.props, A = o.animation;
+  let h = '';
+
+  /* --- Cabecera --- */
+  h += `<div class="ptitle">
+    <span class="badge">${TYPE_LABEL[o.type]}</span>
+    <div class="mini-actions">
+      <button data-act="dup"   title="Duplicar">⧉</button>
+      <button data-act="front" title="Traer al frente">↑</button>
+      <button data-act="back"  title="Enviar al fondo">↓</button>
+      <button data-act="del" class="danger" title="Eliminar">🗑</button>
+    </div></div>`;
+
+  /* --- Posición y tamaño --- */
+  h += `<div class="sec"><h3>Posición y tamaño</h3>
+    <div class="grid2">
+      <div><label>X</label><input type="number" data-prop="x" value="${o.x}"></div>
+      <div><label>Y</label><input type="number" data-prop="y" value="${o.y}"></div>
+      <div><label>Ancho</label><input type="number" data-prop="w" value="${o.w}"></div>
+      <div><label>Alto</label><input type="number" data-prop="h" value="${o.h}"></div>
+    </div>
+    ${rangeRow('Rotación','rot', o.rot, -180, 180, 1, '°')}
+    ${rangeRow('Opacidad','opacity', o.opacity, 0, 1, 0.05, '')}
+    <div class="grid2"><div><label>Capa (z)</label>
+      <input type="number" data-prop="z" value="${o.z}"></div></div>
+  </div>`;
+
+  /* --- Propiedades específicas --- */
+  h += `<div class="sec"><h3>Apariencia</h3>`;
+
+  if(o.type === 'box'){
+    h += rowCtrl('Fondo', `<input type="color" data-prop="props.bg" value="${P.bg}">`);
+    h += rangeRow('Redondeo','props.radius', P.radius, 0, 200, 1, ' px');
+    h += rangeRow('Borde','props.borderW', P.borderW, 0, 20, 1, ' px');
+    h += rowCtrl('Color borde', `<input type="color" data-prop="props.borderColor" value="${P.borderColor}">`);
+    h += chkHTML('props.shadow', P.shadow, 'Sombra');
+  }
+
+  if(o.type === 'text'){
+    h += rowCtrl('Texto', `<textarea data-prop="props.text" data-textarea="1"></textarea>`);
+    h += rowCtrl('Color', `<input type="color" data-prop="props.color" value="${P.color}">`);
+    h += rangeRow('Tamaño','props.fontSize', P.fontSize, 8, 200, 1, ' px');
+    h += rowCtrl('Tipografía', selectHTML('props.family', [
+      ['Inter, system-ui, sans-serif','Inter / Sistema'],
+      ['Georgia, serif','Georgia (serif)'],
+      ['"Times New Roman", serif','Times'],
+      ['"Courier New", monospace','Monoespaciada'],
+      ['Impact, sans-serif','Impact'],
+      ['"Trebuchet MS", sans-serif','Trebuchet']
+    ], P.family));
+    h += rowCtrl('Alineación', selectHTML('props.align', [
+      ['left','Izquierda'], ['center','Centro'], ['right','Derecha']
+    ], P.align));
+    h += rangeRow('Interlineado','props.lineHeight', P.lineHeight, 0.8, 3, 0.05, '');
+    h += rangeRow('Espaciado','props.letterSpacing', P.letterSpacing, -5, 20, 0.5, ' px');
+    h += rangeRow('Relleno','props.padding', P.padding, 0, 100, 1, ' px');
+    h += chkHTML('props.bold', P.bold, 'Negrita');
+    h += chkHTML('props.italic', P.italic, 'Cursiva');
+  }
+
+  if(o.type === 'image'){
+    h += rowCtrl('URL', `<input type="text" data-prop="props.src" value="${escAttr(P.src)}">`);
+    h += `<input type="file" data-imgfile accept="image/*">`;
+    h += rowCtrl('Ajuste', selectHTML('props.fit', [
+      ['cover','Cubrir'], ['contain','Contener'], ['fill','Estirar']
+    ], P.fit));
+    h += rangeRow('Redondeo','props.radius', P.radius, 0, 300, 1, ' px');
+    h += chkHTML('props.shadow', P.shadow, 'Sombra');
+  }
+
+  if(o.type === 'button'){
+    h += rowCtrl('Texto', `<input type="text" data-prop="props.text" value="${escAttr(P.text)}">`);
+    h += rowCtrl('Enlace', `<input type="text" data-prop="props.href" value="${escAttr(P.href)}">`);
+    h += rowCtrl('Fondo', `<input type="color" data-prop="props.bg" value="${P.bg}">`);
+    h += rowCtrl('Texto', `<input type="color" data-prop="props.color" value="${P.color}">`);
+    h += rangeRow('Tamaño','props.fontSize', P.fontSize, 8, 80, 1, ' px');
+    h += rangeRow('Redondeo','props.radius', P.radius, 0, 80, 1, ' px');
+    h += chkHTML('props.shadow', P.shadow, 'Sombra');
+  }
+
+  h += `</div>`;
+
+  /* --- Animación --- */
+  h += `<div class="sec"><h3>Animación de entrada</h3>
+    ${rowCtrl('Efecto', selectHTML('animation.effect', [
+      ['none','Ninguno'],
+      ['fade','Aparecer (fade)'],
+      ['left','Entrar desde la izquierda'],
+      ['right','Entrar desde la derecha'],
+      ['up','Subir desde abajo'],
+      ['down','Bajar desde arriba'],
+      ['zoom','Zoom'],
+      ['rotate','Rotar'],
+      ['flip','Voltear (3D)']
+    ], A.effect))}
+    ${rangeRow('Duración','animation.duration', A.duration, 100, 4000, 50, ' ms')}
+    ${rangeRow('Retardo','animation.delay', A.delay, 0, 4000, 50, ' ms')}
+    ${rangeRow('Distancia','animation.distance', A.distance, 0, 800, 10, ' px')}
+    ${rowCtrl('Curva', selectHTML('animation.easing', [
+      ['linear','Linear'],
+      ['ease','Ease'],
+      ['ease-in','Ease In'],
+      ['ease-out','Ease Out'],
+      ['ease-in-out','Ease In Out'],
+      ['cubic-bezier(.34,1.56,.64,1)','Rebote (back)']
+    ], A.easing))}
+  </div>`;
+
+  propsPanel.innerHTML = h;
+
+  /* El textarea se rellena por JS para evitar problemas de escape */
+  const ta = propsPanel.querySelector('textarea[data-textarea]');
+  if(ta) ta.value = P.text;
+}
+
+/* =========================================================
+   EVENTOS DEL PANEL DE PROPIEDADES
+   ========================================================= */
+function setPath(obj, path, val){
+  const parts = path.split('.');
+  let cur = obj;
+  for(let i = 0; i < parts.length - 1; i++) cur = cur[parts[i]];
+  cur[parts[parts.length - 1]] = val;
+}
+
+function onPropChange(e){
+  const inp = e.target.closest('[data-prop]');
+  if(!inp) return;
+
+  const o = project.objects.find(x => x.id === selectedId);
+  if(!o) return;
+
+  let val;
+  if(inp.type === 'checkbox')      val = inp.checked;
+  else if(inp.type === 'number' || inp.type === 'range'){
+    val = parseFloat(inp.value);
+    if(isNaN(val)) val = 0;
+  } else {
+    val = inp.value;
+  }
+
+  setPath(o, inp.dataset.prop, val);
+
+  // Actualiza el valor numérico mostrado junto al slider
+  if(inp.type === 'range'){
+    const span = propsPanel.querySelector(`[data-valfor="${inp.dataset.prop}"]`);
+    if(span) span.textContent = val + (inp.dataset.suffix || '');
+  }
+
+  renderObjects();
+}
+
+propsPanel.addEventListener('input',  onPropChange);
+propsPanel.addEventListener('change', onPropChange);
+
+/* Carga de archivo para imágenes */
+propsPanel.addEventListener('change', e => {
+  const f = e.target.closest('[data-imgfile]');
+  if(!f || !f.files || !f.files[0]) return;
+  const o = project.objects.find(x => x.id === selectedId);
+  if(!o) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    o.props.src = ev.target.result;
+    renderProps();
+    renderObjects();
+  };
+  reader.readAsDataURL(f.files[0]);
+});
+
+/* Botones de acción */
+propsPanel.addEventListener('click', e => {
+  const btn = e.target.closest('[data-act]');
+  if(!btn) return;
+  const o = project.objects.find(x => x.id === selectedId);
+  if(!o) return;
+  const act = btn.dataset.act;
+
+  if(act === 'del'){
+    project.objects = project.objects.filter(x => x.id !== o.id);
+    selectedId = null;
+    renderObjects(); renderProps();
+  }
+  if(act === 'dup'){
+    const copy = JSON.parse(JSON.stringify(o));
+    copy.id = uid();
+    copy.x += 24; copy.y += 24;
+    copy.z = project.objects.reduce((m, x) => Math.max(m, x.z), 0) + 1;
+    project.objects.push(copy);
+    select(copy.id);
+  }
+  if(act === 'front'){
+    o.z = project.objects.reduce((m, x) => Math.max(m, x.z), 0) + 1;
+    renderObjects(); renderProps();
+  }
+  if(act === 'back'){
+    o.z = project.objects.reduce((m, x) => Math.min(m, x.z), 9999) - 1;
+    renderObjects(); renderProps();
+  }
+});
+
+/* =========================================================
+   CONTROLES DEL SIDEBAR
+   ========================================================= */
+$('#bgColor').addEventListener('input', e => {
+  project.background.color = e.target.value;
+  renderBg();
+});
+$('#bgImage').addEventListener('input', e => {
+  project.background.image = e.target.value.trim();
+  renderBg();
+});
+$('#bgFile').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    project.background.image = ev.target.result;
+    $('#bgImage').value = '';
+    renderBg();
+  };
+  r.readAsDataURL(f);
+});
+$('#bgFit').addEventListener('change', e => {
+  project.background.fit = e.target.value;
+  renderBg();
+});
+$('#bgOverlay').addEventListener('input', e => {
+  project.background.overlay = +e.target.value;
+  $('#ovVal').textContent = e.target.value + '%';
+  renderBg();
+});
+$('#cvW').addEventListener('change', e => {
+  project.width = Math.max(200, parseInt(e.target.value) || 1280);
+  renderAll();
+});
+$('#cvH').addEventListener('change', e => {
+  project.height = Math.max(200, parseInt(e.target.value) || 720);
+  renderAll();
+});
+
+function syncSidebar(){
+  $('#bgColor').value   = project.background.color;
+  $('#bgImage').value   = project.background.image.startsWith('data:') ? '' : project.background.image;
+  $('#bgFit').value     = project.background.fit;
+  $('#bgOverlay').value = project.background.overlay;
+  $('#ovVal').textContent = project.background.overlay + '%';
+  $('#cvW').value = project.width;
+  $('#cvH').value = project.height;
+}
+
+/* =========================================================
+   TECLADO
+   ========================================================= */
+document.addEventListener('keydown', e => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if(tag === 'input' || tag === 'textarea' || tag === 'select') return;
+
+  if(e.key === 'Escape'){
+    if(previewing) togglePreview();
+    else select(null);
+    return;
+  }
+
+  const o = project.objects.find(x => x.id === selectedId);
+  if(!o) return;
+
+  if(e.key === 'Delete' || e.key === 'Backspace'){
+    e.preventDefault();
+    project.objects = project.objects.filter(x => x.id !== o.id);
+    selectedId = null;
+    renderObjects(); renderProps();
+    return;
+  }
+
+  const step = e.shiftKey ? 10 : 1;
+  if(e.key === 'ArrowLeft'){  o.x -= step; e.preventDefault(); }
+  if(e.key === 'ArrowRight'){ o.x += step; e.preventDefault(); }
+  if(e.key === 'ArrowUp'){    o.y -= step; e.preventDefault(); }
+  if(e.key === 'ArrowDown'){  o.y += step; e.preventDefault(); }
+  if(e.key.startsWith('Arrow')){ renderObjects(); syncGeometry(o); }
+});
+
+/* =========================================================
+   PREVISUALIZACIÓN
+   ========================================================= */
+function togglePreview(){
+  previewing = !previewing;
+  if(previewing) selectedId = null;
+  $('#btnPreview').textContent = previewing ? '⏹ Detener' : '▶ Previsualizar';
+  $('#btnPreview').classList.toggle('primary', previewing);
+  renderObjects();
+  renderProps();
+}
+
+$('#btnPreview').addEventListener('click', togglePreview);
+
+/* =========================================================
+   NUEVO / IMPORTAR / EXPORTAR
+   ========================================================= */
+$('#btnNew').addEventListener('click', () => {
+  if(project.objects.length && !confirm('¿Crear un slide nuevo? Se perderán los cambios no guardados.')) return;
+  project = blankProject();
+  selectedId = null;
+  previewing = false;
+  $('#btnPreview').textContent = '▶ Previsualizar';
+  $('#btnPreview').classList.remove('primary');
+  syncSidebar();
+  renderAll();
+  renderProps();
+});
+
+$('#btnImport').addEventListener('click', () => $('#fileImport').click());
+
+$('#fileImport').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(!data || !Array.isArray(data.objects)) throw new Error('Formato inválido');
+      project = Object.assign(blankProject(), data);
+      project.background = Object.assign(blankProject().background, data.background || {});
+      project.objects.forEach(o => {
+        o.animation = Object.assign(
+          { effect:'none', duration:800, delay:0, easing:'ease-out', distance:150 },
+          o.animation || {}
+        );
+      });
+      selectedId = null;
+      syncSidebar();
+      renderAll();
+      renderProps();
+    }catch(err){
+      alert('No se pudo importar el archivo JSON:\n' + err.message);
+    }
+  };
+  r.readAsText(f);
+  e.target.value = '';
+});
+
+$('#btnExportJson').addEventListener('click', () => {
+  download('slide.json', JSON.stringify(project, null, 2), 'application/json');
+});
+
+$('#btnExportHtml').addEventListener('click', () => {
+  download('slide.html', generateHTML(), 'text/html');
+});
+
+function download(filename, content, mime){
+  const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+/* =========================================================
+   GENERADOR DE HTML EXPORTABLE
+   ========================================================= */
+function generateHTML(){
+  const p  = project;
+  const bg = p.background;
+
+  let bgHTML = '';
+  if(bg.image){
+    bgHTML += `      <div style="position:absolute;inset:0;background-image:${cssUrl(bg.image)};`
+            + `background-size:${bg.fit};background-position:center;background-repeat:no-repeat;"></div>\n`;
+  }
+  if(bg.overlay > 0){
+    bgHTML += `      <div style="position:absolute;inset:0;background:rgba(0,0,0,${(bg.overlay/100).toFixed(2)});"></div>\n`;
+  }
+
+  const objsHTML = p.objects
+    .slice()
+    .sort((a,b) => a.z - b.z)
+    .map(o => {
+      const st = objStyleString(o, true);
+      if(o.type === 'button'){
+        return `      <a class="obj" href="${escAttr(o.props.href || '#')}" style="${st}">${escHTML(o.props.text)}</a>`;
+      }
+      if(o.type === 'text'){
+        return `      <div class="obj" style="${st}">${escHTML(o.props.text)}</div>`;
+      }
+      return `      <div class="obj" style="${st}"></div>`;
+    })
+    .join('\n');
+
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Slide</title>
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;overflow:hidden;background:#05070f;
+    font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  #slide{position:relative;width:${p.width}px;height:${p.height}px;overflow:hidden;
+    transform-origin:center center;background:${bg.color};flex:0 0 auto;}
+  .obj{position:absolute;}
+${KEYFRAMES}
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div id="slide">
+${bgHTML}${objsHTML}
+    </div>
+  </div>
+<script>
+(function(){
+  var slide = document.getElementById('slide');
+  var W = ${p.width}, H = ${p.height};
+  function fit(){
+    var s = Math.min(window.innerWidth / W, window.innerHeight / H);
+    slide.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', fit);
+  fit();
+})();
+<\/script>
+</body>
+</html>`;
+}
+
+/* =========================================================
+   PANELES MÓVILES
+   ========================================================= */
+$('#btnSidebar').addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  propsPanel.classList.remove('open');
+});
+$('#btnPropsPanel').addEventListener('click', () => {
+  propsPanel.classList.toggle('open');
+  sidebar.classList.remove('open');
+});
+
+/* =========================================================
+   INICIALIZACIÓN
+   ========================================================= */
+(function init(){
+  // Slide de ejemplo
+  const t = makeObject('text', project.width/2, 220);
+  t.w = 900; t.h = 110; t.x = (project.width - 900)/2; t.y = 180;
+  t.props.text = 'Bienvenido a Slide Builder';
+  t.props.fontSize = 62;
+  t.animation = { effect:'down', duration:900, delay:0, easing:'ease-out', distance:120 };
+  t.z = 2;
+
+  const s = makeObject('text', project.width/2, 320);
+  s.w = 760; s.h = 60; s.x = (project.width - 760)/2; s.y = 310;
+  s.props.text = 'Arrastra objetos desde el panel izquierdo y personalízalos.';
+  s.props.fontSize = 24; s.props.bold = false; s.props.color = '#a9b8e8';
+  s.animation = { effect:'fade', duration:900, delay:250, easing:'ease-out', distance:150 };
+  s.z = 3;
+
+  const b = makeObject('button', project.width/2, 470);
+  b.x = (project.width - b.w)/2; b.y = 440;
+  b.animation = { effect:'zoom', duration:700, delay:550, easing:'cubic-bezier(.34,1.56,.64,1)', distance:150 };
+  b.z = 4;
+
+  project.objects.push(t, s, b);
+
+  syncSidebar();
+  renderAll();
+  renderProps();
+})();
+</script>
+</body>
+</html>
