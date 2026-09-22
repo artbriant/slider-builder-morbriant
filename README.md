@@ -9,7 +9,9 @@ Builder de Slider
 	  Cambiado el nombre del shortcode por [slider_morbriant_item id="1"].
 2.0:  Hacemos que el programa tenga más de un slide dentro de pestañas.
 	  Hay un apartado global con los parámetros del slider completo que usa las pestañas como slides.
-Versión: 2.0
+	  Shortcode del Slider Principal: [slider_morbriant nombre="..." items="1,2,3"]
+2.1:  Agregado un botón al lado de las imágenes para agregar su URL. 
+Versión: 2.1
 Autor: MorBriant
 ==========================================
 Responsive Editing & Device-Aware Design
@@ -84,3 +86,26 @@ Shortcode principal
     B)	La función del shortcode busca cada item en $GLOBALS['slider_morbriant_data'] y muestra sólo los que existan. Si falta nombre o no encuentra items, no genera nada.
 
     C)	El contenedor del slider muestra los items con la transición elegida (fade, slide-izq/der/arriba/abajo, zoom) y cicla automáticamente según el tiempo configurado.
+
+Versión 2.1:
+Nuevo botón 🔗 URL junto a cada campo de imagen:
+
+1.    Fondo del item (sidebar): El campo "Imagen de fondo" ahora es una fila flex con el input de texto y un botón 🔗 URL. Al pulsarlo, se abre un prompt con la URL actual precargada para editar o pegar una nueva. Si se cancela o se deja vacío, no se cambia nada.
+
+2.    Objeto imagen (panel de propiedades): El campo URL de la imagen ahora también incluye el botón 🔗 URL al lado. Al pulsarlo, se abre un prompt con la URL actual para poder introducir una nueva sin necesidad de usar el input de texto.
+
+Estilos añadidos:
+
+	A) url-row: contenedor flex para alinear input + botón.
+
+	B) url-btn: estilo azul destacado con emoji 🔗, hover más brillante.
+
+Comportamiento:
+
+	A) El prompt muestra la URL actual como valor por defecto para facilitar la edición.
+
+	B) Si el usuario cancela (null) o introduce una cadena vacía, no se aplica ningún cambio.
+
+	C) Si se introduce una URL válida, se aplica al dispositivo actual (respetando el sistema de overrides por dispositivo) y se refresca el lienzo.
+
+Todo lo demás (pestañas, configuración global del slider, exports JSON/HTML/Shortcode, sistema de herencia por dispositivo, etc.) permanece intacto y funcional.
