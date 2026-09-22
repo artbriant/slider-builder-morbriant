@@ -1467,7 +1467,7 @@ if (!function_exists('slider_morbriant_shortcode')) {
         static $slider_assets_done = false;
         if (!$slider_assets_done) {
             $out .= '<style id="sbm-slider-styles">' . slider_morbriant_get_slider_css() . '</style>';
-            $out .= '<script id="sbm-slider-runtime">' . slider_morbriant_get_slider_js() . '</script>';
+            $out .= '<script id="sbm-slider-runtime">' . slider_morbriant_get_slider_js() . '</' . 'script>';
             $slider_assets_done = true;
         }
 
