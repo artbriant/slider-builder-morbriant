@@ -14,8 +14,10 @@ Builder de Slider
 2.2:  He añadido el checkbox "Usar URL en shortcode" junto a cada campo de imagen (fondo e imágenes de objetos).
 	  El checkbox sólo se habilita si el src es una URL real (no un data: URI). Si es una URL, el shortcode extrae la URL y no incluye ningún base64.
 	  Si el usuario sube un archivo (base64), el checkbox queda deshabilitado y el shortcode usa el base64 como antes.
-2.3:  Creamos el shortcode en HTML y CSS reales en el código fuente, sin base64 ni inyección dinámica.
-Versión: 2.3
+2.3:  (Falla) Creamos el shortcode en HTML y CSS reales en el código fuente, sin base64 ni inyección dinámica.
+2.3.1:(Falla) Añadido tres selects por imagen (loading, clase lazy, fetch priority) que se aplican al <img> del shortcode y HTML estático,
+      y un botón específico para borrar sólo la imagen de fondo del dispositivo actual sin afectar al resto.
+Versión: 2.3.1
 Autor: MorBriant
 ==========================================
 Responsive Editing & Device-Aware Design
@@ -182,3 +184,46 @@ Mejoras para PageSpeed
     4. CSS crítico en <style> inline (el navegador lo procesa sin bloquear).
 
     5. El único JS (transición del slider) es mínimo y sólo se carga una vez por página.
+
+Versión 2.3.1 (Falla):
+Añadido tres selects por imagen (loading, clase lazy, fetch priority) que se aplican al <img> del shortcode y HTML estático, y un botón específico para borrar sólo la imagen de fondo del dispositivo actual sin afectar al resto.
+
+Cambios realizados
+
+1. Nuevas propiedades de imagen (makeObject para tipo imagen):
+	js
+
+	loading:'lazy', lazyClass:'', fetchpriority:'auto'
+
+2. Nueva sección en el panel de propiedades (solo para imágenes) con 3 selects:
+
+    Loading: lazy / eager
+
+    Clase lazy: (ninguna) / skip-lazy / no-lazy
+
+    Fetch priority: auto / high / low
+
+	Los tres admiten herencia por dispositivo (aparece el punto azul si están sobrescritos).
+
+3. Generación del <img> en el shortcode y HTML:
+
+	html
+
+	<img class="sbm-o-X skip-lazy" src="..." alt="" loading="eager" fetchpriority="high" decoding="async">
+
+	La clase lazy se concatena a la clase base del objeto, loading siempre se emite, y fetchpriority se emite siempre con el valor elegido.
+
+4. Botón "🚫 Sin imagen de fondo en este dispositivo" en el sidebar:
+
+    En desktop: vacía bg.desktop.image.
+
+    En tablet/mobile: crea un override bg[device].image = '' que NO afecta a los otros dispositivos.
+
+5. Detección de overrides en generateItemAssets: ahora usa los valores RAW de item.bg.desktop/tablet/mobile para detectar cuándo se ha puesto image:'' explícitamente. En ese caso, la media query correspondiente emite background-image:none, de modo que el dispositivo muestra solo el color de fondo sin la imagen.
+
+6. Diferencia entre los dos botones de fondo:
+
+    🚫 Sin imagen de fondo en este dispositivo: sólo borra la imagen para el dispositivo actual (override específico).
+
+    ↺ Limpiar todos los cambios de fondo de este dispositivo: revierte todos los overrides (color, imagen, ajuste, oscurecido) y vuelve a heredar del dispositivo padre.
+
