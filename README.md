@@ -14,7 +14,8 @@ Builder de Slider
 2.2:  He añadido el checkbox "Usar URL en shortcode" junto a cada campo de imagen (fondo e imágenes de objetos).
 	  El checkbox sólo se habilita si el src es una URL real (no un data: URI). Si es una URL, el shortcode extrae la URL y no incluye ningún base64.
 	  Si el usuario sube un archivo (base64), el checkbox queda deshabilitado y el shortcode usa el base64 como antes.
-Versión: 2.2
+2.3:  Creamos el shortcode en HTML y CSS reales en el código fuente, sin base64 ni inyección dinámica.
+Versión: 2.3
 Autor: MorBriant
 ==========================================
 Responsive Editing & Device-Aware Design
@@ -114,7 +115,6 @@ Comportamiento:
 Todo lo demás (pestañas, configuración global del slider, exports JSON/HTML/Shortcode, sistema de herencia por dispositivo, etc.) permanece intacto y funcional.
 
 Versión 2.2:
-Versión 2.2:
 	1. Nueva utilidad isUrlLike(s) — determina si un string es una URL real (no vacío, no data:). Todo el resto se apoya en ella.
 
 	2. Checkbox solo habilitable con URL real. Tanto en el panel de propiedades de imágenes como en el sidebar del fondo, la habilitación del checkbox usa isUrlLike() en lugar de simplemente "hay texto". Si src/image es un data: URI (imagen subida como archivo), el checkbox queda deshabilitado y se desmarca.
@@ -133,3 +133,52 @@ Compatibilidad:
 	1. Los JSON antiguos sin useUrlInShortcode se importan con el flag por defecto false.
 
 	2. Si el flag no está definido en un objeto/props, no se hace nada especial (comportamiento previo intacto).
+
+Versión 2.3:
+El shortcode crea la salida en HTML y CSS reales en el código fuente, sin base64 ni inyección dinámica. Ahora:
+
+    Las imágenes se renderizan como <img src="..."> directamente.
+
+    Los fondos como background-image: url(...) en el CSS.
+
+    Todo se escala con unidades de container query (cqw), así no hace falta JS para el ajuste responsivo.
+	
+Cómo funciona ahora el shortcode generado
+
+	Item shortcode ([slider_morbriant_item id="1"]):
+
+		1. Devuelve un <style> con el CSS específico del item, con media queries para tablet y móvil.
+
+		2. Seguido de un <div class="sbm-item sbm-go"> que contiene las imágenes como <img src="URL" loading="lazy">, los textos, botones y cajas.
+
+		3. Cero base64, cero JS de decodificación.
+
+	Slider shortcode ([slider_morbriant nombre="..." items="1,2"]):
+
+		1. Sólo incluye el CSS del slider (visibility/transition) y ~40 líneas de JS para alternar la clase .sbm-active cada X ms.
+
+		2. No inyecta HTML — sólo cambia clases. La animación de entrada se dispara al añadir .sbm-go.
+
+Cómo se logra el escalado sin JS
+
+    1. Cada .sbm-item es un contenedor con container-type: inline-size, aspect-ratio y variables --sbm-dw/--sbm-dh.
+
+    2. Se define --sbm-em: calc(100cqw / var(--sbm-dw)).
+
+    3. Cada objeto usa calc(N * var(--sbm-em)) para left, top, width, height, font-size, border-radius, padding, etc.
+
+    4. Como 1em = anchoContenedor / anchoDiseño, todos los píxeles del diseño escalan automáticamente con el contenedor sin JS.
+
+    5. Los media queries cambian --sbm-dw/--sbm-dh y el aspect-ratio, así que la misma hoja de estilos sirve para los 3 dispositivos.
+
+Mejoras para PageSpeed
+
+    1. Imágenes con loading="lazy" y decoding="async".
+
+    2. Google Fonts con preconnect sólo para las fuentes realmente usadas.
+
+    3. Sin <script> que decodifique base64 ni inyecte HTML.
+
+    4. CSS crítico en <style> inline (el navegador lo procesa sin bloquear).
+
+    5. El único JS (transición del slider) es mínimo y sólo se carga una vez por página.
