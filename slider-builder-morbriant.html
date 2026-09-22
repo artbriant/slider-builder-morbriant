@@ -3,25 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Slider Builder MorBriant (Versión 2.1)</title>
+<title>Slider Builder MorBriant (Versión 2.2)</title>
 <style>
-:root{
-  --bg:#0b1020; --panel:#121a2e; --panel2:#1a2440; --line:#26314f;
-  --txt:#e6ecff; --muted:#8b9ac4; --accent:#6366f1; --accent2:#22c55e;
-  --dev:#4f9cf9;
-}
+:root{--bg:#0b1020;--panel:#121a2e;--panel2:#1a2440;--line:#26314f;--txt:#e6ecff;--muted:#8b9ac4;--accent:#6366f1;--dev:#4f9cf9;}
 *{box-sizing:border-box;}
-html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  background:var(--bg);color:var(--txt);overflow:hidden;}
+html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);overflow:hidden;}
 body{display:flex;flex-direction:column;height:100vh;}
-
-.topbar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--panel);
-  border-bottom:1px solid var(--line);flex-wrap:wrap;flex:0 0 auto;z-index:120;}
-.brand{font-weight:800;letter-spacing:.3px;font-size:15px;margin-right:6px;
-  background:linear-gradient(90deg,#818cf8,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.topbar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap;flex:0 0 auto;z-index:120;}
+.brand{font-weight:800;letter-spacing:.3px;font-size:15px;margin-right:6px;background:linear-gradient(90deg,#818cf8,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .spacer{flex:1;}
-button{font:inherit;font-size:13px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);
-  background:var(--panel2);color:var(--txt);cursor:pointer;transition:.15s;white-space:nowrap;}
+button{font:inherit;font-size:13px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);cursor:pointer;transition:.15s;white-space:nowrap;}
 button:hover{background:#243356;border-color:#3a4a78;}
 button.primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);border-color:transparent;font-weight:600;}
 button.primary:hover{filter:brightness(1.12);}
@@ -30,89 +21,62 @@ button.wp:hover{filter:brightness(1.12);}
 button.cfg{background:linear-gradient(135deg,#f59e0b,#f97316);border-color:transparent;color:#1a0f00;font-weight:700;}
 button.cfg:hover{filter:brightness(1.12);}
 button.mob{display:none;}
-
 .devswitch{display:flex;gap:2px;background:#0d1428;padding:3px;border-radius:10px;border:1px solid var(--line);}
-.devswitch button{padding:6px 11px;font-size:12px;border:none;background:transparent;border-radius:7px;
-  display:flex;align-items:center;gap:6px;color:var(--muted);font-weight:500;}
+.devswitch button{padding:6px 11px;font-size:12px;border:none;background:transparent;border-radius:7px;display:flex;align-items:center;gap:6px;color:var(--muted);font-weight:500;}
 .devswitch button:hover{background:#1e2a47;color:#cdd8ff;}
-.devswitch button.active{background:linear-gradient(135deg,#4f9cf9,#6366f1);color:#fff;
-  box-shadow:0 4px 14px rgba(79,156,249,.35);}
+.devswitch button.active{background:linear-gradient(135deg,#4f9cf9,#6366f1);color:#fff;box-shadow:0 4px 14px rgba(79,156,249,.35);}
 .devswitch button svg{width:15px;height:15px;display:block;}
 .devswitch .dlabel{display:none;}
-@media (min-width:1280px){ .devswitch .dlabel{display:inline;} }
-
-.tabbar{display:flex;gap:2px;padding:0 8px;background:#0f1728;border-bottom:1px solid var(--line);
-  overflow-x:auto;flex:0 0 auto;align-items:center;min-height:36px;}
-.tab{display:flex;align-items:center;gap:6px;padding:6px 12px;border:none;background:transparent;
-  color:var(--muted);border-radius:6px 6px 0 0;cursor:pointer;font-size:12px;white-space:nowrap;
-  position:relative;border-top:2px solid transparent;margin-bottom:-1px;}
+@media (min-width:1280px){.devswitch .dlabel{display:inline;}}
+.tabbar{display:flex;gap:2px;padding:0 8px;background:#0f1728;border-bottom:1px solid var(--line);overflow-x:auto;flex:0 0 auto;align-items:center;min-height:36px;}
+.tab{display:flex;align-items:center;gap:6px;padding:6px 12px;border:none;background:transparent;color:var(--muted);border-radius:6px 6px 0 0;cursor:pointer;font-size:12px;white-space:nowrap;position:relative;border-top:2px solid transparent;margin-bottom:-1px;}
 .tab:hover{background:#1a2440;color:#cbd5ff;}
 .tab.active{background:var(--panel);color:var(--txt);border-top-color:var(--accent);font-weight:600;}
 .tab-close{font-size:14px;opacity:.4;padding:1px 4px;border-radius:3px;line-height:1;}
 .tab-close:hover{background:rgba(255,90,90,.25);opacity:1;color:#ff9db1;}
-.tab-add{padding:4px 10px;font-size:16px;background:transparent;border:1px dashed var(--line);
-  color:var(--muted);border-radius:6px;cursor:pointer;line-height:1;}
+.tab-add{padding:4px 10px;font-size:16px;background:transparent;border:1px dashed var(--line);color:var(--muted);border-radius:6px;cursor:pointer;line-height:1;}
 .tab-add:hover{background:var(--panel2);color:var(--txt);border-color:var(--accent);}
-
 .layout{flex:1;display:flex;min-height:0;position:relative;}
-.sidebar{width:248px;flex:0 0 248px;background:var(--panel);border-right:1px solid var(--line);
-  overflow-y:auto;padding:12px;z-index:60;}
-.props{width:312px;flex:0 0 312px;background:var(--panel);border-left:1px solid var(--line);
-  overflow-y:auto;padding:12px;z-index:60;}
+.sidebar{width:248px;flex:0 0 248px;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;padding:12px;z-index:60;}
+.props{width:312px;flex:0 0 312px;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:12px;z-index:60;}
 .sec{margin-bottom:16px;}
-.sec h3{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);
-  margin:0 0 8px;font-weight:700;display:flex;align-items:center;gap:6px;}
-.sec h3 .devtag{font-size:9px;background:#1e3a6b;color:#8fc0ff;padding:2px 6px;border-radius:5px;
-  letter-spacing:.5px;font-weight:700;text-transform:uppercase;}
+.sec h3{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);margin:0 0 8px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.sec h3 .devtag{font-size:9px;background:#1e3a6b;color:#8fc0ff;padding:2px 6px;border-radius:5px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;}
 .hint{font-size:11px;color:var(--muted);margin:-4px 0 8px;line-height:1.5;}
 .lbl{display:block;font-size:11px;color:var(--muted);margin:8px 0 4px;}
-input[type=text],input[type=number],select,textarea{
-  width:100%;background:#0d1428;border:1px solid var(--line);color:var(--txt);
-  border-radius:7px;padding:7px 9px;font:inherit;font-size:12.5px;outline:none;}
+input[type=text],input[type=number],select,textarea{width:100%;background:#0d1428;border:1px solid var(--line);color:var(--txt);border-radius:7px;padding:7px 9px;font:inherit;font-size:12.5px;outline:none;}
 input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,102,241,.25);}
-input[type=color]{width:100%;height:34px;padding:2px;background:#0d1428;border:1px solid var(--line);
-  border-radius:7px;cursor:pointer;}
+input[type=color]{width:100%;height:34px;padding:2px;background:#0d1428;border:1px solid var(--line);border-radius:7px;cursor:pointer;}
 input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 input[type=file]{font-size:11px;color:var(--muted);margin-top:6px;width:100%;}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 select option{background:#0d1428;color:#e6ecff;}
-
-/* ---- Fila de URL con botón ---- */
 .url-row{display:flex;gap:6px;align-items:stretch;}
 .url-row input[type=text]{flex:1;min-width:0;}
-.url-btn{flex:0 0 auto;padding:7px 10px;font-size:11.5px;font-weight:600;
-  background:#1e3a6b;border-color:#2b4f8a;color:#bfd8ff;letter-spacing:.3px;}
+.url-btn{flex:0 0 auto;padding:7px 10px;font-size:11.5px;font-weight:600;background:#1e3a6b;border-color:#2b4f8a;color:#bfd8ff;letter-spacing:.3px;}
 .url-btn:hover{background:#2b4f8a;border-color:#4a7ec9;color:#fff;}
-
+.sbm-url-check{margin-top:6px;font-size:11.5px;padding:7px 9px;background:#0d1428;border:1px solid var(--line);border-radius:7px;display:flex;align-items:center;gap:8px;color:#cbd5ff;cursor:pointer;transition:.15s;}
+.sbm-url-check input[type=checkbox]{accent-color:#22c55e;width:15px;height:15px;cursor:pointer;flex:0 0 auto;margin:0;}
+.sbm-url-check.disabled{opacity:.45;cursor:not-allowed;}
+.sbm-url-check.disabled input[type=checkbox]{cursor:not-allowed;}
+.sbm-url-check .urlicon{font-size:12px;}
+.sbm-url-note{font-size:10.5px;color:#7ddfa0;margin-top:4px;padding:4px 6px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:5px;line-height:1.4;}
 .palette{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.pal{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;
-  background:var(--panel2);border:1px dashed #35446b;border-radius:10px;cursor:grab;
-  font-size:11.5px;color:#cbd5ff;user-select:none;transition:.15s;}
+.pal{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;background:var(--panel2);border:1px dashed #35446b;border-radius:10px;cursor:grab;font-size:11.5px;color:#cbd5ff;user-select:none;transition:.15s;}
 .pal:hover{background:#22305a;border-color:var(--accent);transform:translateY(-1px);}
 .pal:active{cursor:grabbing;}
 .pal .ic{font-size:19px;line-height:1;}
-
-.stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;
-  overflow:hidden;min-width:0;flex-direction:column;gap:8px;
-  background-image:
-    linear-gradient(45deg,#0e1428 25%,transparent 25%,transparent 75%,#0e1428 75%),
-    linear-gradient(45deg,#0e1428 25%,#0a0f1f 25%,#0a0f1f 75%,#0e1428 75%);
-  background-size:26px 26px;background-position:0 0,13px 13px;}
-.devbar{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);
-  background:rgba(18,26,46,.85);padding:4px 12px;border-radius:20px;border:1px solid var(--line);
-  backdrop-filter:blur(6px);}
+.stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;min-width:0;flex-direction:column;gap:8px;background-image:linear-gradient(45deg,#0e1428 25%,transparent 25%,transparent 75%,#0e1428 75%),linear-gradient(45deg,#0e1428 25%,#0a0f1f 25%,#0a0f1f 75%,#0e1428 75%);background-size:26px 26px;background-position:0 0,13px 13px;}
+.devbar{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);background:rgba(18,26,46,.85);padding:4px 12px;border-radius:20px;border:1px solid var(--line);backdrop-filter:blur(6px);}
 .devbar b{color:#8fc0ff;font-weight:600;}
 .slide-wrap{position:relative;box-shadow:0 24px 70px rgba(0,0,0,.65);}
 .slide{position:relative;overflow:hidden;transform-origin:top left;background:#0f172a;}
 .bg-layer{position:absolute;inset:0;pointer-events:none;}
 .objects-layer{position:absolute;inset:0;}
-
 .obj{position:absolute;user-select:none;-webkit-user-select:none;}
 .objects-layer:not(.previewing) .obj{cursor:move;}
 .obj.selected{outline:2px dashed #6366f1;outline-offset:0;}
-.handle{position:absolute;width:11px;height:11px;background:#fff;border:2px solid #6366f1;
-  border-radius:3px;box-sizing:border-box;z-index:20;transform:scale(var(--hs,1));
-  box-shadow:0 1px 4px rgba(0,0,0,.4);}
+.handle{position:absolute;width:11px;height:11px;background:#fff;border:2px solid #6366f1;border-radius:3px;box-sizing:border-box;z-index:20;transform:scale(var(--hs,1));box-shadow:0 1px 4px rgba(0,0,0,.4);}
 .handle[data-dir="nw"]{left:-6px;top:-6px;cursor:nwse-resize;}
 .handle[data-dir="n"]{left:calc(50% - 5.5px);top:-6px;cursor:ns-resize;}
 .handle[data-dir="ne"]{right:-6px;top:-6px;cursor:nesw-resize;}
@@ -121,12 +85,9 @@ select option{background:#0d1428;color:#e6ecff;}
 .handle[data-dir="s"]{left:calc(50% - 5.5px);bottom:-6px;cursor:ns-resize;}
 .handle[data-dir="sw"]{left:-6px;bottom:-6px;cursor:nesw-resize;}
 .handle[data-dir="w"]{left:-6px;top:calc(50% - 5.5px);cursor:ew-resize;}
-
 .empty{color:var(--muted);font-size:13px;text-align:center;padding:40px 10px;line-height:1.6;}
-.ptitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;
-  padding-bottom:10px;border-bottom:1px solid var(--line);}
-.badge{background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:4px 10px;border-radius:20px;
-  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;}
+.ptitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+.badge{background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;}
 .mini-actions{display:flex;gap:4px;}
 .mini-actions button{padding:5px 8px;font-size:13px;line-height:1;border-radius:7px;}
 .mini-actions button.danger{background:#3b1220;border-color:#6b2038;color:#ff9db1;}
@@ -141,39 +102,26 @@ select option{background:#0d1428;color:#e6ecff;}
 .chk{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#cbd5ff;cursor:pointer;margin:4px 0;}
 .chk input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;}
 textarea{resize:vertical;min-height:62px;line-height:1.4;}
-
-.devdots{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--dev);
-  flex:0 0 6px;box-shadow:0 0 0 2px rgba(79,156,249,.2);}
-button.devdots{border:none;padding:0;cursor:pointer;width:14px;height:14px;background:transparent;
-  display:inline-flex;align-items:center;justify-content:center;}
-button.devdots::after{content:"";display:block;width:7px;height:7px;border-radius:50%;background:var(--dev);
-  box-shadow:0 0 0 2px rgba(79,156,249,.2);}
+.devdots{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--dev);flex:0 0 6px;box-shadow:0 0 0 2px rgba(79,156,249,.2);}
+button.devdots{border:none;padding:0;cursor:pointer;width:14px;height:14px;background:transparent;display:inline-flex;align-items:center;justify-content:center;}
+button.devdots::after{content:"";display:block;width:7px;height:7px;border-radius:50%;background:var(--dev);box-shadow:0 0 0 2px rgba(79,156,249,.2);}
 button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249,.45);}
-.info-banner{font-size:11px;background:#12203a;border:1px solid #1e3a6b;color:#8fc0ff;
-  padding:8px 10px;border-radius:8px;line-height:1.5;margin-bottom:10px;}
+.info-banner{font-size:11px;background:#12203a;border:1px solid #1e3a6b;color:#8fc0ff;padding:8px 10px;border-radius:8px;line-height:1.5;margin-bottom:10px;}
 .info-banner b{color:#bfd8ff;}
-.bp-preview{font-size:10.5px;color:#9fb1dd;background:#0d1428;border:1px solid var(--line);
-  border-radius:8px;padding:7px 9px;line-height:1.6;margin-top:8px;}
+.bp-preview{font-size:10.5px;color:#9fb1dd;background:#0d1428;border:1px solid var(--line);border-radius:8px;padding:7px 9px;line-height:1.6;margin-top:8px;}
 .bp-preview span{color:#8fc0ff;font-weight:600;}
-
-.modal-overlay{position:fixed;inset:0;background:rgba(5,8,18,.72);backdrop-filter:blur(5px);
-  z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(5,8,18,.72);backdrop-filter:blur(5px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;
-  max-width:640px;width:100%;max-height:90vh;overflow-y:auto;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.7);}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;max-width:640px;width:100%;max-height:90vh;overflow-y:auto;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.7);}
 .modal h2{margin:0 0 4px;font-size:18px;display:flex;align-items:center;gap:10px;}
-.modal h2 .icon{background:linear-gradient(135deg,#f59e0b,#f97316);width:28px;height:28px;
-  border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.modal h2 .icon{background:linear-gradient(135deg,#f59e0b,#f97316);width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
 .modal .sub{color:var(--muted);font-size:12px;margin-bottom:18px;}
 .modal .msec{padding:14px 0;border-top:1px solid var(--line);}
 .modal .msec:first-of-type{border-top:none;padding-top:6px;}
-.modal .msec h4{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.7px;
-  color:#8fc0ff;font-weight:700;}
-.modal .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;
-  padding-top:16px;border-top:1px solid var(--line);flex-wrap:wrap;}
+.modal .msec h4{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:#8fc0ff;font-weight:700;}
+.modal .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--line);flex-wrap:wrap;}
 .modal .actions .left{margin-right:auto;display:flex;gap:8px;}
 .required{color:#ffb4b4;font-size:11px;}
-
 @media (max-width:900px){
   .sidebar,.props{position:fixed;top:0;bottom:0;z-index:200;box-shadow:0 0 50px rgba(0,0,0,.7);}
   .sidebar{left:0;transform:translateX(-102%);transition:transform .25s ease;}
@@ -184,10 +132,7 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
   .topbar button{font-size:12px;padding:6px 9px;}
   .devswitch button{padding:6px 8px;}
 }
-@media (max-width:640px){
-  .topbar{gap:6px;padding:6px 8px;}
-  .brand span{display:none;}
-}
+@media (max-width:640px){.topbar{gap:6px;padding:6px 8px;}.brand span{display:none;}}
 </style>
 </head>
 <body>
@@ -196,7 +141,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
   <div class="brand">🎬 Slider Builder MorBriant</div>
   <button class="mob" id="btnSidebar">☰</button>
   <button class="mob" id="btnPropsPanel">⚙</button>
-
   <div class="devswitch" id="devswitch">
     <button data-device="desktop" class="active" title="Escritorio">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
@@ -211,9 +155,7 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
       <span class="dlabel">Móvil</span>
     </button>
   </div>
-
   <button id="btnSliderConfig" class="cfg" title="Configuración global del slider">⚙ Slider</button>
-
   <div class="spacer"></div>
   <button id="btnImport">📂 Importar item</button>
   <button id="btnExportJson">⬇ JSON item</button>
@@ -237,7 +179,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
         <div class="pal" draggable="true" data-type="button"><span class="ic">⬭</span>Botón</div>
       </div>
     </div>
-
     <div class="sec">
       <h3>Lienzo <span class="devtag" id="cvDevTag">escritorio</span></h3>
       <p class="hint">Las dimensiones se configuran globalmente en ⚙ Slider.</p>
@@ -246,17 +187,21 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
         <div><label class="lbl">Alto</label><input type="number" id="cvH" readonly></div>
       </div>
     </div>
-
     <div class="sec">
       <h3>Fondo del item <span class="devtag" id="bgDevTag">escritorio</span></h3>
       <p class="hint" id="bgHint">Cada dispositivo puede tener su propio fondo para este item.</p>
       <label class="lbl">Color</label>
       <input type="color" id="bgColor" value="#0f172a">
-      <label class="lbl">Imagen de fondo</label>
+      <label class="lbl">Imagen de fondo (URL)</label>
       <div class="url-row">
         <input type="text" id="bgImage" placeholder="https://...">
         <button type="button" id="bgImagePrompt" class="url-btn" title="Introducir URL de la imagen de fondo">🔗 URL</button>
       </div>
+      <label class="sbm-url-check disabled" id="bgUseUrlWrap">
+        <input type="checkbox" id="bgUseUrl" disabled>
+        <span class="urlicon">🌐</span> Usar URL en shortcode
+      </label>
+      <p class="hint" id="bgUrlNote" style="display:none;color:#7ddfa0;margin-top:4px;">✓ El shortcode usará solo esta URL (sin base64).</p>
       <input type="file" id="bgFile" accept="image/*">
       <label class="lbl">Ajuste</label>
       <select id="bgFit">
@@ -293,7 +238,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
   <div class="modal">
     <h2><span class="icon">⚙</span> Configuración del Slider</h2>
     <p class="sub">Estas opciones afectan a todos los items/pestañas del slider.</p>
-
     <div class="msec">
       <h4>General</h4>
       <label class="lbl">Nombre del slider <span class="required">* obligatorio</span></label>
@@ -308,10 +252,9 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
         <option value="slide-down">Deslizar hacia abajo</option>
         <option value="zoom">Zoom</option>
       </select>
-      <label class="lbl">Tiempo de transición (ms) — cada cuánto pasa de item a item</label>
+      <label class="lbl">Tiempo de transición (ms)</label>
       <input type="number" id="cfgTime" min="500" max="60000" step="100" value="4000">
     </div>
-
     <div class="msec">
       <h4>Breakpoints</h4>
       <div class="two">
@@ -320,7 +263,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
       </div>
       <div class="bp-preview" id="cfgBpPreview"></div>
     </div>
-
     <div class="msec">
       <h4>Dimensiones del lienzo por dispositivo</h4>
       <div class="two" style="margin-bottom:8px;">
@@ -336,7 +278,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
         <div><label class="lbl">Móvil — Alto</label><input type="number" id="cfgDmH" step="10"></div>
       </div>
     </div>
-
     <div class="actions">
       <div class="left">
         <button id="cfgImport">📂 Importar JSON</button>
@@ -350,9 +291,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
 </div>
 
 <script>
-/* =========================================================
-   0. FUENTES
-   ========================================================= */
 const FONTS = [
   { name:'Inter',           stack:'Inter, system-ui, sans-serif',        google:'Inter:wght@300;400;500;600;700;800;900' },
   { name:'Roboto',          stack:'Roboto, sans-serif',                  google:'Roboto:wght@300;400;500;700;900' },
@@ -385,7 +323,6 @@ const FONTS = [
 ];
 const FONT_BY_STACK = {};
 FONTS.forEach(f => FONT_BY_STACK[f.stack] = f);
-
 (function loadEditorFonts(){
   const g = FONTS.filter(f => f.google).map(f => 'family=' + f.google).join('&');
   if(!g) return;
@@ -395,57 +332,29 @@ FONTS.forEach(f => FONT_BY_STACK[f.stack] = f);
   document.head.appendChild(link);
 })();
 
-/* =========================================================
-   1. CONSTANTES
-   ========================================================= */
 const TYPE_LABEL = { box:'Caja', text:'Texto', image:'Imagen', button:'Botón' };
-
-const EFFECTS = {
-  none:null, fade:'kFade', left:'kLeft', right:'kRight',
-  up:'kUp', down:'kDown', zoom:'kZoom', rotate:'kRotate', flip:'kFlip'
-};
-
+const EFFECTS = { none:null, fade:'kFade', left:'kLeft', right:'kRight', up:'kUp', down:'kDown', zoom:'kZoom', rotate:'kRotate', flip:'kFlip' };
 const KEYFRAMES = `
 @keyframes kFade{from{opacity:0}to{opacity:var(--op,1)}}
-@keyframes kLeft{from{opacity:0;transform:translateX(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}
-                 to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
-@keyframes kRight{from{opacity:0;transform:translateX(var(--dist,150px)) rotate(var(--rot,0deg))}
-                  to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
-@keyframes kUp{from{opacity:0;transform:translateY(var(--dist,150px)) rotate(var(--rot,0deg))}
-               to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
-@keyframes kDown{from{opacity:0;transform:translateY(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}
-                 to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
-@keyframes kZoom{from{opacity:0;transform:scale(.5) rotate(var(--rot,0deg))}
-                 to{opacity:var(--op,1);transform:scale(1) rotate(var(--rot,0deg))}}
-@keyframes kRotate{from{opacity:0;transform:rotate(calc(var(--rot,0deg) - 30deg)) scale(.8)}
-                   to{opacity:var(--op,1);transform:rotate(var(--rot,0deg)) scale(1)}}
-@keyframes kFlip{from{opacity:0;transform:perspective(900px) rotateY(90deg)}
-                 to{opacity:var(--op,1);transform:perspective(900px) rotateY(0deg) rotate(var(--rot,0deg))}}
+@keyframes kLeft{from{opacity:0;transform:translateX(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
+@keyframes kRight{from{opacity:0;transform:translateX(var(--dist,150px)) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
+@keyframes kUp{from{opacity:0;transform:translateY(var(--dist,150px)) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
+@keyframes kDown{from{opacity:0;transform:translateY(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
+@keyframes kZoom{from{opacity:0;transform:scale(.5) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:scale(1) rotate(var(--rot,0deg))}}
+@keyframes kRotate{from{opacity:0;transform:rotate(calc(var(--rot,0deg) - 30deg)) scale(.8)}to{opacity:var(--op,1);transform:rotate(var(--rot,0deg)) scale(1)}}
+@keyframes kFlip{from{opacity:0;transform:perspective(900px) rotateY(90deg)}to{opacity:var(--op,1);transform:perspective(900px) rotateY(0deg) rotate(var(--rot,0deg))}}
 `;
-(function injectKeyframes(){
-  const s = document.createElement('style');
-  s.textContent = KEYFRAMES;
-  document.head.appendChild(s);
-})();
+(function(){ const s=document.createElement('style'); s.textContent=KEYFRAMES; document.head.appendChild(s); })();
 
-/* =========================================================
-   2. DISPOSITIVOS
-   ========================================================= */
 const DEVICE_KEYS = ['desktop','tablet','mobile'];
-const DEVICE_META = {
-  desktop:{ label:'Escritorio', short:'desktop' },
-  tablet: { label:'Tablet',     short:'tablet'  },
-  mobile: { label:'Móvil',      short:'mobile'  }
-};
-function deviceChain(d){
-  if(d === 'desktop') return ['desktop'];
-  if(d === 'tablet')  return ['desktop','tablet'];
-  return ['desktop','tablet','mobile'];
+const DEVICE_META = { desktop:{label:'Escritorio',short:'desktop'}, tablet:{label:'Tablet',short:'tablet'}, mobile:{label:'Móvil',short:'mobile'} };
+function deviceChain(d){ if(d==='desktop')return['desktop']; if(d==='tablet')return['desktop','tablet']; return ['desktop','tablet','mobile']; }
+
+/* ==== Utilidad: ¿es una URL real (no un data URI base64)? ==== */
+function isUrlLike(s){
+  return typeof s === 'string' && s.trim().length > 0 && !s.trim().startsWith('data:');
 }
 
-/* =========================================================
-   3. ESTADO
-   ========================================================= */
 let app = {
   slider: {
     name: 'Mi Slider',
@@ -469,447 +378,184 @@ let previewing = false;
 
 const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
-const stage        = $('#stage');
-const slideWrap    = $('#slideWrap');
-const slide        = $('#slide');
-const bgLayer      = $('#bgLayer');
-const objectsLayer = $('#objectsLayer');
-const propsPanel   = $('#propsPanel');
-const sidebar      = $('#sidebar');
-const tabbar       = $('#tabbar');
+const stage=$('#stage'), slideWrap=$('#slideWrap'), slide=$('#slide'), bgLayer=$('#bgLayer'),
+      objectsLayer=$('#objectsLayer'), propsPanel=$('#propsPanel'), sidebar=$('#sidebar'), tabbar=$('#tabbar');
 
-const curItem    = () => app.items[app.currentTab];
-const curDevice  = () => app.currentDevice;
-const curDev     = () => app.slider.devices[app.currentDevice];
-const bp         = () => app.slider.breakpoints;
-const uid        = () => 'obj_' + Math.random().toString(36).slice(2,9);
+const curItem = () => app.items[app.currentTab];
+const curDevice = () => app.currentDevice;
+const curDev = () => app.slider.devices[app.currentDevice];
+const bp = () => app.slider.breakpoints;
+const uid = () => 'obj_' + Math.random().toString(36).slice(2,9);
 
-/* =========================================================
-   4. HELPERS GET/SET CON HERENCIA
-   ========================================================= */
-function getPath(o, path){
-  const p = path.split('.');
-  let c = o;
-  for(let i = 0; i < p.length; i++){ if(c == null) return undefined; c = c[p[i]]; }
-  return c;
-}
-function setPath(o, path, val){
-  const p = path.split('.');
-  let c = o;
-  for(let i = 0; i < p.length - 1; i++){ if(c[p[i]] == null) c[p[i]] = {}; c = c[p[i]]; }
-  c[p[p.length - 1]] = val;
-}
-function getVal(o, path, device){
-  device = device || curDevice();
-  const chain = deviceChain(device);
-  for(let i = chain.length - 1; i >= 1; i--){
-    const b = o.r && o.r[chain[i]];
-    if(b){ const v = getPath(b, path); if(v !== undefined) return v; }
-  }
-  return getPath(o, path);
-}
-function setVal(o, path, val, device){
-  device = device || curDevice();
-  if(device === 'desktop'){ setPath(o, path, val); return; }
-  if(!o.r) o.r = {};
-  if(!o.r[device]) o.r[device] = {};
-  setPath(o.r[device], path, val);
-}
-function isOverridden(o, path, device){
-  device = device || curDevice();
-  if(device === 'desktop') return false;
-  const b = o.r && o.r[device];
-  if(!b) return false;
-  return getPath(b, path) !== undefined;
-}
-function clearOverride(o, path, device){
-  device = device || curDevice();
-  if(device === 'desktop') return;
-  const b = o.r && o.r[device];
-  if(!b) return;
-  const p = path.split('.');
-  let c = b;
-  for(let i = 0; i < p.length - 1; i++){
-    if(c[p[i]] == null) return;
-    c = c[p[i]];
-  }
-  delete c[p[p.length - 1]];
-}
+function getPath(o, path){ const p = path.split('.'); let c = o; for(let i=0;i<p.length;i++){ if(c==null) return undefined; c = c[p[i]]; } return c; }
+function setPath(o, path, val){ const p = path.split('.'); let c = o; for(let i=0;i<p.length-1;i++){ if(c[p[i]]==null) c[p[i]]={}; c = c[p[i]]; } c[p[p.length-1]] = val; }
+function getVal(o, path, device){ device = device || curDevice(); const chain = deviceChain(device); for(let i = chain.length-1; i >= 1; i--){ const b = o.r && o.r[chain[i]]; if(b){ const v = getPath(b, path); if(v !== undefined) return v; } } return getPath(o, path); }
+function setVal(o, path, val, device){ device = device || curDevice(); if(device === 'desktop'){ setPath(o, path, val); return; } if(!o.r) o.r = {}; if(!o.r[device]) o.r[device] = {}; setPath(o.r[device], path, val); }
+function isOverridden(o, path, device){ device = device || curDevice(); if(device === 'desktop') return false; const b = o.r && o.r[device]; if(!b) return false; return getPath(b, path) !== undefined; }
+function clearOverride(o, path, device){ device = device || curDevice(); if(device === 'desktop') return; const b = o.r && o.r[device]; if(!b) return; const p = path.split('.'); let c = b; for(let i=0;i<p.length-1;i++){ if(c[p[i]]==null) return; c = c[p[i]]; } delete c[p[p.length-1]]; }
+function getBg(device){ device = device || curDevice(); const item = curItem(); const chain = deviceChain(device); const r = Object.assign({}, item.bg.desktop); for(let i=1;i<chain.length;i++) Object.assign(r, item.bg[chain[i]] || {}); return r; }
+function setBg(key, val, device){ device = device || curDevice(); const item = curItem(); if(device === 'desktop'){ item.bg.desktop[key] = val; } else { item.bg[device][key] = val; } }
+function clearBgOverride(device){ device = device || curDevice(); if(device === 'desktop') return; curItem().bg[device] = {}; }
 
-/* --- Fondo (por item, con herencia por dispositivo) --- */
-function getBg(device){
-  device = device || curDevice();
-  const item = curItem();
-  const chain = deviceChain(device);
-  const r = Object.assign({}, item.bg.desktop);
-  for(let i = 1; i < chain.length; i++){
-    Object.assign(r, item.bg[chain[i]] || {});
-  }
-  return r;
-}
-function setBg(key, val, device){
-  device = device || curDevice();
-  const item = curItem();
-  if(device === 'desktop'){ item.bg.desktop[key] = val; }
-  else { item.bg[device][key] = val; }
-}
-function isBgOverridden(key, device){
-  device = device || curDevice();
-  if(device === 'desktop') return false;
-  return curItem().bg[device] && curItem().bg[device][key] !== undefined;
-}
-function clearBgOverride(device){
-  device = device || curDevice();
-  if(device === 'desktop') return;
-  curItem().bg[device] = {};
-}
-
-/* =========================================================
-   5. FÁBRICA DE OBJETOS
-   ========================================================= */
 function makeObject(type, cx, cy, device){
   device = device || 'desktop';
-  const d  = app.slider.devices[device];
-  const dd = app.slider.devices.desktop;
-  const nx = cx / d.width, ny = cy / d.height;
-  const dx = nx * dd.width, dy = ny * dd.height;
-
-  const base = {
-    id: uid(), type, z: 1,
-    x:0, y:0, w:200, h:120, rot:0, opacity:1,
-    props:{},
-    animation:{ effect:'none', duration:800, delay:0, easing:'ease-out', distance:150 },
-    r: { tablet:{}, mobile:{} }
-  };
+  const d = app.slider.devices[device], dd = app.slider.devices.desktop;
+  const dx = (cx/d.width) * dd.width, dy = (cy/d.height) * dd.height;
+  const base = { id:uid(), type, z:1, x:0, y:0, w:200, h:120, rot:0, opacity:1, props:{}, animation:{ effect:'none', duration:800, delay:0, easing:'ease-out', distance:150 }, r:{ tablet:{}, mobile:{} } };
   let w = 200, h = 120;
-  if(type === 'box'){
-    w = 260; h = 170;
-    base.props = { bg:'#3b82f6', radius:16, borderW:0, borderColor:'#ffffff', shadow:true };
-  }
-  if(type === 'text'){
-    w = 440; h = 96;
-    base.props = { text:'Tu texto aquí', color:'#ffffff', fontSize:56, bold:true, italic:false,
-      align:'center', family:FONTS[0].stack, lineHeight:1.2, letterSpacing:0, padding:8 };
-  }
-  if(type === 'image'){
-    w = 320; h = 220;
-    base.props = { src:'https://picsum.photos/640/440', fit:'cover', radius:12, shadow:true };
-  }
-  if(type === 'button'){
-    w = 220; h = 64;
-    base.props = { text:'Comenzar', href:'#', bg:'#22c55e', color:'#04121f', fontSize:20, radius:32, shadow:true };
-  }
+  if(type === 'box'){ w = 260; h = 170; base.props = { bg:'#3b82f6', radius:16, borderW:0, borderColor:'#ffffff', shadow:true }; }
+  if(type === 'text'){ w = 440; h = 96; base.props = { text:'Tu texto aquí', color:'#ffffff', fontSize:56, bold:true, italic:false, align:'center', family:FONTS[0].stack, lineHeight:1.2, letterSpacing:0, padding:8 }; }
+  if(type === 'image'){ w = 320; h = 220; base.props = { src:'https://picsum.photos/640/440', fit:'cover', radius:12, shadow:true, useUrlInShortcode:false }; }
+  if(type === 'button'){ w = 220; h = 64; base.props = { text:'Comenzar', href:'#', bg:'#22c55e', color:'#04121f', fontSize:20, radius:32, shadow:true }; }
   base.w = w; base.h = h;
-  base.x = Math.round(dx - w/2);
-  base.y = Math.round(dy - h/2);
-
+  base.x = Math.round(dx - w/2); base.y = Math.round(dy - h/2);
   if(device !== 'desktop'){
-    const ratio = d.width / dd.width;
-    const cw = Math.max(20, Math.round(w * ratio));
-    const ch = Math.max(20, Math.round(h * ratio));
-    base.r[device] = { x: Math.round(cx - cw/2), y: Math.round(cy - ch/2), w: cw, h: ch };
+    const ratio = d.width/dd.width;
+    const cw = Math.max(20, Math.round(w*ratio)), ch = Math.max(20, Math.round(h*ratio));
+    base.r[device] = { x: Math.round(cx - cw/2), y: Math.round(cy - ch/2), w:cw, h:ch };
   }
   return base;
 }
 
-/* =========================================================
-   6. ITEMS (pestañas)
-   ========================================================= */
 function newEmptyItem(){
   const id = app.nextItemId++;
-  return {
-    id,
-    bg: {
-      desktop:{ color:'#0f172a', image:'', fit:'cover', overlay:0 },
-      tablet: {},
-      mobile: {}
-    },
-    objects: []
-  };
+  return { id, bg: { desktop:{ color:'#0f172a', image:'', fit:'cover', overlay:0, useUrlInShortcode:false }, tablet:{}, mobile:{} }, objects: [] };
 }
-
 function newDefaultItem(){
   const item = newEmptyItem();
-  const dw = app.slider.devices.desktop.width;
-  const dh = app.slider.devices.desktop.height;
-
-  const t = makeObject('text', dw/2, dh*0.3, 'desktop');
-  t.w = 900; t.h = 110; t.x = (dw - 900)/2; t.y = dh*0.2;
-  t.props.text = 'Bienvenido a Slider Builder MorBriant';
-  t.props.fontSize = 62;
-  t.animation = { effect:'down', duration:900, delay:0, easing:'ease-out', distance:120 };
-  t.z = 2;
-
-  const s = makeObject('text', dw/2, dh*0.45, 'desktop');
-  s.w = 760; s.h = 60; s.x = (dw - 760)/2; s.y = dh*0.4;
+  const dw = app.slider.devices.desktop.width, dh = app.slider.devices.desktop.height;
+  const t = makeObject('text', dw/2, dh*0.3, 'desktop'); t.w=900; t.h=110; t.x=(dw-900)/2; t.y=dh*0.2;
+  t.props.text = 'Bienvenido a Slider Builder MorBriant'; t.props.fontSize = 62;
+  t.animation = { effect:'down', duration:900, delay:0, easing:'ease-out', distance:120 }; t.z = 2;
+  const s = makeObject('text', dw/2, dh*0.45, 'desktop'); s.w=760; s.h=60; s.x=(dw-760)/2; s.y=dh*0.4;
   s.props.text = 'Arrastra objetos desde el panel izquierdo y personalízalos.';
   s.props.fontSize = 24; s.props.bold = false; s.props.color = '#a9b8e8';
-  s.animation = { effect:'fade', duration:900, delay:250, easing:'ease-out', distance:150 };
-  s.z = 3;
-
-  const b = makeObject('button', dw/2, dh*0.62, 'desktop');
-  b.x = (dw - b.w)/2; b.y = dh*0.58;
-  b.animation = { effect:'zoom', duration:700, delay:550, easing:'cubic-bezier(.34,1.56,.64,1)', distance:150 };
-  b.z = 4;
-
+  s.animation = { effect:'fade', duration:900, delay:250, easing:'ease-out', distance:150 }; s.z = 3;
+  const b = makeObject('button', dw/2, dh*0.62, 'desktop'); b.x = (dw-b.w)/2; b.y = dh*0.58;
+  b.animation = { effect:'zoom', duration:700, delay:550, easing:'cubic-bezier(.34,1.56,.64,1)', distance:150 }; b.z = 4;
   item.objects.push(t, s, b);
   return item;
 }
 
-/* =========================================================
-   7. ESTILOS
-   ========================================================= */
 const cssUrl = u => `url('${String(u).replace(/'/g, '%27')}')`;
-
 function objStyleString(o, device, animate){
   device = device || curDevice();
   const gp = p => getVal(o, 'props.' + p, device);
-  const x   = getVal(o, 'x', device);
-  const y   = getVal(o, 'y', device);
-  const w   = getVal(o, 'w', device);
-  const h   = getVal(o, 'h', device);
-  const rot = getVal(o, 'rot', device) || 0;
-  let   op  = getVal(o, 'opacity', device); if(op == null) op = 1;
-
-  let s = `position:absolute;left:${x}px;top:${y}px;width:${w}px;height:${h}px;`
-        + `z-index:${o.z};opacity:${op};--rot:${rot}deg;--op:${op};`
-        + `transform:rotate(${rot}deg);box-sizing:border-box;`;
-
-  if(o.type === 'box'){
-    s += `background:${gp('bg')};border-radius:${gp('radius')}px;`
-      +  `border:${gp('borderW')}px solid ${gp('borderColor')};`
-      +  `box-shadow:${gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none'};`;
-  }
-  if(o.type === 'text'){
-    s += `display:flex;flex-direction:column;justify-content:center;text-align:${gp('align')};`
-      +  `color:${gp('color')};font-size:${gp('fontSize')}px;font-weight:${gp('bold') ? 700 : 400};`
-      +  `font-style:${gp('italic') ? 'italic' : 'normal'};font-family:${gp('family')};`
-      +  `line-height:${gp('lineHeight')};letter-spacing:${gp('letterSpacing')}px;padding:${gp('padding')}px;`
-      +  `white-space:pre-wrap;word-break:break-word;overflow:hidden;`;
-  }
-  if(o.type === 'image'){
-    s += `background-image:${cssUrl(gp('src'))};background-size:${gp('fit')};background-position:center;`
-      +  `background-repeat:no-repeat;border-radius:${gp('radius')}px;`
-      +  `box-shadow:${gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none'};`;
-  }
-  if(o.type === 'button'){
-    s += `display:flex;align-items:center;justify-content:center;background:${gp('bg')};color:${gp('color')};`
-      +  `font-size:${gp('fontSize')}px;font-weight:600;border-radius:${gp('radius')}px;`
-      +  `text-decoration:none;font-family:Inter,system-ui,sans-serif;cursor:pointer;`
-      +  `border:none;overflow:hidden;`
-      +  `box-shadow:${gp('shadow') ? '0 12px 28px rgba(0,0,0,.38)' : 'none'};`;
-  }
+  const x=getVal(o,'x',device), y=getVal(o,'y',device), w=getVal(o,'w',device), h=getVal(o,'h',device);
+  const rot=getVal(o,'rot',device)||0; let op=getVal(o,'opacity',device); if(op==null) op=1;
+  let s = `position:absolute;left:${x}px;top:${y}px;width:${w}px;height:${h}px;z-index:${o.z};opacity:${op};--rot:${rot}deg;--op:${op};transform:rotate(${rot}deg);box-sizing:border-box;`;
+  if(o.type === 'box') s += `background:${gp('bg')};border-radius:${gp('radius')}px;border:${gp('borderW')}px solid ${gp('borderColor')};box-shadow:${gp('shadow')?'0 14px 34px rgba(0,0,0,.4)':'none'};`;
+  if(o.type === 'text') s += `display:flex;flex-direction:column;justify-content:center;text-align:${gp('align')};color:${gp('color')};font-size:${gp('fontSize')}px;font-weight:${gp('bold')?700:400};font-style:${gp('italic')?'italic':'normal'};font-family:${gp('family')};line-height:${gp('lineHeight')};letter-spacing:${gp('letterSpacing')}px;padding:${gp('padding')}px;white-space:pre-wrap;word-break:break-word;overflow:hidden;`;
+  if(o.type === 'image') s += `background-image:${cssUrl(gp('src'))};background-size:${gp('fit')};background-position:center;background-repeat:no-repeat;border-radius:${gp('radius')}px;box-shadow:${gp('shadow')?'0 14px 34px rgba(0,0,0,.4)':'none'};`;
+  if(o.type === 'button') s += `display:flex;align-items:center;justify-content:center;background:${gp('bg')};color:${gp('color')};font-size:${gp('fontSize')}px;font-weight:600;border-radius:${gp('radius')}px;text-decoration:none;font-family:Inter,system-ui,sans-serif;cursor:pointer;border:none;overflow:hidden;box-shadow:${gp('shadow')?'0 12px 28px rgba(0,0,0,.38)':'none'};`;
   if(animate){
-    const eff = getVal(o, 'animation.effect', device);
+    const eff = getVal(o,'animation.effect', device);
     if(eff && eff !== 'none' && EFFECTS[eff]){
-      const dur  = getVal(o, 'animation.duration', device) || 800;
-      const del  = getVal(o, 'animation.delay', device) || 0;
-      const eas  = getVal(o, 'animation.easing', device) || 'ease-out';
-      const dist = getVal(o, 'animation.distance', device) || 150;
+      const dur=getVal(o,'animation.duration',device)||800, del=getVal(o,'animation.delay',device)||0, eas=getVal(o,'animation.easing',device)||'ease-out', dist=getVal(o,'animation.distance',device)||150;
       s += `--dist:${dist}px;animation:${EFFECTS[eff]} ${dur}ms ${eas} ${del}ms both;`;
     }
   }
   return s;
 }
 
-/* =========================================================
-   8. RENDER
-   ========================================================= */
 function renderObjects(){
   objectsLayer.classList.toggle('previewing', previewing);
   objectsLayer.style.setProperty('--hs', (1/scale).toFixed(3));
   objectsLayer.innerHTML = '';
-  const dev = curDevice();
-  const item = curItem();
+  const dev = curDevice(), item = curItem();
   if(!item) return;
-
   item.objects.slice().sort((a,b) => a.z - b.z).forEach(o => {
     const el = document.createElement('div');
-    el.className = 'obj';
-    el.dataset.id = o.id;
-    el.dataset.type = o.type;
+    el.className = 'obj'; el.dataset.id = o.id; el.dataset.type = o.type;
     el.setAttribute('style', objStyleString(o, dev, previewing));
-    if(o.type === 'text' || o.type === 'button'){
-      const txt = getVal(o, 'props.text', dev);
-      el.textContent = txt != null ? txt : '';
-    }
+    if(o.type === 'text' || o.type === 'button'){ const t = getVal(o,'props.text',dev); el.textContent = t!=null?t:''; }
     if(!previewing && o.id === selectedId){
       el.classList.add('selected');
-      ['nw','n','ne','e','se','s','sw','w'].forEach(d => {
-        const h = document.createElement('div');
-        h.className = 'handle';
-        h.dataset.dir = d;
-        el.appendChild(h);
-      });
+      ['nw','n','ne','e','se','s','sw','w'].forEach(d => { const h = document.createElement('div'); h.className='handle'; h.dataset.dir = d; el.appendChild(h); });
     }
     objectsLayer.appendChild(el);
   });
 }
-
 function renderBg(){
   const bg = getBg();
   let html = '';
-  if(bg.image){
-    html += `<div style="position:absolute;inset:0;background-image:${cssUrl(bg.image)};`
-          + `background-size:${bg.fit};background-position:center;background-repeat:no-repeat;"></div>`;
-  }
-  if(bg.overlay > 0){
-    html += `<div style="position:absolute;inset:0;background:rgba(0,0,0,${(bg.overlay/100).toFixed(2)});"></div>`;
-  }
+  if(bg.image) html += `<div style="position:absolute;inset:0;background-image:${cssUrl(bg.image)};background-size:${bg.fit};background-position:center;background-repeat:no-repeat;"></div>`;
+  if(bg.overlay > 0) html += `<div style="position:absolute;inset:0;background:rgba(0,0,0,${(bg.overlay/100).toFixed(2)});"></div>`;
   bgLayer.innerHTML = html;
   slide.style.background = bg.color;
 }
-
 function renderAll(){
   const d = curDev();
-  slide.style.width  = d.width  + 'px';
-  slide.style.height = d.height + 'px';
-  renderBg();
-  renderObjects();
-  fitSlide();
-  updateDeviceUI();
+  slide.style.width = d.width+'px'; slide.style.height = d.height+'px';
+  renderBg(); renderObjects(); fitSlide(); updateDeviceUI();
 }
-
 function updateDeviceUI(){
-  const dev = curDevice();
-  const d = curDev();
+  const dev = curDevice(), d = curDev();
   $('#devbarName').textContent = DEVICE_META[dev].label;
   $('#devbarSize').textContent = d.width + ' × ' + d.height;
   $('#cvDevTag').textContent = DEVICE_META[dev].short;
   $('#bgDevTag').textContent = DEVICE_META[dev].short;
-  const item = curItem();
-  $('#devbarItem').textContent = item ? ('item-' + item.id) : '—';
+  const item = curItem(); $('#devbarItem').textContent = item ? ('item-'+item.id) : '—';
   $$('.devswitch button').forEach(b => b.classList.toggle('active', b.dataset.device === dev));
 }
 
-/* =========================================================
-   9. TABS
-   ========================================================= */
 function renderTabs(){
   tabbar.innerHTML = '';
   app.items.forEach((item, i) => {
     const t = document.createElement('button');
     t.className = 'tab' + (i === app.currentTab ? ' active' : '');
-    t.dataset.i = i;
     t.innerHTML = `item-${item.id}<span class="tab-close" title="Cerrar">×</span>`;
-    t.addEventListener('click', e => {
-      if(e.target.classList.contains('tab-close')){
-        e.stopPropagation();
-        closeTab(i);
-        return;
-      }
-      switchTab(i);
-    });
+    t.addEventListener('click', e => { if(e.target.classList.contains('tab-close')){ e.stopPropagation(); closeTab(i); return; } switchTab(i); });
     tabbar.appendChild(t);
   });
   const add = document.createElement('button');
-  add.className = 'tab-add';
-  add.title = 'Añadir nueva pestaña';
-  add.textContent = '+';
+  add.className = 'tab-add'; add.title = 'Añadir nueva pestaña'; add.textContent = '+';
   add.addEventListener('click', () => addTab());
   tabbar.appendChild(add);
 }
-
-function switchTab(i){
-  if(i === app.currentTab) return;
-  app.currentTab = i;
-  selectedId = null;
-  previewing = false;
-  $('#btnPreview').textContent = '▶ Previsualizar';
-  $('#btnPreview').classList.remove('primary');
-  renderTabs();
-  syncSidebar();
-  renderAll();
-  renderProps();
-}
-
-function addTab(){
-  const item = newDefaultItem();
-  app.items.push(item);
-  switchTab(app.items.length - 1);
-}
-
+function switchTab(i){ if(i === app.currentTab) return; app.currentTab = i; selectedId = null; previewing = false; $('#btnPreview').textContent = '▶ Previsualizar'; $('#btnPreview').classList.remove('primary'); renderTabs(); syncSidebar(); renderAll(); renderProps(); }
+function addTab(){ app.items.push(newDefaultItem()); switchTab(app.items.length-1); }
 function closeTab(i){
-  if(app.items.length <= 1){
-    alert('Debe haber al menos un item.');
-    return;
-  }
+  if(app.items.length <= 1){ alert('Debe haber al menos un item.'); return; }
   const it = app.items[i];
   if(it.objects.length > 0 && !confirm(`¿Cerrar "item-${it.id}"? Se perderán sus cambios.`)) return;
   app.items.splice(i, 1);
-  if(app.currentTab >= app.items.length) app.currentTab = app.items.length - 1;
+  if(app.currentTab >= app.items.length) app.currentTab = app.items.length-1;
   else if(app.currentTab > i) app.currentTab--;
-  else if(app.currentTab === i) app.currentTab = Math.max(0, i - 1);
-  selectedId = null;
-  renderTabs();
-  syncSidebar();
-  renderAll();
-  renderProps();
+  else if(app.currentTab === i) app.currentTab = Math.max(0, i-1);
+  selectedId = null; renderTabs(); syncSidebar(); renderAll(); renderProps();
 }
 
-/* =========================================================
-   10. AJUSTE AL VIEWPORT
-   ========================================================= */
 function fitSlide(){
   const padX = 56, padY = 78;
-  const aw = Math.max(120, stage.clientWidth  - padX);
+  const aw = Math.max(120, stage.clientWidth - padX);
   const ah = Math.max(120, stage.clientHeight - padY);
   const d = curDev();
-  scale = Math.min(aw / d.width, ah / d.height);
-  scale = Math.max(0.05, Math.min(scale, 2));
-  slide.style.width  = d.width  + 'px';
-  slide.style.height = d.height + 'px';
+  scale = Math.max(0.05, Math.min(2, Math.min(aw/d.width, ah/d.height)));
+  slide.style.width = d.width+'px'; slide.style.height = d.height+'px';
   slide.style.transform = `scale(${scale})`;
-  slideWrap.style.width  = (d.width  * scale) + 'px';
-  slideWrap.style.height = (d.height * scale) + 'px';
+  slideWrap.style.width = (d.width*scale)+'px'; slideWrap.style.height = (d.height*scale)+'px';
   objectsLayer.style.setProperty('--hs', (1/scale).toFixed(3));
 }
 window.addEventListener('resize', fitSlide);
 if(window.ResizeObserver) new ResizeObserver(fitSlide).observe(stage);
 
-/* =========================================================
-   11. CAMBIO DE DISPOSITIVO
-   ========================================================= */
-function setDevice(key){
-  if(!DEVICE_KEYS.includes(key)) return;
-  app.currentDevice = key;
-  previewing = false;
-  $('#btnPreview').textContent = '▶ Previsualizar';
-  $('#btnPreview').classList.remove('primary');
-  renderAll();
-  renderProps();
-  syncSidebar();
-}
-$$('.devswitch button').forEach(b => {
-  b.addEventListener('click', () => setDevice(b.dataset.device));
-});
+function setDevice(key){ if(!DEVICE_KEYS.includes(key)) return; app.currentDevice = key; previewing = false; $('#btnPreview').textContent = '▶ Previsualizar'; $('#btnPreview').classList.remove('primary'); renderAll(); renderProps(); syncSidebar(); }
+$$('.devswitch button').forEach(b => b.addEventListener('click', () => setDevice(b.dataset.device)));
 
-/* =========================================================
-   12. SELECCIÓN
-   ========================================================= */
 function select(id){ selectedId = id; renderObjects(); renderProps(); }
 function getSel(){ return (curItem().objects || []).find(x => x.id === selectedId); }
 
-/* =========================================================
-   13. AÑADIR OBJETOS
-   ========================================================= */
 function addObject(type, x, y){
   const o = makeObject(type, x, y, curDevice());
-  o.z = curItem().objects.reduce((m,x) => Math.max(m, x.z), 0) + 1;
-  curItem().objects.push(o);
-  select(o.id);
+  o.z = curItem().objects.reduce((m,x)=>Math.max(m,x.z),0) + 1;
+  curItem().objects.push(o); select(o.id);
   if(window.innerWidth <= 900) sidebar.classList.remove('open');
   return o;
 }
 $$('.pal').forEach(pal => {
-  pal.addEventListener('dragstart', e => {
-    e.dataTransfer.setData('text/plain', pal.dataset.type);
-    e.dataTransfer.effectAllowed = 'copy';
-  });
-  pal.addEventListener('click', () => {
-    const d = curDev();
-    addObject(pal.dataset.type, d.width/2, d.height/2);
-  });
+  pal.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', pal.dataset.type); e.dataTransfer.effectAllowed = 'copy'; });
+  pal.addEventListener('click', () => { const d = curDev(); addObject(pal.dataset.type, d.width/2, d.height/2); });
 });
 stage.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
 stage.addEventListener('drop', e => {
@@ -917,43 +563,30 @@ stage.addEventListener('drop', e => {
   const type = e.dataTransfer.getData('text/plain');
   if(!type || !TYPE_LABEL[type]) return;
   const rect = slide.getBoundingClientRect();
-  const x = (e.clientX - rect.left) / scale;
-  const y = (e.clientY - rect.top)  / scale;
-  addObject(type, x, y);
+  addObject(type, (e.clientX - rect.left)/scale, (e.clientY - rect.top)/scale);
 });
 
-/* =========================================================
-   14. MOVER / REDIMENSIONAR
-   ========================================================= */
 objectsLayer.addEventListener('pointerdown', e => {
   if(previewing) return;
-  const objEl = e.target.closest('.obj');
-  if(!objEl){ select(null); return; }
+  const objEl = e.target.closest('.obj'); if(!objEl){ select(null); return; }
   e.preventDefault();
   const id = objEl.dataset.id;
-  const o  = curItem().objects.find(x => x.id === id);
-  if(!o) return;
+  const o = curItem().objects.find(x => x.id === id); if(!o) return;
   if(selectedId !== id) select(id);
   const freshEl = objectsLayer.querySelector(`.obj[data-id="${id}"]`);
   const handleEl = e.target.closest('.handle');
   startInteraction(e, o, handleEl ? handleEl.dataset.dir : null, freshEl);
 });
-
 function startInteraction(e, o, dir, el){
-  const startX = e.clientX, startY = e.clientY;
-  const dev = curDevice();
+  const startX = e.clientX, startY = e.clientY, dev = curDevice();
   const o0 = { x:getVal(o,'x',dev), y:getVal(o,'y',dev), w:getVal(o,'w',dev), h:getVal(o,'h',dev) };
-  const mode = dir ? 'resize' : 'move';
-  const MIN = 24;
+  const mode = dir ? 'resize' : 'move'; const MIN = 24;
   if(mode === 'move') document.body.style.cursor = 'move';
-
   function onMove(ev){
-    const dx = (ev.clientX - startX) / scale;
-    const dy = (ev.clientY - startY) / scale;
-    let nx = o0.x, ny = o0.y, nw = o0.w, nh = o0.h;
-    if(mode === 'move'){
-      nx = Math.round(o0.x + dx); ny = Math.round(o0.y + dy);
-    } else {
+    const dx = (ev.clientX-startX)/scale, dy = (ev.clientY-startY)/scale;
+    let nx=o0.x, ny=o0.y, nw=o0.w, nh=o0.h;
+    if(mode === 'move'){ nx=Math.round(o0.x+dx); ny=Math.round(o0.y+dy); }
+    else {
       if(dir.includes('e')) nw = o0.w + dx;
       if(dir.includes('w')){ nw = o0.w - dx; nx = o0.x + dx; }
       if(dir.includes('s')) nh = o0.h + dy;
@@ -962,161 +595,78 @@ function startInteraction(e, o, dir, el){
       if(nh < MIN){ if(dir.includes('n')) ny = o0.y + o0.h - MIN; nh = MIN; }
       nw = Math.round(nw); nh = Math.round(nh);
     }
-    setVal(o, 'x', Math.round(nx), dev);
-    setVal(o, 'y', Math.round(ny), dev);
-    setVal(o, 'w', Math.round(nw), dev);
-    setVal(o, 'h', Math.round(nh), dev);
-    if(el){
-      el.style.left = nx + 'px'; el.style.top = ny + 'px';
-      el.style.width = nw + 'px'; el.style.height = nh + 'px';
-    }
+    setVal(o,'x',Math.round(nx),dev); setVal(o,'y',Math.round(ny),dev);
+    setVal(o,'w',Math.round(nw),dev); setVal(o,'h',Math.round(nh),dev);
+    if(el){ el.style.left = nx+'px'; el.style.top = ny+'px'; el.style.width = nw+'px'; el.style.height = nh+'px'; }
     syncGeometry(o);
   }
-  function onUp(){
-    document.removeEventListener('pointermove', onMove);
-    document.removeEventListener('pointerup', onUp);
-    document.body.style.cursor = '';
-    renderProps();
-  }
+  function onUp(){ document.removeEventListener('pointermove', onMove); document.removeEventListener('pointerup', onUp); document.body.style.cursor = ''; renderProps(); }
   document.addEventListener('pointermove', onMove);
   document.addEventListener('pointerup', onUp);
 }
+function syncGeometry(o){ const dev = curDevice(); ['x','y','w','h'].forEach(k => { const inp = propsPanel.querySelector(`[data-prop="${k}"]`); if(inp) inp.value = getVal(o,k,dev); }); }
 
-function syncGeometry(o){
-  const dev = curDevice();
-  ['x','y','w','h'].forEach(k => {
-    const inp = propsPanel.querySelector(`[data-prop="${k}"]`);
-    if(inp) inp.value = getVal(o, k, dev);
-  });
-}
-
-/* =========================================================
-   15. PANEL DE PROPIEDADES
-   ========================================================= */
-function escAttr(s){
-  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;')
-    .replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function escHTML(s){
-  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function devDot(o, path){
-  if(curDevice() === 'desktop') return '';
-  if(!isOverridden(o, path)) return '';
-  return `<button type="button" class="devdot" data-reset="${path}" title="Personalizado para ${DEVICE_META[curDevice()].label}. Clic para heredar."></button>`;
-}
-function lblWith(o, path, label){
-  return `<label>${label}${devDot(o, path)}</label>`;
-}
-function rowCtrl(o, path, label, ctrl){
-  return `<div class="row">${lblWith(o, path, label)}<div class="ctrl">${ctrl}</div></div>`;
-}
+function escAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function devDot(o, path){ if(curDevice() === 'desktop') return ''; if(!isOverridden(o, path)) return ''; return `<button type="button" class="devdot" data-reset="${path}" title="Personalizado para ${DEVICE_META[curDevice()].label}. Clic para heredar."></button>`; }
+function lblWith(o, path, label){ return `<label>${label}${devDot(o, path)}</label>`; }
+function rowCtrl(o, path, label, ctrl){ return `<div class="row">${lblWith(o,path,label)}<div class="ctrl">${ctrl}</div></div>`; }
 function rangeRow(o, path, label, val, min, max, step, suffix){
   suffix = suffix || '';
-  const v = Math.round(val * 100) / 100;
-  return `<div class="row">${lblWith(o, path, label)}<div class="ctrl range">
-    <input type="range" data-prop="${path}" data-suffix="${suffix}" min="${min}" max="${max}" step="${step}" value="${v}">
-    <span class="val" data-valfor="${path}">${v}${suffix}</span></div></div>`;
+  const v = Math.round(val*100)/100;
+  return `<div class="row">${lblWith(o,path,label)}<div class="ctrl range"><input type="range" data-prop="${path}" data-suffix="${suffix}" min="${min}" max="${max}" step="${step}" value="${v}"><span class="val" data-valfor="${path}">${v}${suffix}</span></div></div>`;
 }
 function selectHTML(prop, opts, cur){
-  return `<select data-prop="${prop}">` + opts.map(([v,l,st]) =>
-    `<option value="${escAttr(v)}"${String(v)===String(cur)?' selected':''}${st?` style="font-family:${st}"`:''}>${l}</option>`
-  ).join('') + `</select>`;
+  return `<select data-prop="${prop}">` + opts.map(([v,l,st]) => `<option value="${escAttr(v)}"${String(v)===String(cur)?' selected':''}${st?` style="font-family:${st}"`:''}>${l}</option>`).join('') + `</select>`;
 }
-function chkHTML(o, path, checked, label){
-  return `<label class="chk"><input type="checkbox" data-prop="${path}"${checked?' checked':''}> ${label}${devDot(o,path)}</label>`;
-}
+function chkHTML(o, path, checked, label){ return `<label class="chk"><input type="checkbox" data-prop="${path}"${checked?' checked':''}> ${label}${devDot(o,path)}</label>`; }
 
 function renderProps(){
-  const o = getSel();
-  const dev = curDevice();
+  const o = getSel(), dev = curDevice();
   if(!o){
     const it = curItem();
-    propsPanel.innerHTML = `<div class="empty">
-      Selecciona un objeto en el lienzo<br>para editar sus propiedades.
-      <br><br>
-      <b style="color:#8fc0ff">Item actual:</b> item-${it?it.id:'—'}<br>
-      <b style="color:#8fc0ff">Dispositivo:</b> ${DEVICE_META[dev].label}
-    </div>`;
+    propsPanel.innerHTML = `<div class="empty">Selecciona un objeto en el lienzo<br>para editar sus propiedades.<br><br><b style="color:#8fc0ff">Item actual:</b> item-${it?it.id:'—'}<br><b style="color:#8fc0ff">Dispositivo:</b> ${DEVICE_META[dev].label}</div>`;
     return;
   }
   const g = p => getVal(o, p, dev);
-  const P = {
-    bg: g('props.bg'), radius: g('props.radius'), borderW: g('props.borderW'),
-    borderColor: g('props.borderColor'), shadow: g('props.shadow'),
-    text: g('props.text'), color: g('props.color'), fontSize: g('props.fontSize'),
-    bold: g('props.bold'), italic: g('props.italic'), align: g('props.align'),
-    family: g('props.family'), lineHeight: g('props.lineHeight'),
-    letterSpacing: g('props.letterSpacing'), padding: g('props.padding'),
-    src: g('props.src'), fit: g('props.fit'), href: g('props.href')
-  };
-  const A = {
-    effect: g('animation.effect'), duration: g('animation.duration'),
-    delay: g('animation.delay'), distance: g('animation.distance'), easing: g('animation.easing')
-  };
-  let banner = '';
-  if(dev !== 'desktop'){
-    banner = `<div class="info-banner">
-      Editando para <b>${DEVICE_META[dev].label}</b>. Los valores heredados vienen de
-      ${dev === 'mobile' ? '<b>Tablet</b> o <b>Escritorio</b>' : '<b>Escritorio</b>'}.
-      Usa el <span class="devdots"></span> para volver a heredar.
-    </div>`;
-  }
-  let h = banner;
-  h += `<div class="ptitle">
-    <span class="badge">${TYPE_LABEL[o.type]}</span>
-    <div class="mini-actions">
-      <button data-act="dup" title="Duplicar">⧉</button>
-      <button data-act="front" title="Traer al frente">↑</button>
-      <button data-act="back" title="Enviar al fondo">↓</button>
-      <button data-act="reset" title="Restablecer para este dispositivo">↺</button>
-      <button data-act="del" class="danger" title="Eliminar">🗑</button>
-    </div></div>`;
-
-  h += `<div class="sec"><h3>Posición y tamaño</h3>
-    <div class="grid2">
-      <div>${lblWith(o,'x','X')}<input type="number" data-prop="x" value="${Math.round(g('x'))}"></div>
-      <div>${lblWith(o,'y','Y')}<input type="number" data-prop="y" value="${Math.round(g('y'))}"></div>
-      <div>${lblWith(o,'w','Ancho')}<input type="number" data-prop="w" value="${Math.round(g('w'))}"></div>
-      <div>${lblWith(o,'h','Alto')}<input type="number" data-prop="h" value="${Math.round(g('h'))}"></div>
-    </div>
-    ${rangeRow(o,'rot','Rotación', g('rot'), -180, 180, 1, '°')}
-    ${rangeRow(o,'opacity','Opacidad', g('opacity'), 0, 1, 0.05, '')}
-    <div class="grid2"><div>${lblWith(o,'z','Capa (z)')}<input type="number" data-prop="z" value="${o.z}"></div></div>
-  </div>`;
-
+  const P = { bg:g('props.bg'), radius:g('props.radius'), borderW:g('props.borderW'), borderColor:g('props.borderColor'), shadow:g('props.shadow'), text:g('props.text'), color:g('props.color'), fontSize:g('props.fontSize'), bold:g('props.bold'), italic:g('props.italic'), align:g('props.align'), family:g('props.family'), lineHeight:g('props.lineHeight'), letterSpacing:g('props.letterSpacing'), padding:g('props.padding'), src:g('props.src'), fit:g('props.fit'), href:g('props.href'), useUrlInShortcode:g('props.useUrlInShortcode') };
+  const A = { effect:g('animation.effect'), duration:g('animation.duration'), delay:g('animation.delay'), distance:g('animation.distance'), easing:g('animation.easing') };
+  let h = '';
+  if(dev !== 'desktop') h += `<div class="info-banner">Editando para <b>${DEVICE_META[dev].label}</b>. Los valores heredados vienen de ${dev === 'mobile' ? '<b>Tablet</b> o <b>Escritorio</b>' : '<b>Escritorio</b>'}.</div>`;
+  h += `<div class="ptitle"><span class="badge">${TYPE_LABEL[o.type]}</span><div class="mini-actions"><button data-act="dup" title="Duplicar">⧉</button><button data-act="front" title="Traer al frente">↑</button><button data-act="back" title="Enviar al fondo">↓</button><button data-act="reset" title="Restablecer para este dispositivo">↺</button><button data-act="del" class="danger" title="Eliminar">🗑</button></div></div>`;
+  h += `<div class="sec"><h3>Posición y tamaño</h3><div class="grid2"><div>${lblWith(o,'x','X')}<input type="number" data-prop="x" value="${Math.round(g('x'))}"></div><div>${lblWith(o,'y','Y')}<input type="number" data-prop="y" value="${Math.round(g('y'))}"></div><div>${lblWith(o,'w','Ancho')}<input type="number" data-prop="w" value="${Math.round(g('w'))}"></div><div>${lblWith(o,'h','Alto')}<input type="number" data-prop="h" value="${Math.round(g('h'))}"></div></div>${rangeRow(o,'rot','Rotación',g('rot'),-180,180,1,'°')}${rangeRow(o,'opacity','Opacidad',g('opacity'),0,1,0.05,'')}<div class="grid2"><div>${lblWith(o,'z','Capa (z)')}<input type="number" data-prop="z" value="${o.z}"></div></div></div>`;
   h += `<div class="sec"><h3>Apariencia</h3>`;
   if(o.type === 'box'){
     h += rowCtrl(o,'props.bg','Fondo',`<input type="color" data-prop="props.bg" value="${P.bg}">`);
-    h += rangeRow(o,'props.radius','Redondeo', P.radius, 0, 200, 1, ' px');
-    h += rangeRow(o,'props.borderW','Borde', P.borderW, 0, 20, 1, ' px');
+    h += rangeRow(o,'props.radius','Redondeo',P.radius,0,200,1,' px');
+    h += rangeRow(o,'props.borderW','Borde',P.borderW,0,20,1,' px');
     h += rowCtrl(o,'props.borderColor','Color borde',`<input type="color" data-prop="props.borderColor" value="${P.borderColor}">`);
     h += chkHTML(o,'props.shadow',P.shadow,'Sombra');
   }
   if(o.type === 'text'){
     h += rowCtrl(o,'props.text','Texto',`<textarea data-prop="props.text" data-textarea="1"></textarea>`);
-    h += rowCtrl(o,'props.family','Fuente', selectHTML('props.family',
-      FONTS.map(f => [f.stack, f.name, f.stack.split(',')[0].replace(/"/g,'')]), P.family));
+    h += rowCtrl(o,'props.family','Fuente', selectHTML('props.family', FONTS.map(f => [f.stack, f.name, f.stack.split(',')[0].replace(/"/g,'')]), P.family));
     h += rowCtrl(o,'props.color','Color',`<input type="color" data-prop="props.color" value="${P.color}">`);
-    h += rangeRow(o,'props.fontSize','Tamaño', P.fontSize, 8, 200, 1, ' px');
-    h += rowCtrl(o,'props.align','Alineación', selectHTML('props.align',
-      [['left','Izquierda'],['center','Centro'],['right','Derecha']], P.align));
-    h += rangeRow(o,'props.lineHeight','Interlineado', P.lineHeight, 0.8, 3, 0.05, '');
-    h += rangeRow(o,'props.letterSpacing','Espaciado', P.letterSpacing, -5, 20, 0.5, ' px');
-    h += rangeRow(o,'props.padding','Relleno', P.padding, 0, 100, 1, ' px');
+    h += rangeRow(o,'props.fontSize','Tamaño',P.fontSize,8,200,1,' px');
+    h += rowCtrl(o,'props.align','Alineación', selectHTML('props.align', [['left','Izquierda'],['center','Centro'],['right','Derecha']], P.align));
+    h += rangeRow(o,'props.lineHeight','Interlineado',P.lineHeight,0.8,3,0.05,'');
+    h += rangeRow(o,'props.letterSpacing','Espaciado',P.letterSpacing,-5,20,0.5,' px');
+    h += rangeRow(o,'props.padding','Relleno',P.padding,0,100,1,' px');
     h += chkHTML(o,'props.bold',P.bold,'Negrita');
     h += chkHTML(o,'props.italic',P.italic,'Cursiva');
   }
   if(o.type === 'image'){
-    h += rowCtrl(o,'props.src','URL',
-      `<div class="url-row">
-         <input type="text" data-prop="props.src" value="${escAttr(P.src)}">
-         <button type="button" class="url-btn" data-url-prompt="props.src" title="Introducir / cambiar URL de la imagen">🔗 URL</button>
-       </div>`);
+    const hasUrl = isUrlLike(P.src);
+    const urlChecked = hasUrl && P.useUrlInShortcode === true;
+    h += rowCtrl(o,'props.src','URL',`<div class="url-row"><input type="text" data-prop="props.src" value="${escAttr(P.src)}"><button type="button" class="url-btn" data-url-prompt="props.src" title="Introducir / cambiar URL de la imagen">🔗 URL</button></div>`);
+    h += `<label class="sbm-url-check${hasUrl?'':' disabled'}" data-url-check-wrap="props.src"><input type="checkbox" data-prop="props.useUrlInShortcode"${urlChecked?' checked':''}${hasUrl?'':' disabled'}><span class="urlicon">🌐</span> Usar URL en shortcode</label>`;
+    if(urlChecked){
+      h += `<p class="sbm-url-note">✓ El shortcode usará solo esta URL. La imagen no se incluirá en base64.</p>`;
+    } else if(!hasUrl && P.src){
+      h += `<p class="hint" style="margin-top:6px;">Imagen cargada como base64. Introduce una URL para poder usar la opción "Usar URL en shortcode".</p>`;
+    }
     h += `<input type="file" data-imgfile accept="image/*">`;
-    h += rowCtrl(o,'props.fit','Ajuste', selectHTML('props.fit',
-      [['cover','Cubrir'],['contain','Contener'],['fill','Estirar']], P.fit));
-    h += rangeRow(o,'props.radius','Redondeo', P.radius, 0, 300, 1, ' px');
+    h += rowCtrl(o,'props.fit','Ajuste', selectHTML('props.fit', [['cover','Cubrir'],['contain','Contener'],['fill','Estirar']], P.fit));
+    h += rangeRow(o,'props.radius','Redondeo',P.radius,0,300,1,' px');
     h += chkHTML(o,'props.shadow',P.shadow,'Sombra');
   }
   if(o.type === 'button'){
@@ -1124,496 +674,322 @@ function renderProps(){
     h += rowCtrl(o,'props.href','Enlace',`<input type="text" data-prop="props.href" value="${escAttr(P.href)}">`);
     h += rowCtrl(o,'props.bg','Fondo',`<input type="color" data-prop="props.bg" value="${P.bg}">`);
     h += rowCtrl(o,'props.color','Texto color',`<input type="color" data-prop="props.color" value="${P.color}">`);
-    h += rangeRow(o,'props.fontSize','Tamaño', P.fontSize, 8, 80, 1, ' px');
-    h += rangeRow(o,'props.radius','Redondeo', P.radius, 0, 80, 1, ' px');
+    h += rangeRow(o,'props.fontSize','Tamaño',P.fontSize,8,80,1,' px');
+    h += rangeRow(o,'props.radius','Redondeo',P.radius,0,80,1,' px');
     h += chkHTML(o,'props.shadow',P.shadow,'Sombra');
   }
   h += `</div>`;
-
-  h += `<div class="sec"><h3>Animación de entrada</h3>
-    ${rowCtrl(o,'animation.effect','Efecto', selectHTML('animation.effect', [
-      ['none','Ninguno'],['fade','Aparecer (fade)'],['left','Entrar desde la izquierda'],
-      ['right','Entrar desde la derecha'],['up','Subir desde abajo'],['down','Bajar desde arriba'],
-      ['zoom','Zoom'],['rotate','Rotar'],['flip','Voltear (3D)']
-    ], A.effect))}
-    ${rangeRow(o,'animation.duration','Duración', A.duration, 100, 4000, 50, ' ms')}
-    ${rangeRow(o,'animation.delay','Retardo', A.delay, 0, 4000, 50, ' ms')}
-    ${rangeRow(o,'animation.distance','Distancia', A.distance, 0, 800, 10, ' px')}
-    ${rowCtrl(o,'animation.easing','Curva', selectHTML('animation.easing', [
-      ['linear','Linear'],['ease','Ease'],['ease-in','Ease In'],['ease-out','Ease Out'],
-      ['ease-in-out','Ease In Out'],['cubic-bezier(.34,1.56,.64,1)','Rebote (back)']
-    ], A.easing))}
-  </div>`;
-
+  h += `<div class="sec"><h3>Animación de entrada</h3>${rowCtrl(o,'animation.effect','Efecto', selectHTML('animation.effect', [['none','Ninguno'],['fade','Aparecer (fade)'],['left','Entrar desde la izquierda'],['right','Entrar desde la derecha'],['up','Subir desde abajo'],['down','Bajar desde arriba'],['zoom','Zoom'],['rotate','Rotar'],['flip','Voltear (3D)']], A.effect))}${rangeRow(o,'animation.duration','Duración',A.duration,100,4000,50,' ms')}${rangeRow(o,'animation.delay','Retardo',A.delay,0,4000,50,' ms')}${rangeRow(o,'animation.distance','Distancia',A.distance,0,800,10,' px')}${rowCtrl(o,'animation.easing','Curva', selectHTML('animation.easing', [['linear','Linear'],['ease','Ease'],['ease-in','Ease In'],['ease-out','Ease Out'],['ease-in-out','Ease In Out'],['cubic-bezier(.34,1.56,.64,1)','Rebote (back)']], A.easing))}</div>`;
   propsPanel.innerHTML = h;
-  const ta = propsPanel.querySelector('textarea[data-textarea]');
-  if(ta) ta.value = P.text;
+  const ta = propsPanel.querySelector('textarea[data-textarea]'); if(ta) ta.value = P.text;
 }
 
-/* =========================================================
-   16. EVENTOS DEL PANEL DE PROPIEDADES
-   ========================================================= */
+function refreshImageUrlCheckbox(o, urlValue){
+  const wrap = propsPanel.querySelector('[data-url-check-wrap="props.src"]'); if(!wrap) return;
+  const cb = wrap.querySelector('input[data-prop="props.useUrlInShortcode"]'); if(!cb) return;
+  const hasUrl = isUrlLike(urlValue);
+  if(!hasUrl){
+    if(cb.checked) setVal(o,'props.useUrlInShortcode',false,curDevice());
+    cb.checked = false; cb.disabled = true; wrap.classList.add('disabled');
+  } else {
+    cb.disabled = false; wrap.classList.remove('disabled');
+  }
+}
+
 function onPropChange(e){
-  const inp = e.target.closest('[data-prop]');
-  if(!inp) return;
-  const o = getSel();
-  if(!o) return;
+  const inp = e.target.closest('[data-prop]'); if(!inp) return;
+  const o = getSel(); if(!o) return;
   const path = inp.dataset.prop;
   let val;
   if(inp.type === 'checkbox') val = inp.checked;
-  else if(inp.type === 'number' || inp.type === 'range'){
-    val = parseFloat(inp.value); if(isNaN(val)) val = 0;
-  } else val = inp.value;
-
+  else if(inp.type === 'number' || inp.type === 'range'){ val = parseFloat(inp.value); if(isNaN(val)) val = 0; }
+  else val = inp.value;
   if(path === 'z') o.z = Math.round(val) || 1;
   else setVal(o, path, val, curDevice());
-
-  if(inp.type === 'range'){
-    const span = propsPanel.querySelector(`[data-valfor="${path}"]`);
-    if(span) span.textContent = (Math.round(val*100)/100) + (inp.dataset.suffix || '');
-  }
+  if(inp.type === 'range'){ const span = propsPanel.querySelector(`[data-valfor="${path}"]`); if(span) span.textContent = (Math.round(val*100)/100) + (inp.dataset.suffix||''); }
+  if(path === 'props.src') refreshImageUrlCheckbox(o, inp.value);
   renderObjects();
 }
 propsPanel.addEventListener('input', onPropChange);
-propsPanel.addEventListener('change', e => {
-  onPropChange(e);
-  if(e.target.closest('[data-prop]')) renderProps();
-});
+propsPanel.addEventListener('change', e => { onPropChange(e); if(e.target.closest('[data-prop]') && e.target.dataset.prop !== 'props.src') renderProps(); });
 propsPanel.addEventListener('click', e => {
-  const btn = e.target.closest('[data-reset]');
-  if(!btn) return;
+  const btn = e.target.closest('[data-reset]'); if(!btn) return;
   const o = getSel(); if(!o) return;
   clearOverride(o, btn.dataset.reset, curDevice());
   renderObjects(); renderProps();
 });
-
-/* ---------- NUEVO: prompt de URL para imágenes de objetos ---------- */
 propsPanel.addEventListener('click', e => {
-  const btn = e.target.closest('[data-url-prompt]');
-  if(!btn) return;
+  const btn = e.target.closest('[data-url-prompt]'); if(!btn) return;
   e.preventDefault();
   const o = getSel(); if(!o) return;
-  const path = btn.dataset.urlPrompt; // 'props.src'
+  const path = btn.dataset.urlPrompt;
   const cur = getVal(o, path, curDevice()) || '';
   const url = prompt('Introduce la URL de la imagen:', cur);
-  if(url === null) return;       // cancelado
-  const clean = url.trim();
-  if(!clean) return;              // vacío → no cambiar
+  if(url === null) return;
+  const clean = url.trim(); if(!clean) return;
   setVal(o, path, clean, curDevice());
-  renderProps();
-  renderObjects();
+  renderProps(); renderObjects();
 });
-
 propsPanel.addEventListener('change', e => {
-  const f = e.target.closest('[data-imgfile]');
-  if(!f || !f.files || !f.files[0]) return;
+  const f = e.target.closest('[data-imgfile]'); if(!f || !f.files || !f.files[0]) return;
   const o = getSel(); if(!o) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    setVal(o, 'props.src', ev.target.result, curDevice());
+    setVal(o,'props.src',ev.target.result,curDevice());
+    /* Al subir archivo, desmarcar y deshabilitar el checkbox (es base64) */
+    setVal(o,'props.useUrlInShortcode',false,curDevice());
     renderProps(); renderObjects();
   };
   reader.readAsDataURL(f.files[0]);
 });
 propsPanel.addEventListener('click', e => {
-  const btn = e.target.closest('[data-act]');
-  if(!btn) return;
+  const btn = e.target.closest('[data-act]'); if(!btn) return;
   const o = getSel(); if(!o) return;
-  const act = btn.dataset.act;
-  const item = curItem();
-  if(act === 'del'){
-    item.objects = item.objects.filter(x => x.id !== o.id);
-    selectedId = null; renderObjects(); renderProps();
-  }
+  const act = btn.dataset.act, item = curItem();
+  if(act === 'del'){ item.objects = item.objects.filter(x => x.id !== o.id); selectedId = null; renderObjects(); renderProps(); }
   if(act === 'dup'){
-    const copy = JSON.parse(JSON.stringify(o));
-    copy.id = uid();
-    copy.x = (copy.x || 0) + 24;
-    copy.y = (copy.y || 0) + 24;
-    if(copy.r){
-      ['tablet','mobile'].forEach(d => {
-        if(copy.r[d]){
-          if(copy.r[d].x != null) copy.r[d].x += 24;
-          if(copy.r[d].y != null) copy.r[d].y += 24;
-        }
-      });
-    }
-    copy.z = item.objects.reduce((m,x)=>Math.max(m,x.z),0)+1;
-    item.objects.push(copy);
-    select(copy.id);
+    const copy = JSON.parse(JSON.stringify(o)); copy.id = uid();
+    copy.x = (copy.x||0)+24; copy.y = (copy.y||0)+24;
+    if(copy.r){ ['tablet','mobile'].forEach(d => { if(copy.r[d]){ if(copy.r[d].x!=null) copy.r[d].x += 24; if(copy.r[d].y!=null) copy.r[d].y += 24; } }); }
+    copy.z = item.objects.reduce((m,x)=>Math.max(m,x.z),0)+1; item.objects.push(copy); select(copy.id);
   }
-  if(act === 'front'){
-    o.z = item.objects.reduce((m,x)=>Math.max(m,x.z),0)+1;
-    renderObjects(); renderProps();
-  }
-  if(act === 'back'){
-    o.z = item.objects.reduce((m,x)=>Math.min(m,x.z),9999)-1;
-    renderObjects(); renderProps();
-  }
-  if(act === 'reset'){
-    if(curDevice() !== 'desktop'){ if(o.r) o.r[curDevice()] = {}; renderObjects(); renderProps(); }
-  }
+  if(act === 'front'){ o.z = item.objects.reduce((m,x)=>Math.max(m,x.z),0)+1; renderObjects(); renderProps(); }
+  if(act === 'back'){ o.z = item.objects.reduce((m,x)=>Math.min(m,x.z),9999)-1; renderObjects(); renderProps(); }
+  if(act === 'reset'){ if(curDevice() !== 'desktop'){ if(o.r) o.r[curDevice()] = {}; renderObjects(); renderProps(); } }
 });
 
-/* =========================================================
-   17. SIDEBAR
-   ========================================================= */
 function syncSidebar(){
-  const d = curDev();
-  const bg = getBg();
-  $('#cvW').value = d.width;
-  $('#cvH').value = d.height;
+  const d = curDev(), bg = getBg();
+  $('#cvW').value = d.width; $('#cvH').value = d.height;
   $('#bgColor').value = bg.color || '#0f172a';
-  $('#bgImage').value = (bg.image && !bg.image.startsWith('data:')) ? bg.image : '';
+  $('#bgImage').value = isUrlLike(bg.image) ? bg.image : '';
   $('#bgFit').value = bg.fit || 'cover';
-  $('#bgOverlay').value = bg.overlay || 0;
-  $('#ovVal').textContent = (bg.overlay || 0) + '%';
+  $('#bgOverlay').value = bg.overlay || 0; $('#ovVal').textContent = (bg.overlay||0) + '%';
+  const hasUrl = isUrlLike(bg.image);
+  const cb = $('#bgUseUrl'), wrap = $('#bgUseUrlWrap'), note = $('#bgUrlNote');
+  cb.checked = hasUrl && bg.useUrlInShortcode === true;
+  cb.disabled = !hasUrl;
+  wrap.classList.toggle('disabled', !hasUrl);
+  note.style.display = (cb.checked) ? 'block' : 'none';
   const dev = curDevice();
-  $('#bgHint').innerHTML = dev === 'desktop'
-    ? 'El fondo de escritorio de este item es la base para los otros dispositivos.'
-    : `El fondo de <b>${DEVICE_META[dev].label}</b> hereda del escritorio. Los cambios aquí solo afectan a este item/dispositivo.`;
+  $('#bgHint').innerHTML = dev === 'desktop' ? 'El fondo de escritorio de este item es la base para los otros dispositivos.' : `El fondo de <b>${DEVICE_META[dev].label}</b> hereda del escritorio. Los cambios aquí solo afectan a este item/dispositivo.`;
   updateDeviceUI();
 }
-
+function refreshBgUrlCheckbox(urlValue){
+  const hasUrl = isUrlLike(urlValue);
+  const cb = $('#bgUseUrl'), wrap = $('#bgUseUrlWrap'), note = $('#bgUrlNote');
+  if(!hasUrl){
+    if(cb.checked) setBg('useUrlInShortcode', false, curDevice());
+    cb.checked = false; cb.disabled = true; wrap.classList.add('disabled');
+    note.style.display = 'none';
+  } else {
+    cb.disabled = false; wrap.classList.remove('disabled');
+    note.style.display = cb.checked ? 'block' : 'none';
+  }
+}
 $('#bgColor').addEventListener('input', e => { setBg('color', e.target.value); renderBg(); });
-$('#bgImage').addEventListener('input', e => { setBg('image', e.target.value.trim()); renderBg(); });
+$('#bgImage').addEventListener('input', e => { const v = e.target.value.trim(); setBg('image', v); refreshBgUrlCheckbox(v); renderBg(); });
 $('#bgFile').addEventListener('change', e => {
-  const f = e.target.files && e.target.files[0];
-  if(!f) return;
+  const f = e.target.files && e.target.files[0]; if(!f) return;
   const r = new FileReader();
-  r.onload = ev => { setBg('image', ev.target.result); $('#bgImage').value = ''; renderBg(); };
-  r.readAsDataURL(f);
-  e.target.value = '';
+  r.onload = ev => {
+    setBg('image', ev.target.result);
+    setBg('useUrlInShortcode', false, curDevice());
+    $('#bgImage').value = '';
+    refreshBgUrlCheckbox(ev.target.result);
+    renderBg();
+  };
+  r.readAsDataURL(f); e.target.value = '';
 });
 $('#bgFit').addEventListener('change', e => { setBg('fit', e.target.value); renderBg(); });
-$('#bgOverlay').addEventListener('input', e => {
-  setBg('overlay', +e.target.value);
-  $('#ovVal').textContent = e.target.value + '%';
-  renderBg();
-});
+$('#bgOverlay').addEventListener('input', e => { setBg('overlay', +e.target.value); $('#ovVal').textContent = e.target.value + '%'; renderBg(); });
 $('#btnClearBg').addEventListener('click', () => {
-  if(curDevice() === 'desktop'){
-    curItem().bg.desktop = { color:'#0f172a', image:'', fit:'cover', overlay:0 };
-  } else {
-    clearBgOverride(curDevice());
-  }
+  if(curDevice() === 'desktop') curItem().bg.desktop = { color:'#0f172a', image:'', fit:'cover', overlay:0, useUrlInShortcode:false };
+  else clearBgOverride(curDevice());
   syncSidebar(); renderBg();
 });
-
-/* ---------- NUEVO: prompt de URL para el fondo de la imagen ---------- */
 $('#bgImagePrompt').addEventListener('click', () => {
   const cur = ($('#bgImage').value || '').trim() || (getBg().image || '');
   const url = prompt('Introduce la URL de la imagen de fondo:', cur);
   if(url === null) return;
-  const clean = url.trim();
-  if(!clean) return;
+  const clean = url.trim(); if(!clean) return;
   setBg('image', clean);
-  $('#bgImage').value = clean.startsWith('data:') ? '' : clean;
-  renderBg();
+  $('#bgImage').value = isUrlLike(clean) ? clean : '';
+  refreshBgUrlCheckbox(clean); renderBg();
+});
+$('#bgUseUrl').addEventListener('change', e => {
+  setBg('useUrlInShortcode', e.target.checked, curDevice());
+  $('#bgUrlNote').style.display = e.target.checked ? 'block' : 'none';
 });
 
-/* =========================================================
-   18. TECLADO
-   ========================================================= */
 document.addEventListener('keydown', e => {
-  const tag = (e.target.tagName || '').toLowerCase();
+  const tag = (e.target.tagName||'').toLowerCase();
   if(tag === 'input' || tag === 'textarea' || tag === 'select') return;
-  if(e.key === 'Escape'){
-    if(previewing) togglePreview();
-    else select(null);
-    return;
-  }
+  if(e.key === 'Escape'){ if(previewing) togglePreview(); else select(null); return; }
   const o = getSel(); if(!o) return;
-  if(e.key === 'Delete' || e.key === 'Backspace'){
-    e.preventDefault();
-    const item = curItem();
-    item.objects = item.objects.filter(x => x.id !== o.id);
-    selectedId = null; renderObjects(); renderProps();
-    return;
-  }
-  const step = e.shiftKey ? 10 : 1;
-  const dev = curDevice();
-  let moved = false;
-  if(e.key === 'ArrowLeft'){  setVal(o, 'x', getVal(o,'x',dev) - step, dev); moved = true; e.preventDefault(); }
-  if(e.key === 'ArrowRight'){ setVal(o, 'x', getVal(o,'x',dev) + step, dev); moved = true; e.preventDefault(); }
-  if(e.key === 'ArrowUp'){    setVal(o, 'y', getVal(o,'y',dev) - step, dev); moved = true; e.preventDefault(); }
-  if(e.key === 'ArrowDown'){  setVal(o, 'y', getVal(o,'y',dev) + step, dev); moved = true; e.preventDefault(); }
+  if(e.key === 'Delete' || e.key === 'Backspace'){ e.preventDefault(); curItem().objects = curItem().objects.filter(x => x.id !== o.id); selectedId = null; renderObjects(); renderProps(); return; }
+  const step = e.shiftKey ? 10 : 1, dev = curDevice(); let moved = false;
+  if(e.key === 'ArrowLeft'){ setVal(o,'x',getVal(o,'x',dev)-step,dev); moved = true; e.preventDefault(); }
+  if(e.key === 'ArrowRight'){ setVal(o,'x',getVal(o,'x',dev)+step,dev); moved = true; e.preventDefault(); }
+  if(e.key === 'ArrowUp'){ setVal(o,'y',getVal(o,'y',dev)-step,dev); moved = true; e.preventDefault(); }
+  if(e.key === 'ArrowDown'){ setVal(o,'y',getVal(o,'y',dev)+step,dev); moved = true; e.preventDefault(); }
   if(moved){ renderObjects(); syncGeometry(o); }
 });
 
-/* =========================================================
-   19. PREVISUALIZACIÓN
-   ========================================================= */
 function togglePreview(){
-  previewing = !previewing;
-  if(previewing) selectedId = null;
+  previewing = !previewing; if(previewing) selectedId = null;
   $('#btnPreview').textContent = previewing ? '⏹ Detener' : '▶ Previsualizar';
   $('#btnPreview').classList.toggle('primary', previewing);
   renderObjects(); renderProps();
 }
 $('#btnPreview').addEventListener('click', togglePreview);
 
-/* =========================================================
-   20. IMPORTAR / EXPORTAR ITEM (JSON y HTML)
-   ========================================================= */
 $('#btnImport').addEventListener('click', () => $('#fileImport').click());
-
 $('#fileImport').addEventListener('change', e => {
-  const f = e.target.files && e.target.files[0];
-  if(!f) return;
+  const f = e.target.files && e.target.files[0]; if(!f) return;
   const r = new FileReader();
   r.onload = ev => {
     try{
       const data = JSON.parse(ev.target.result);
       if(!data || !Array.isArray(data.objects)) throw new Error('Formato inválido');
-
       const warns = [];
-      if(data.devices){
-        DEVICE_KEYS.forEach(k => {
-          const curD = app.slider.devices[k];
-          const impD = data.devices[k];
-          if(impD && (impD.width !== curD.width || impD.height !== curD.height)){
-            warns.push(`· ${DEVICE_META[k].label}: ${curD.width}×${curD.height} → ${impD.width}×${impD.height}`);
-          }
-        });
-      }
-      if(data.breakpoints && bp()){
-        if(data.breakpoints.tablet !== bp().tablet || data.breakpoints.mobile !== bp().mobile){
-          warns.push(`· Breakpoints: actuales T≤${bp().tablet} / M≤${bp().mobile} → importados T≤${data.breakpoints.tablet} / M≤${data.breakpoints.mobile}`);
-        }
-      }
+      if(data.devices){ DEVICE_KEYS.forEach(k => { const c = app.slider.devices[k], im = data.devices[k]; if(im && (im.width!==c.width||im.height!==c.height)) warns.push(`· ${DEVICE_META[k].label}: ${c.width}×${c.height} → ${im.width}×${im.height}`); }); }
+      if(data.breakpoints && bp()){ if(data.breakpoints.tablet !== bp().tablet || data.breakpoints.mobile !== bp().mobile) warns.push(`· Breakpoints: T≤${bp().tablet}/M≤${bp().mobile} → T≤${data.breakpoints.tablet}/M≤${data.breakpoints.mobile}`); }
       if(warns.length){
-        if(!confirm('Las dimensiones del lienzo o los breakpoints del archivo importado difieren de los que tienes definidos globalmente.\n\n' +
-                    warns.join('\n') +
-                    '\n\nSe importará el contenido, pero se usarán las dimensiones y breakpoints GLOBALES actuales.\n\n¿Continuar?')) {
-          e.target.value = '';
-          return;
-        }
+        if(!confirm('Las dimensiones o breakpoints del archivo difieren de los globales.\n\n' + warns.join('\n') + '\n\nSe usará la configuración GLOBAL actual.\n\n¿Continuar?')){ e.target.value=''; return; }
       }
-
       data.objects.forEach(o => {
         if(!o.r) o.r = { tablet:{}, mobile:{} };
         if(!o.r.tablet) o.r.tablet = {};
         if(!o.r.mobile) o.r.mobile = {};
         o.animation = Object.assign({ effect:'none', duration:800, delay:0, easing:'ease-out', distance:150 }, o.animation || {});
-        if(o.type === 'box' && o.props && o.props.borderColor === undefined){
-          o.props.borderColor = '#ffffff';
-          o.props.borderW = o.props.borderW || 0;
+        if(o.type === 'box' && o.props && o.props.borderColor === undefined){ o.props.borderColor = '#ffffff'; o.props.borderW = o.props.borderW || 0; }
+        if(o.type === 'image' && o.props){
+          if(o.props.useUrlInShortcode === undefined) o.props.useUrlInShortcode = false;
+          /* Si el src no es URL, no permitir la marca */
+          if(o.props.useUrlInShortcode && !isUrlLike(o.props.src)) o.props.useUrlInShortcode = false;
         }
       });
       data.objects.forEach(o => o.id = uid());
-
       const item = curItem();
       item.objects = data.objects;
-      item.bg = {
-        desktop: Object.assign({ color:'#0f172a', image:'', fit:'cover', overlay:0 }, (data.bg && data.bg.desktop) || data.background || {}),
-        tablet:  (data.bg && data.bg.tablet) || {},
-        mobile:  (data.bg && data.bg.mobile) || {}
-      };
-      selectedId = null;
-      syncSidebar(); renderAll(); renderProps();
-    }catch(err){
-      alert('No se pudo importar el archivo JSON:\n' + err.message);
-    }
+      const baseBg = Object.assign({ color:'#0f172a', image:'', fit:'cover', overlay:0, useUrlInShortcode:false }, (data.bg && data.bg.desktop) || data.background || {});
+      if(baseBg.useUrlInShortcode === undefined) baseBg.useUrlInShortcode = false;
+      if(baseBg.useUrlInShortcode && !isUrlLike(baseBg.image)) baseBg.useUrlInShortcode = false;
+      item.bg = { desktop: baseBg, tablet:(data.bg && data.bg.tablet) || {}, mobile:(data.bg && data.bg.mobile) || {} };
+      selectedId = null; syncSidebar(); renderAll(); renderProps();
+    }catch(err){ alert('No se pudo importar el JSON:\n' + err.message); }
   };
-  r.readAsText(f);
-  e.target.value = '';
+  r.readAsText(f); e.target.value = '';
 });
-
 $('#btnExportJson').addEventListener('click', () => {
   const item = curItem();
-  const payload = {
-    version: 2,
-    type: 'slider_morbriant_item',
-    id: item.id,
-    name: 'item-' + item.id,
-    breakpoints: JSON.parse(JSON.stringify(bp())),
-    devices: JSON.parse(JSON.stringify(app.slider.devices)),
-    bg: JSON.parse(JSON.stringify(item.bg)),
-    objects: JSON.parse(JSON.stringify(item.objects))
-  };
-  download('slider-morbriant-item-' + item.id + '.json', JSON.stringify(payload, null, 2), 'application/json');
+  const payload = { version:2, type:'slider_morbriant_item', id:item.id, name:'item-'+item.id, breakpoints:JSON.parse(JSON.stringify(bp())), devices:JSON.parse(JSON.stringify(app.slider.devices)), bg:JSON.parse(JSON.stringify(item.bg)), objects:JSON.parse(JSON.stringify(item.objects)) };
+  download('slider-morbriant-item-'+item.id+'.json', JSON.stringify(payload, null, 2), 'application/json');
 });
-
-$('#btnExportHtml').addEventListener('click', () => {
-  download('slider-morbriant-item-' + curItem().id + '.html', generateItemHTML(curItem()), 'text/html');
-});
-
+$('#btnExportHtml').addEventListener('click', () => download('slider-morbriant-item-'+curItem().id+'.html', generateItemHTML(curItem()), 'text/html'));
 $('#btnExportShortcode').addEventListener('click', () => {
   const item = curItem();
-  download('slider-morbriant-item-' + item.id + '.shortcode', generateItemShortcode(item), 'text/plain');
+  download('slider-morbriant-item-'+item.id+'.shortcode', generateItemShortcode(item), 'text/plain');
 });
-
 function download(filename, content, mime){
   const blob = new Blob([content], { type: mime + ';charset=utf-8' });
-  const url  = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
-/* =========================================================
-   21. GENERADORES: HTML de un ITEM
-   ========================================================= */
 function detectUsedFonts(){
   const used = new Set();
   app.items.forEach(item => {
     item.objects.forEach(o => {
       if(o.type === 'text'){
-        ['desktop','tablet','mobile'].forEach(d => {
-          const stack = getVal(o, 'props.family', d);
-          if(stack && FONT_BY_STACK[stack] && FONT_BY_STACK[stack].google) used.add(FONT_BY_STACK[stack].google);
-        });
+        ['desktop','tablet','mobile'].forEach(d => { const s = getVal(o,'props.family',d); if(s && FONT_BY_STACK[s] && FONT_BY_STACK[s].google) used.add(FONT_BY_STACK[s].google); });
         const base = o.props && o.props.family;
         if(base && FONT_BY_STACK[base] && FONT_BY_STACK[base].google) used.add(FONT_BY_STACK[base].google);
       }
     });
   });
-  if(app.items.some(it => it.objects.some(o => o.type === 'button'))){
-    used.add('Inter:wght@300;400;500;600;700;800;900');
-  }
+  if(app.items.some(it => it.objects.some(o => o.type === 'button'))) used.add('Inter:wght@300;400;500;600;700;800;900');
   return Array.from(used);
 }
 
 function buildRuntimeJS(effectsMap){
   return `(function(){
     var EFFECTS = ${JSON.stringify(effectsMap)};
-    function getPath(o, p){
-        var parts = p.split('.');
-        var c = o;
-        for (var i = 0; i < parts.length; i++){ if (c == null) return undefined; c = c[parts[i]]; }
-        return c;
+    function getPath(o, p){ var parts=p.split('.'),c=o; for(var i=0;i<parts.length;i++){if(c==null)return undefined;c=c[parts[i]];} return c; }
+    function deviceChain(d){ if(d==='desktop')return['desktop']; if(d==='tablet')return['desktop','tablet']; return ['desktop','tablet','mobile']; }
+    function getVal(o, p, d){ var ch=deviceChain(d); for(var i=ch.length-1;i>=1;i--){var b=o.r&&o.r[ch[i]];if(b){var v=getPath(b,p);if(v!==undefined)return v;}} return getPath(o,p); }
+    function getBg(data, d){ var base=(data.bg && data.bg.desktop)||{}; var ch=deviceChain(d); var r={}; for(var k in base)r[k]=base[k]; for(var i=1;i<ch.length;i++){var b=(data.bg && data.bg[ch[i]])||{};for(var k2 in b)r[k2]=b[k2];} return r; }
+    function pickDevice(w, bp){ bp=bp||{tablet:1024,mobile:767}; if(w>bp.tablet)return 'desktop'; if(w>bp.mobile)return 'tablet'; return 'mobile'; }
+    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function cssUrl(u){ return "url('"+String(u).replace(/'/g,'%27')+"')"; }
+
+    /* Lee el mapa de URLs desde el <script type="application/json" class="sbm-urls"> */
+    function readUrlMap(el){
+        var s = el.querySelector ? el.querySelector('script.sbm-urls') : null;
+        if (!s) return {};
+        try { return JSON.parse(s.textContent || s.innerText || ''); }
+        catch(e){ return {}; }
     }
-    function deviceChain(d){
-        if (d === 'desktop') return ['desktop'];
-        if (d === 'tablet') return ['desktop', 'tablet'];
-        return ['desktop', 'tablet', 'mobile'];
-    }
-    function getVal(o, p, d){
-        var ch = deviceChain(d);
-        for (var i = ch.length - 1; i >= 1; i--){
-            var b = o.r && o.r[ch[i]];
-            if (b){ var v = getPath(b, p); if (v !== undefined) return v; }
+    function replacePlaceholders(obj, urlMap){
+        if (!obj || typeof obj !== 'object') return;
+        for (var k in obj){
+            if (!Object.prototype.hasOwnProperty.call(obj, k)) continue;
+            var v = obj[k];
+            if (typeof v === 'string' && urlMap[v] !== undefined){ obj[k] = urlMap[v]; }
+            else if (typeof v === 'object' && v !== null){ replacePlaceholders(v, urlMap); }
         }
-        return getPath(o, p);
     }
-    function getBg(data, d){
-        var base = (data.bg && data.bg.desktop) || {};
-        var ch = deviceChain(d);
-        var r = {};
-        for (var k in base) r[k] = base[k];
-        for (var i = 1; i < ch.length; i++){
-            var b = (data.bg && data.bg[ch[i]]) || {};
-            for (var k2 in b) r[k2] = b[k2];
-        }
-        return r;
-    }
-    function pickDevice(w, bp){
-        bp = bp || { tablet:1024, mobile:767 };
-        if (w > bp.tablet) return 'desktop';
-        if (w > bp.mobile) return 'tablet';
-        return 'mobile';
-    }
-    function esc(s){
-        return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-    function escAttr(s){
-        return String(s == null ? '' : s)
-            .replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-    function cssUrl(u){ return "url('" + String(u).replace(/'/g, '%27') + "')"; }
+
     function styleFor(o, d){
         var gp = function(p){ return getVal(o, 'props.' + p, d); };
-        var x = getVal(o,'x',d), y = getVal(o,'y',d);
-        var w = getVal(o,'w',d), h = getVal(o,'h',d);
-        var rot = getVal(o,'rot',d) || 0;
-        var op = getVal(o,'opacity',d); if (op == null) op = 1;
-        var s = 'position:absolute;left:' + x + 'px;top:' + y + 'px;'
-              + 'width:' + w + 'px;height:' + h + 'px;'
-              + 'z-index:' + o.z + ';opacity:' + op + ';'
-              + '--rot:' + rot + 'deg;--op:' + op + ';'
-              + 'transform:rotate(' + rot + 'deg);box-sizing:border-box;';
-        if (o.type === 'box'){
-            s += 'background:' + gp('bg') + ';border-radius:' + gp('radius') + 'px;'
-               + 'border:' + gp('borderW') + 'px solid ' + gp('borderColor') + ';'
-               + 'box-shadow:' + (gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none') + ';';
-        }
-        if (o.type === 'text'){
-            s += 'display:flex;flex-direction:column;justify-content:center;text-align:' + gp('align') + ';'
-               + 'color:' + gp('color') + ';font-size:' + gp('fontSize') + 'px;font-weight:' + (gp('bold') ? 700 : 400) + ';'
-               + 'font-style:' + (gp('italic') ? 'italic' : 'normal') + ';font-family:' + gp('family') + ';'
-               + 'line-height:' + gp('lineHeight') + ';letter-spacing:' + gp('letterSpacing') + 'px;'
-               + 'padding:' + gp('padding') + 'px;white-space:pre-wrap;word-break:break-word;overflow:hidden;';
-        }
-        if (o.type === 'image'){
-            s += 'background-image:' + cssUrl(gp('src')) + ';background-size:' + gp('fit') + ';'
-               + 'background-position:center;background-repeat:no-repeat;'
-               + 'border-radius:' + gp('radius') + 'px;'
-               + 'box-shadow:' + (gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none') + ';';
-        }
-        if (o.type === 'button'){
-            s += 'display:flex;align-items:center;justify-content:center;'
-               + 'background:' + gp('bg') + ';color:' + gp('color') + ';'
-               + 'font-size:' + gp('fontSize') + 'px;font-weight:600;border-radius:' + gp('radius') + 'px;'
-               + 'text-decoration:none;font-family:Inter,system-ui,sans-serif;cursor:pointer;'
-               + 'border:none;overflow:hidden;'
-               + 'box-shadow:' + (gp('shadow') ? '0 12px 28px rgba(0,0,0,.38)' : 'none') + ';';
-        }
-        var eff = getVal(o, 'animation.effect', d);
-        if (eff && eff !== 'none' && EFFECTS[eff]){
-            var dur  = getVal(o, 'animation.duration', d) || 800;
-            var del  = getVal(o, 'animation.delay', d) || 0;
-            var eas  = getVal(o, 'animation.easing', d) || 'ease-out';
-            var dist = getVal(o, 'animation.distance', d) || 150;
-            s += '--dist:' + dist + 'px;'
-               + 'animation:' + EFFECTS[eff] + ' ' + dur + 'ms ' + eas + ' ' + del + 'ms both;';
+        var x=getVal(o,'x',d), y=getVal(o,'y',d), w=getVal(o,'w',d), h=getVal(o,'h',d);
+        var rot=getVal(o,'rot',d)||0; var op=getVal(o,'opacity',d); if(op==null)op=1;
+        var s = 'position:absolute;left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+h+'px;z-index:'+o.z+';opacity:'+op+';--rot:'+rot+'deg;--op:'+op+';transform:rotate('+rot+'deg);box-sizing:border-box;';
+        if(o.type==='box') s += 'background:'+gp('bg')+';border-radius:'+gp('radius')+'px;border:'+gp('borderW')+'px solid '+gp('borderColor')+';box-shadow:'+(gp('shadow')?'0 14px 34px rgba(0,0,0,.4)':'none')+';';
+        if(o.type==='text') s += 'display:flex;flex-direction:column;justify-content:center;text-align:'+gp('align')+';color:'+gp('color')+';font-size:'+gp('fontSize')+'px;font-weight:'+(gp('bold')?700:400)+';font-style:'+(gp('italic')?'italic':'normal')+';font-family:'+gp('family')+';line-height:'+gp('lineHeight')+';letter-spacing:'+gp('letterSpacing')+'px;padding:'+gp('padding')+'px;white-space:pre-wrap;word-break:break-word;overflow:hidden;';
+        if(o.type==='image') s += 'background-image:'+cssUrl(gp('src'))+';background-size:'+gp('fit')+';background-position:center;background-repeat:no-repeat;border-radius:'+gp('radius')+'px;box-shadow:'+(gp('shadow')?'0 14px 34px rgba(0,0,0,.4)':'none')+';';
+        if(o.type==='button') s += 'display:flex;align-items:center;justify-content:center;background:'+gp('bg')+';color:'+gp('color')+';font-size:'+gp('fontSize')+'px;font-weight:600;border-radius:'+gp('radius')+'px;text-decoration:none;font-family:Inter,system-ui,sans-serif;cursor:pointer;border:none;overflow:hidden;box-shadow:'+(gp('shadow')?'0 12px 28px rgba(0,0,0,.38)':'none')+';';
+        var eff = getVal(o,'animation.effect', d);
+        if(eff && eff!=='none' && EFFECTS[eff]){
+            var dur=getVal(o,'animation.duration',d)||800, del=getVal(o,'animation.delay',d)||0, eas=getVal(o,'animation.easing',d)||'ease-out', dist=getVal(o,'animation.distance',d)||150;
+            s += '--dist:'+dist+'px;animation:'+EFFECTS[eff]+' '+dur+'ms '+eas+' '+del+'ms both;';
         }
         return s;
     }
     function buildItemHTML(data, d){
         var bg = getBg(data, d);
         var html = '';
-        if (bg.image){
-            html += '<div style="position:absolute;inset:0;background-image:' + cssUrl(bg.image) + ';'
-                  + 'background-size:' + bg.fit + ';background-position:center;background-repeat:no-repeat;"></div>';
-        }
-        if (bg.overlay > 0){
-            html += '<div style="position:absolute;inset:0;background:rgba(0,0,0,' + (bg.overlay/100) + ');"></div>';
-        }
+        if(bg.image) html += '<div style="position:absolute;inset:0;background-image:'+cssUrl(bg.image)+';background-size:'+bg.fit+';background-position:center;background-repeat:no-repeat;"></div>';
+        if(bg.overlay>0) html += '<div style="position:absolute;inset:0;background:rgba(0,0,0,'+(bg.overlay/100)+');"></div>';
         var objs = data.objects.slice().sort(function(a,b){ return a.z - b.z; });
-        for (var i = 0; i < objs.length; i++){
-            var o = objs[i];
-            var st = styleFor(o, d);
-            var txt = getVal(o, 'props.text', d); if (txt == null) txt = '';
-            if (o.type === 'button'){
-                var href = getVal(o, 'props.href', d) || '#';
-                html += '<a href="' + escAttr(href) + '" style="' + st + '">' + esc(txt) + '</a>';
-            } else if (o.type === 'text'){
-                html += '<div style="' + st + '">' + esc(txt) + '</div>';
-            } else {
-                html += '<div style="' + st + '"></div>';
-            }
+        for(var i=0;i<objs.length;i++){
+            var o = objs[i], st = styleFor(o, d), txt = getVal(o,'props.text', d); if(txt==null) txt = '';
+            if(o.type==='button') html += '<a href="'+escAttr(getVal(o,'props.href',d)||'#')+'" style="'+st+'">'+esc(txt)+'</a>';
+            else if(o.type==='text') html += '<div style="'+st+'">'+esc(txt)+'</div>';
+            else html += '<div style="'+st+'"></div>';
         }
         return { html: html, bg: bg };
     }
     function b64DecodeUnicode(str){
-        var bin = atob(str);
-        var bytes = new Uint8Array(bin.length);
-        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-        if (window.TextDecoder) return new TextDecoder('utf-8').decode(bytes);
-        var s = '';
-        for (var j = 0; j < bytes.length; j++) s += String.fromCharCode(bytes[j]);
+        if(!str) return '';
+        var bin = atob(str), bytes = new Uint8Array(bin.length);
+        for(var i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+        if(window.TextDecoder) return new TextDecoder('utf-8').decode(bytes);
+        var s=''; for(var j=0;j<bytes.length;j++) s += String.fromCharCode(bytes[j]);
         try { return decodeURIComponent(escape(s)); } catch(e){ return s; }
     }
     function initStage(el){
-        if (el.dataset.sbmInit === '1') return;
+        if(el.dataset.sbmInit === '1') return;
         el.dataset.sbmInit = '1';
         var data;
         try { data = JSON.parse(b64DecodeUnicode(el.getAttribute('data-sbm-b64'))); }
         catch(e){ console.error('SBM: error decodificando', e); return; }
+        var urlMap = readUrlMap(el);
+        replacePlaceholders(data, urlMap);
         var slide = document.createElement('div');
         slide.className = 'sbm-slide';
         el.appendChild(slide);
@@ -1621,118 +997,89 @@ function buildRuntimeJS(effectsMap){
         function render(){
             var d = pickDevice(window.innerWidth, data.breakpoints);
             var dev = data.devices[d];
-            if (d !== lastDevice){
+            if(d !== lastDevice){
                 lastDevice = d;
-                el.style.paddingBottom = (dev.height / dev.width * 100) + '%';
+                el.style.paddingBottom = (dev.height/dev.width*100) + '%';
                 var built = buildItemHTML(data, d);
                 slide.innerHTML = built.html;
                 slide.style.background = built.bg.color;
             }
             var w = el.clientWidth || el.offsetWidth || 1;
             var s = w / dev.width;
-            slide.style.width  = dev.width + 'px';
+            slide.style.width = dev.width + 'px';
             slide.style.height = dev.height + 'px';
             slide.style.transform = 'scale(' + s + ')';
         }
         var t;
-        window.addEventListener('resize', function(){
-            clearTimeout(t); t = setTimeout(render, 120);
-        });
+        window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(render, 120); });
         render();
     }
     function initSlider(el){
-        if (el.dataset.sbmInit === '1') return;
+        if(el.dataset.sbmInit === '1') return;
         el.dataset.sbmInit = '1';
         var slides = el.querySelectorAll('.sbm-slider-slide[data-sbm-b64]');
-        if (!slides.length) return;
+        if(!slides.length) return;
         var decoded = [];
-        for (var i = 0; i < slides.length; i++){
-            try { decoded.push({ el: slides[i], data: JSON.parse(b64DecodeUnicode(slides[i].getAttribute('data-sbm-b64'))) }); }
-            catch(e){ decoded.push({ el: slides[i], data: null }); }
+        for(var i=0;i<slides.length;i++){
+            try{
+                var d = JSON.parse(b64DecodeUnicode(slides[i].getAttribute('data-sbm-b64')));
+                var um = readUrlMap(slides[i]);
+                replacePlaceholders(d, um);
+                decoded.push({ el: slides[i], data: d });
+            } catch(e){ decoded.push({ el: slides[i], data: null }); }
         }
         var transition = el.getAttribute('data-sbm-transition') || 'fade';
         var time = parseInt(el.getAttribute('data-sbm-time')) || 4000;
-        var current = 0;
-        var lastDevice = null;
-
+        var current = 0, lastDevice = null;
         function applyDevice(){
             var d = pickDevice(window.innerWidth, decoded[0].data ? decoded[0].data.breakpoints : null);
             var dev = (decoded[0].data && decoded[0].data.devices[d]) || { width:1280, height:720 };
-            el.style.paddingBottom = (dev.height / dev.width * 100) + '%';
-            for (var i = 0; i < decoded.length; i++){
-                var item = decoded[i];
-                if (!item.data) continue;
+            el.style.paddingBottom = (dev.height/dev.width*100) + '%';
+            for(var i=0;i<decoded.length;i++){
+                var item = decoded[i]; if(!item.data) continue;
                 var inner = item.el.querySelector('.sbm-slide');
-                if (!inner){
-                    inner = document.createElement('div');
-                    inner.className = 'sbm-slide';
-                    item.el.appendChild(inner);
-                }
+                if(!inner){ inner = document.createElement('div'); inner.className = 'sbm-slide'; item.el.appendChild(inner); }
                 var built = buildItemHTML(item.data, d);
                 inner.innerHTML = built.html;
                 inner.style.background = built.bg.color;
                 inner.style.width = dev.width + 'px';
                 inner.style.height = dev.height + 'px';
             }
-            lastDevice = d;
-            fit();
+            lastDevice = d; fit();
         }
         function fit(){
             var d = lastDevice;
             var dev = (decoded[0].data && decoded[0].data.devices[d]) || { width:1280, height:720 };
             var w = el.clientWidth || el.offsetWidth || 1;
             var s = w / dev.width;
-            for (var i = 0; i < decoded.length; i++){
+            for(var i=0;i<decoded.length;i++){
                 var inner = decoded[i].el.querySelector('.sbm-slide');
-                if (inner) inner.style.transform = 'scale(' + s + ')';
+                if(inner) inner.style.transform = 'scale(' + s + ')';
             }
         }
-        function show(idx){
-            for (var i = 0; i < decoded.length; i++){
-                decoded[i].el.classList.toggle('sbm-active', i === idx);
-            }
-        }
-        function next(){
-            current = (current + 1) % decoded.length;
-            show(current);
-        }
-        applyDevice();
-        show(0);
+        function show(idx){ for(var i=0;i<decoded.length;i++) decoded[i].el.classList.toggle('sbm-active', i===idx); }
+        function next(){ current = (current+1) % decoded.length; show(current); }
+        applyDevice(); show(0);
         var t;
-        window.addEventListener('resize', function(){
-            clearTimeout(t); t = setTimeout(applyDevice, 120);
-        });
-        if (decoded.length > 1 && time > 0){
-            setInterval(next, Math.max(500, time));
-        }
+        window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(applyDevice, 120); });
+        if(decoded.length > 1 && time > 0) setInterval(next, Math.max(500, time));
     }
     function ready(){
         var stages = document.querySelectorAll('.sbm-stage[data-sbm-b64]');
-        for (var i = 0; i < stages.length; i++) initStage(stages[i]);
+        for(var i=0;i<stages.length;i++) initStage(stages[i]);
         var sliders = document.querySelectorAll('.sbm-slider');
-        for (var j = 0; j < sliders.length; j++) initSlider(sliders[j]);
+        for(var j=0;j<sliders.length;j++) initSlider(sliders[j]);
     }
-    if (document.readyState === 'loading'){
-        document.addEventListener('DOMContentLoaded', ready);
-    } else { ready(); }
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
+    else ready();
     setTimeout(ready, 250);
 })();`;
 }
 
 function generateItemHTML(item){
   const usedFonts = detectUsedFonts();
-  const fontLink = usedFonts.length
-    ? `<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?${usedFonts.map(f=>'family='+f).join('&')}&display=swap" rel="stylesheet">`
-    : '';
-  const payload = {
-    id: item.id,
-    breakpoints: bp(),
-    devices: app.slider.devices,
-    bg: item.bg,
-    objects: item.objects
-  };
+  const fontLink = usedFonts.length ? `<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?${usedFonts.map(f=>'family='+f).join('&')}&display=swap" rel="stylesheet">` : '';
+  const payload = { id:item.id, breakpoints:bp(), devices:app.slider.devices, bg:item.bg, objects:item.objects };
   const dataJSON = JSON.stringify(payload);
   return `<!DOCTYPE html>
 <html lang="es">
@@ -1742,11 +1089,10 @@ function generateItemHTML(item){
 <title>Item ${item.id} — Slider Builder MorBriant</title>
 ${fontLink}
 <style>
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#05070f;
-    font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
-  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-  #slide{position:relative;overflow:hidden;transform-origin:center center;flex:0 0 auto;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#05070f;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+#slide{position:relative;overflow:hidden;transform-origin:center center;flex:0 0 auto;}
 ${KEYFRAMES}
 </style>
 </head>
@@ -1758,12 +1104,7 @@ const EFFECTS = ${JSON.stringify(EFFECTS)};
 (function(){
   var slide = document.getElementById('slide');
   var currentDevice = null;
-  function pickDevice(w){
-    var bp = DATA.breakpoints || { tablet:1024, mobile:767 };
-    if(w > bp.tablet) return 'desktop';
-    if(w > bp.mobile) return 'tablet';
-    return 'mobile';
-  }
+  function pickDevice(w){ var bp = DATA.breakpoints || {tablet:1024,mobile:767}; if(w>bp.tablet)return 'desktop'; if(w>bp.mobile)return 'tablet'; return 'mobile'; }
   function deviceChain(d){ if(d==='desktop')return['desktop']; if(d==='tablet')return['desktop','tablet']; return ['desktop','tablet','mobile']; }
   function getPath(o,p){ var parts=p.split('.'),c=o; for(var i=0;i<parts.length;i++){if(c==null)return undefined;c=c[parts[i]];} return c; }
   function getVal(o,p,d){ var ch=deviceChain(d); for(var i=ch.length-1;i>=1;i--){var b=o.r&&o.r[ch[i]];if(b){var v=getPath(b,p);if(v!==undefined)return v;}} return getPath(o,p); }
@@ -1781,10 +1122,7 @@ const EFFECTS = ${JSON.stringify(EFFECTS)};
     if(o.type==='image') s+='background-image:'+cssUrl(gp('src'))+';background-size:'+gp('fit')+';background-position:center;background-repeat:no-repeat;border-radius:'+gp('radius')+'px;box-shadow:'+(gp('shadow')?'0 14px 34px rgba(0,0,0,.4)':'none')+';';
     if(o.type==='button') s+='display:flex;align-items:center;justify-content:center;background:'+gp('bg')+';color:'+gp('color')+';font-size:'+gp('fontSize')+'px;font-weight:600;border-radius:'+gp('radius')+'px;text-decoration:none;font-family:Inter,system-ui,sans-serif;cursor:pointer;border:none;overflow:hidden;box-shadow:'+(gp('shadow')?'0 12px 28px rgba(0,0,0,.38)':'none')+';';
     var eff=getVal(o,'animation.effect',d);
-    if(eff&&eff!=='none'&&EFFECTS[eff]){
-      var dur=getVal(o,'animation.duration',d)||800, del=getVal(o,'animation.delay',d)||0, eas=getVal(o,'animation.easing',d)||'ease-out', dist=getVal(o,'animation.distance',d)||150;
-      s+='--dist:'+dist+'px;animation:'+EFFECTS[eff]+' '+dur+'ms '+eas+' '+del+'ms both;';
-    }
+    if(eff&&eff!=='none'&&EFFECTS[eff]){ var dur=getVal(o,'animation.duration',d)||800, del=getVal(o,'animation.delay',d)||0, eas=getVal(o,'animation.easing',d)||'ease-out', dist=getVal(o,'animation.distance',d)||150; s+='--dist:'+dist+'px;animation:'+EFFECTS[eff]+' '+dur+'ms '+eas+' '+del+'ms both;'; }
     return s;
   }
   function build(d){
@@ -1802,16 +1140,8 @@ const EFFECTS = ${JSON.stringify(EFFECTS)};
     }
     slide.innerHTML=html;
   }
-  function fit(){
-    var d=currentDevice||pickDevice(window.innerWidth); var dev=DATA.devices[d];
-    var s=Math.min(window.innerWidth/dev.width, window.innerHeight/dev.height);
-    slide.style.transform='scale('+s+')';
-  }
-  function render(){
-    var d=pickDevice(window.innerWidth);
-    if(d!==currentDevice){ currentDevice=d; build(d); }
-    fit();
-  }
+  function fit(){ var d=currentDevice||pickDevice(window.innerWidth); var dev=DATA.devices[d]; var s=Math.min(window.innerWidth/dev.width, window.innerHeight/dev.height); slide.style.transform='scale('+s+')'; }
+  function render(){ var d=pickDevice(window.innerWidth); if(d!==currentDevice){ currentDevice=d; build(d); } fit(); }
   var t; window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(render,120);});
   window.addEventListener('orientationchange',function(){clearTimeout(t);t=setTimeout(render,220);});
   render();
@@ -1821,35 +1151,61 @@ const EFFECTS = ${JSON.stringify(EFFECTS)};
 </html>`;
 }
 
-/* =========================================================
-   22. GENERADOR: SHORTCODE de un ITEM
-   ========================================================= */
 function phpSQ(s){ return "'" + String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'") + "'"; }
 function utf8ToBase64(str){
   const bytes = new TextEncoder().encode(str);
   let bin = ''; const chunk = 0x8000;
-  for(let i = 0; i < bytes.length; i += chunk){
-    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
-  }
+  for(let i = 0; i < bytes.length; i += chunk) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
   return btoa(bin);
 }
 
+/* =====================================================================
+   EXTRACCIÓN DE URLs para el shortcode.
+   Regla: si useUrlInShortcode === true Y el valor (src o image) es una
+   URL real (no un data: URI), se sustituye por un placeholder y la URL
+   se guarda como texto plano. El base64 NUNCA se extrae.
+   ===================================================================== */
+function extractUrlsForShortcode(payload){
+  const urlMap = {};
+  let counter = 0;
+  function placeholder(){ return '###SBMURL' + (counter++) + '###'; }
+  function walk(obj){
+    if(!obj || typeof obj !== 'object') return;
+    /* Cualquier nivel con la marca puede tener src (imagen objeto) o image (fondo) */
+    if(obj.useUrlInShortcode === true){
+      if(isUrlLike(obj.src)){
+        const ph = placeholder();
+        urlMap[ph] = obj.src;
+        obj.src = ph;
+      }
+      if(isUrlLike(obj.image)){
+        const ph = placeholder();
+        urlMap[ph] = obj.image;
+        obj.image = ph;
+      }
+    }
+    for(const k in obj){
+      if(Object.prototype.hasOwnProperty.call(obj, k)) walk(obj[k]);
+    }
+  }
+  walk(payload);
+  return urlMap;
+}
+
+function phpArrayLiteral(urlMap){
+  const keys = Object.keys(urlMap);
+  if(!keys.length) return 'array()';
+  return 'array(\n' + keys.map(k => '        ' + phpSQ(k) + ' => ' + phpSQ(urlMap[k])).join(',\n') + '\n    )';
+}
+
 function generateItemShortcode(item){
-  const payload = {
-    id: item.id,
-    breakpoints: bp(),
-    devices: app.slider.devices,
-    bg: item.bg,
-    objects: item.objects
-  };
+  const original = { id:item.id, breakpoints:bp(), devices:app.slider.devices, bg:item.bg, objects:item.objects };
+  const payload = JSON.parse(JSON.stringify(original));
+  const urlMap = extractUrlsForShortcode(payload);
   const json = JSON.stringify(payload);
   const b64 = utf8ToBase64(json);
 
-  const effectsSBM = {
-    none:null, fade:'sbmKFade', left:'sbmKLeft', right:'sbmKRight',
-    up:'sbmKUp', down:'sbmKDown', zoom:'sbmKZoom', rotate:'sbmKRotate', flip:'sbmKFlip'
-  };
-
+  const effectsSBM = { none:null, fade:'sbmKFade', left:'sbmKLeft', right:'sbmKRight', up:'sbmKUp', down:'sbmKDown', zoom:'sbmKZoom', rotate:'sbmKRotate', flip:'sbmKFlip' };
   const usedFonts = detectUsedFonts();
   const fontQuery = usedFonts.length ? usedFonts.map(f=>'family='+f).join('&')+'&display=swap' : '';
 
@@ -1866,25 +1222,26 @@ function generateItemShortcode(item){
 @keyframes sbmKFlip{from{opacity:0;transform:perspective(900px) rotateY(90deg)}to{opacity:var(--op,1);transform:perspective(900px) rotateY(0deg) rotate(var(--rot,0deg))}}`;
 
   const JS_ITEM = buildRuntimeJS(effectsSBM);
-
   const phpCSS = "    function slider_morbriant_get_item_css(){\n        return <<<'SBM_CSS'\n" + CSS_ITEM + "\nSBM_CSS;\n    }";
   const phpJS  = "    function slider_morbriant_get_item_js(){\n        return <<<'SBM_JS'\n" + JS_ITEM + "\nSBM_JS;\n    }";
   const phpFonts = fontQuery
-    ? "        $out .= '<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">';\n"
-    + "        $out .= '<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>';\n"
-    + "        $out .= '<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?" + fontQuery + "\">';\n"
+    ? "        $out .= '<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">';\n        $out .= '<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>';\n        $out .= '<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?" + fontQuery + "\">';\n"
     : "        // Sin Google Fonts\n";
+  const urlsLiteral = phpArrayLiteral(urlMap);
+  const urlCount = Object.keys(urlMap).length;
 
   return `<?php
 /**
  * ============================================================
  *  Slider Builder MorBriant — Item ID = ${item.id}
  * ============================================================
- *  Shortcode de este item:
+ *  Shortcode:  [slider_morbriant_item id="${item.id}"]
  *
- *      [slider_morbriant_item id="${item.id}"]
- *
- *  Pega este archivo al final de functions.php de tu tema.
+ *  · Las imágenes marcadas con "Usar URL en shortcode" usan SOLO su URL.
+ *    NO se incluye ningún dato base64 de esas imágenes (ni en el payload
+ *    ni en ningún otro sitio). El ahorro de peso es significativo.
+ *  · Las imágenes SIN la marca se siguen incluyendo en base64 dentro
+ *    del payload (como antes).
  * ============================================================
  */
 
@@ -1896,7 +1253,7 @@ ${phpCSS}
 
 ${phpJS}
 
-    function slider_morbriant_render_item($data, $id) {
+    function slider_morbriant_render_item($data, $id, $urls = array()) {
         static $assets_done = false;
         $slug = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $id);
         if ($slug === '') { $slug = substr(md5((string) $id), 0, 8); }
@@ -1906,37 +1263,45 @@ ${phpJS}
         $dw = isset($data['devices']['desktop']['width'])  ? max(1,(int)$data['devices']['desktop']['width'])  : 1280;
         $dh = isset($data['devices']['desktop']['height']) ? max(1,(int)$data['devices']['desktop']['height']) : 720;
         $pad = ($dh / $dw) * 100;
+
+        // URLs planas (sin base64). Escapamos "</" por si acaso.
+        $urls_json = function_exists('wp_json_encode') ? wp_json_encode($urls) : json_encode($urls);
+        if (!is_string($urls_json)) $urls_json = '{}';
+        $urls_json = str_replace('</', '<\\/', $urls_json);
+
         $out = '';
         if (!$assets_done) {
             $out .= '<style id="sbm-item-styles">' . slider_morbriant_get_item_css() . '</style>';
-            $out .= '<script id="sbm-item-runtime">' . slider_morbriant_get_item_js() . '<' . '/script>';
+            $out .= '<script id="sbm-item-runtime">' . slider_morbriant_get_item_js() . '</' . 'script>';
             $assets_done = true;
         }
 ${phpFonts}
         $out .= '<div class="sbm-stage" id="' . esc_attr($uid) . '"'
               . ' data-sbm-b64="' . esc_attr($b64) . '"'
-              . ' style="padding-bottom:' . esc_attr(number_format($pad, 4, '.', '')) . '%">'
-              . '</div>';
+              . ' style="padding-bottom:' . esc_attr(number_format($pad, 4, '.', '')) . '%">';
+        $out .= '<script type="application/json" class="sbm-urls">' . $urls_json . '</' . 'script>';
+        $out .= '</div>';
         return $out;
     }
 
     function slider_morbriant_item_shortcode($atts) {
         $atts = shortcode_atts(array('id' => '1'), $atts, 'slider_morbriant_item');
-        $id   = (string) $atts['id'];
+        $id = (string) $atts['id'];
         if (empty($GLOBALS['slider_morbriant_data'][$id])) {
-            if (current_user_can('manage_options')) {
-                return '<!-- Slider MorBriant: no existe el item "' . esc_html($id) . '" -->';
-            }
+            if (current_user_can('manage_options')) return '<!-- Slider MorBriant: no existe el item "' . esc_html($id) . '" -->';
             return '';
         }
-        return slider_morbriant_render_item($GLOBALS['slider_morbriant_data'][$id], $id);
+        $urls = isset($GLOBALS['slider_morbriant_urls'][$id]) ? $GLOBALS['slider_morbriant_urls'][$id] : array();
+        return slider_morbriant_render_item($GLOBALS['slider_morbriant_data'][$id], $id, $urls);
     }
     add_shortcode('slider_morbriant_item', 'slider_morbriant_item_shortcode');
 }
 
-if (!isset($GLOBALS['slider_morbriant_data'])) {
-    $GLOBALS['slider_morbriant_data'] = array();
-}
+if (!isset($GLOBALS['slider_morbriant_data'])) $GLOBALS['slider_morbriant_data'] = array();
+if (!isset($GLOBALS['slider_morbriant_urls'])) $GLOBALS['slider_morbriant_urls'] = array();
+
+/* URLs PLANAS de este item (${urlCount} imagen${urlCount===1?'':'es'} con "Usar URL en shortcode"): */
+$GLOBALS['slider_morbriant_urls'][${phpSQ(String(item.id))}] = ${urlsLiteral};
 
 $GLOBALS['slider_morbriant_data'][${phpSQ(String(item.id))}] = json_decode(
     base64_decode('${b64}'),
@@ -1945,22 +1310,12 @@ $GLOBALS['slider_morbriant_data'][${phpSQ(String(item.id))}] = json_decode(
 `;
 }
 
-/* =========================================================
-   23. GENERADOR: SHORTCODE del SLIDER (principal)
-   ========================================================= */
 function generateSliderShortcode(){
   const name = (app.slider.name || '').trim();
-  if(!name){
-    alert('El nombre del slider no puede estar vacío. Configúralo en ⚙ Slider antes de exportar.');
-    return null;
-  }
+  if(!name){ alert('El nombre del slider no puede estar vacío. Configúralo en ⚙ Slider antes de exportar.'); return null; }
   const ids = app.items.map(it => String(it.id));
 
-  const effectsSBM = {
-    none:null, fade:'sbmKFade', left:'sbmKLeft', right:'sbmKRight',
-    up:'sbmKUp', down:'sbmKDown', zoom:'sbmKZoom', rotate:'sbmKRotate', flip:'sbmKFlip'
-  };
-
+  const effectsSBM = { none:null, fade:'sbmKFade', left:'sbmKLeft', right:'sbmKRight', up:'sbmKUp', down:'sbmKDown', zoom:'sbmKZoom', rotate:'sbmKRotate', flip:'sbmKFlip' };
   const usedFonts = detectUsedFonts();
   const fontQuery = usedFonts.length ? usedFonts.map(f=>'family='+f).join('&')+'&display=swap' : '';
 
@@ -1994,13 +1349,10 @@ function generateSliderShortcode(){
 @keyframes sbmKFlip{from{opacity:0;transform:perspective(900px) rotateY(90deg)}to{opacity:var(--op,1);transform:perspective(900px) rotateY(0deg) rotate(var(--rot,0deg))}}`;
 
   const JS_MAIN = buildRuntimeJS(effectsSBM);
-
   const phpCSS = "    function slider_morbriant_get_main_css(){\n        return <<<'SBM_CSS'\n" + CSS_MAIN + "\nSBM_CSS;\n    }";
   const phpJS  = "    function slider_morbriant_get_main_js(){\n        return <<<'SBM_JS'\n" + JS_MAIN + "\nSBM_JS;\n    }";
   const phpFonts = fontQuery
-    ? "            $out .= '<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">';\n"
-    + "            $out .= '<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>';\n"
-    + "            $out .= '<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?" + fontQuery + "\">';\n"
+    ? "            $out .= '<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">';\n            $out .= '<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>';\n            $out .= '<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?" + fontQuery + "\">';\n"
     : "            // Sin Google Fonts";
 
   return `<?php
@@ -2008,25 +1360,19 @@ function generateSliderShortcode(){
  * ============================================================
  *  Slider Builder MorBriant — Shortcode principal del slider
  * ============================================================
- *  Nombre del slider : "${name}"
- *  Items disponibles : ${ids.join(', ')}
+ *  Nombre : "${name}"
+ *  Items  : ${ids.join(', ')}
  *
- *  Shortcode:
+ *  Shortcode:  [slider_morbriant nombre="${name}" items="${ids.join(',')}"]
  *
- *      [slider_morbriant nombre="${name}" items="${ids.join(',')}"]
- *
- *  · El parámetro "nombre" es obligatorio (no puede estar vacío).
- *  · El parámetro "items" es una lista de números de pestaña separados por comas.
- *  · Solo se muestran los items cuyos shortcodes [slider_morbriant_item id="N"]
- *    hayan sido pegados previamente en functions.php.
+ *  · Para las imágenes marcadas con "Usar URL en shortcode" se usa SOLO
+ *    su URL: no se incluye base64 de esas imágenes en ningún sitio.
  * ============================================================
  */
 
 if (!defined('ABSPATH')) { exit; }
 
-if (!isset($GLOBALS['slider_morbriant_sliders'])) {
-    $GLOBALS['slider_morbriant_sliders'] = array();
-}
+if (!isset($GLOBALS['slider_morbriant_sliders'])) $GLOBALS['slider_morbriant_sliders'] = array();
 $GLOBALS['slider_morbriant_sliders'][${phpSQ(name)}] = array(
     'name'           => ${phpSQ(name)},
     'transition'     => ${phpSQ(app.slider.transition)},
@@ -2042,12 +1388,11 @@ ${phpJS}
     function slider_morbriant_render_slider($items, $config) {
         static $assets_done = false;
         $transition = isset($config['transition']) ? $config['transition'] : 'fade';
-        $time       = isset($config['transitionTime']) ? (int)$config['transitionTime'] : 4000;
-
+        $time = isset($config['transitionTime']) ? (int)$config['transitionTime'] : 4000;
         $out = '';
         if (!$assets_done) {
             $out .= '<style id="sbm-main-styles">' . slider_morbriant_get_main_css() . '</style>';
-            $out .= '<script id="sbm-main-runtime">' . slider_morbriant_get_main_js() . '<' . '/script>';
+            $out .= '<script id="sbm-main-runtime">' . slider_morbriant_get_main_js() . '</' . 'script>';
             $assets_done = true;
         }
 ${phpFonts}
@@ -2069,9 +1414,16 @@ ${phpFonts}
 
         foreach ($items as $entry) {
             $json = function_exists('wp_json_encode') ? wp_json_encode($entry['data']) : json_encode($entry['data']);
-            $b64  = base64_encode($json);
+            $b64 = base64_encode($json);
+            $urls = isset($entry['urls']) && is_array($entry['urls']) ? $entry['urls'] : array();
+            $urls_json = function_exists('wp_json_encode') ? wp_json_encode($urls) : json_encode($urls);
+            if (!is_string($urls_json)) $urls_json = '{}';
+            $urls_json = str_replace('</', '<\\/', $urls_json);
+
             $out .= '<div class="sbm-slider-slide" data-sbm-id="' . esc_attr($entry['id']) . '"'
-                  . ' data-sbm-b64="' . esc_attr($b64) . '"></div>';
+                  . ' data-sbm-b64="' . esc_attr($b64) . '">';
+            $out .= '<script type="application/json" class="sbm-urls">' . $urls_json . '<' . '/script>';
+            $out .= '</div>';
         }
 
         $out .= '</div></div>';
@@ -2079,35 +1431,27 @@ ${phpFonts}
     }
 
     function slider_morbriant_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'nombre' => '',
-            'items'  => ''
-        ), $atts, 'slider_morbriant');
-
+        $atts = shortcode_atts(array('nombre' => '', 'items' => ''), $atts, 'slider_morbriant');
         $nombre = trim((string)$atts['nombre']);
         if ($nombre === '') {
-            if (current_user_can('manage_options')) {
-                return '<!-- Slider MorBriant: falta el parámetro obligatorio "nombre" -->';
-            }
+            if (current_user_can('manage_options')) return '<!-- Slider MorBriant: falta "nombre" -->';
             return '';
         }
-
-        $config = isset($GLOBALS['slider_morbriant_sliders'][$nombre])
-            ? $GLOBALS['slider_morbriant_sliders'][$nombre]
-            : array('name'=>$nombre, 'transition'=>'fade', 'transitionTime'=>4000);
-
-        $raw   = trim((string)$atts['items']);
-        $ids   = array_filter(array_map('trim', explode(',', $raw)));
+        $config = isset($GLOBALS['slider_morbriant_sliders'][$nombre]) ? $GLOBALS['slider_morbriant_sliders'][$nombre] : array('name'=>$nombre, 'transition'=>'fade', 'transitionTime'=>4000);
+        $raw = trim((string)$atts['items']);
+        $ids = array_filter(array_map('trim', explode(',', $raw)));
         $items = array();
         foreach ($ids as $id) {
             if (!empty($GLOBALS['slider_morbriant_data'][$id])) {
-                $items[] = array('id'=>$id, 'data'=>$GLOBALS['slider_morbriant_data'][$id]);
+                $items[] = array(
+                    'id'   => $id,
+                    'data' => $GLOBALS['slider_morbriant_data'][$id],
+                    'urls' => isset($GLOBALS['slider_morbriant_urls'][$id]) ? $GLOBALS['slider_morbriant_urls'][$id] : array()
+                );
             }
         }
         if (empty($items)) {
-            if (current_user_can('manage_options')) {
-                return '<!-- Slider MorBriant: no se encontró ninguno de los items indicados -->';
-            }
+            if (current_user_can('manage_options')) return '<!-- Slider MorBriant: no se encontró ninguno de los items -->';
             return '';
         }
         return slider_morbriant_render_slider($items, $config);
@@ -2117,11 +1461,7 @@ ${phpFonts}
 `;
 }
 
-/* =========================================================
-   24. MODAL: CONFIGURACIÓN DEL SLIDER
-   ========================================================= */
 const sliderModal = $('#sliderModal');
-
 function openSliderModal(){
   $('#cfgName').value = app.slider.name;
   $('#cfgTransition').value = app.slider.transition;
@@ -2134,78 +1474,47 @@ function openSliderModal(){
   $('#cfgDtH').value = app.slider.devices.tablet.height;
   $('#cfgDmW').value = app.slider.devices.mobile.width;
   $('#cfgDmH').value = app.slider.devices.mobile.height;
-  updateCfgBpPreview();
-  sliderModal.classList.add('open');
+  updateCfgBpPreview(); sliderModal.classList.add('open');
 }
 function closeSliderModal(){ sliderModal.classList.remove('open'); }
 function updateCfgBpPreview(){
   const t = parseInt($('#cfgBpTablet').value) || 1024;
   const m = parseInt($('#cfgBpMobile').value) || 767;
-  const range = (m+1) + '–' + t;
-  $('#cfgBpPreview').innerHTML =
-    `Escritorio: &gt; <span>${t}</span>px<br>` +
-    `Tablet: <span>${range}</span>px<br>` +
-    `Móvil: ≤ <span>${m}</span>px`;
+  $('#cfgBpPreview').innerHTML = `Escritorio: &gt; <span>${t}</span>px<br>Tablet: <span>${m+1}–${t}</span>px<br>Móvil: ≤ <span>${m}</span>px`;
 }
 ['#cfgBpTablet','#cfgBpMobile'].forEach(sel => $(sel).addEventListener('input', updateCfgBpPreview));
-
 $('#btnSliderConfig').addEventListener('click', openSliderModal);
 $('#cfgCancel').addEventListener('click', closeSliderModal);
 sliderModal.addEventListener('click', e => { if(e.target === sliderModal) closeSliderModal(); });
-
 $('#cfgSave').addEventListener('click', () => {
   const name = $('#cfgName').value.trim();
   if(!name){ alert('El nombre del slider no puede estar vacío.'); return; }
-
   let t = parseInt($('#cfgBpTablet').value) || 1024;
   let m = parseInt($('#cfgBpMobile').value) || 767;
-  t = Math.max(320, Math.min(5000, t));
-  m = Math.max(240, Math.min(4999, m));
+  t = Math.max(320, Math.min(5000, t)); m = Math.max(240, Math.min(4999, m));
   if(m >= t) m = t - 1;
-
   app.slider.name = name;
   app.slider.transition = $('#cfgTransition').value;
   app.slider.transitionTime = Math.max(500, Math.min(60000, parseInt($('#cfgTime').value) || 4000));
   app.slider.breakpoints = { tablet:t, mobile:m };
   app.slider.devices = {
-    desktop:{ width: Math.max(200, parseInt($('#cfgDwW').value) || 1280),
-              height:Math.max(200, parseInt($('#cfgDwH').value) || 720) },
-    tablet: { width: Math.max(200, parseInt($('#cfgDtW').value) || 768),
-              height:Math.max(200, parseInt($('#cfgDtH').value) || 1024) },
-    mobile: { width: Math.max(200, parseInt($('#cfgDmW').value) || 390),
-              height:Math.max(200, parseInt($('#cfgDmH').value) || 844) }
+    desktop:{ width: Math.max(200, parseInt($('#cfgDwW').value)||1280), height: Math.max(200, parseInt($('#cfgDwH').value)||720) },
+    tablet: { width: Math.max(200, parseInt($('#cfgDtW').value)||768),  height: Math.max(200, parseInt($('#cfgDtH').value)||1024) },
+    mobile: { width: Math.max(200, parseInt($('#cfgDmW').value)||390),  height: Math.max(200, parseInt($('#cfgDmH').value)||844) }
   };
-  closeSliderModal();
-  syncSidebar();
-  renderAll();
-  renderProps();
+  closeSliderModal(); syncSidebar(); renderAll(); renderProps();
 });
-
 $('#cfgExport').addEventListener('click', () => {
   const name = $('#cfgName').value.trim() || app.slider.name || 'slider';
-  const payload = {
-    version: 1,
-    type: 'slider_morbriant_slider',
-    name: name,
-    transition: $('#cfgTransition').value,
-    transitionTime: parseInt($('#cfgTime').value) || 4000,
-    breakpoints: {
-      tablet: parseInt($('#cfgBpTablet').value) || 1024,
-      mobile: parseInt($('#cfgBpMobile').value) || 767
-    },
-    devices: {
-      desktop: { width: parseInt($('#cfgDwW').value) || 1280, height: parseInt($('#cfgDwH').value) || 720 },
-      tablet:  { width: parseInt($('#cfgDtW').value) || 768,  height: parseInt($('#cfgDtH').value) || 1024 },
-      mobile:  { width: parseInt($('#cfgDmW').value) || 390,  height: parseInt($('#cfgDmH').value) || 844 }
-    }
+  const payload = { version:1, type:'slider_morbriant_slider', name, transition: $('#cfgTransition').value, transitionTime: parseInt($('#cfgTime').value)||4000,
+    breakpoints:{ tablet: parseInt($('#cfgBpTablet').value)||1024, mobile: parseInt($('#cfgBpMobile').value)||767 },
+    devices:{ desktop:{width: parseInt($('#cfgDwW').value)||1280, height: parseInt($('#cfgDwH').value)||720}, tablet:{width: parseInt($('#cfgDtW').value)||768, height: parseInt($('#cfgDtH').value)||1024}, mobile:{width: parseInt($('#cfgDmW').value)||390, height: parseInt($('#cfgDmH').value)||844} }
   };
   download('slider-morbriant-config.json', JSON.stringify(payload, null, 2), 'application/json');
 });
-
 $('#cfgImport').addEventListener('click', () => $('#cfgFileImport').click());
 $('#cfgFileImport').addEventListener('change', e => {
-  const f = e.target.files && e.target.files[0];
-  if(!f) return;
+  const f = e.target.files && e.target.files[0]; if(!f) return;
   const r = new FileReader();
   r.onload = ev => {
     try{
@@ -2214,66 +1523,33 @@ $('#cfgFileImport').addEventListener('change', e => {
       if(d.name != null) $('#cfgName').value = d.name;
       if(d.transition) $('#cfgTransition').value = d.transition;
       if(d.transitionTime) $('#cfgTime').value = d.transitionTime;
-      if(d.breakpoints){
-        if(d.breakpoints.tablet != null) $('#cfgBpTablet').value = d.breakpoints.tablet;
-        if(d.breakpoints.mobile != null) $('#cfgBpMobile').value = d.breakpoints.mobile;
-      }
-      if(d.devices){
-        if(d.devices.desktop){ $('#cfgDwW').value = d.devices.desktop.width; $('#cfgDwH').value = d.devices.desktop.height; }
-        if(d.devices.tablet) { $('#cfgDtW').value = d.devices.tablet.width;  $('#cfgDtH').value = d.devices.tablet.height; }
-        if(d.devices.mobile) { $('#cfgDmW').value = d.devices.mobile.width;  $('#cfgDmH').value = d.devices.mobile.height; }
-      }
+      if(d.breakpoints){ if(d.breakpoints.tablet != null) $('#cfgBpTablet').value = d.breakpoints.tablet; if(d.breakpoints.mobile != null) $('#cfgBpMobile').value = d.breakpoints.mobile; }
+      if(d.devices){ if(d.devices.desktop){$('#cfgDwW').value=d.devices.desktop.width;$('#cfgDwH').value=d.devices.desktop.height;} if(d.devices.tablet){$('#cfgDtW').value=d.devices.tablet.width;$('#cfgDtH').value=d.devices.tablet.height;} if(d.devices.mobile){$('#cfgDmW').value=d.devices.mobile.width;$('#cfgDmH').value=d.devices.mobile.height;} }
       updateCfgBpPreview();
-    }catch(err){
-      alert('No se pudo importar el JSON del slider:\n' + err.message);
-    }
+    }catch(err){ alert('No se pudo importar el JSON:\n' + err.message); }
   };
-  r.readAsText(f);
-  e.target.value = '';
+  r.readAsText(f); e.target.value = '';
 });
-
-/* Botón para exportar el shortcode principal del slider */
 (function addSliderShortcodeButton(){
   const btn = document.createElement('button');
-  btn.className = 'wp';
-  btn.id = 'btnExportSliderShortcode';
-  btn.title = 'Exportar shortcode principal del slider';
-  btn.textContent = '⬇ Shortcode slider';
+  btn.className = 'wp'; btn.id = 'btnExportSliderShortcode';
+  btn.title = 'Exportar shortcode principal del slider'; btn.textContent = '⬇ Shortcode slider';
   btn.addEventListener('click', () => {
-    const php = generateSliderShortcode();
-    if(!php) return;
+    const php = generateSliderShortcode(); if(!php) return;
     const name = (app.slider.name || 'slider').replace(/[^a-zA-Z0-9_-]+/g,'-');
     download('slider-morbriant-' + name + '.shortcode', php, 'text/plain');
   });
   const spacer = document.querySelector('.topbar .spacer');
-  if(spacer && spacer.nextSibling){
-    spacer.parentNode.insertBefore(btn, spacer.nextSibling);
-  } else {
-    document.querySelector('.topbar').appendChild(btn);
-  }
+  if(spacer && spacer.nextSibling) spacer.parentNode.insertBefore(btn, spacer.nextSibling);
+  else document.querySelector('.topbar').appendChild(btn);
 })();
 
-/* =========================================================
-   25. PANELES MÓVILES
-   ========================================================= */
-$('#btnSidebar').addEventListener('click', () => {
-  sidebar.classList.toggle('open');
-  propsPanel.classList.remove('open');
-});
-$('#btnPropsPanel').addEventListener('click', () => {
-  propsPanel.classList.toggle('open');
-  sidebar.classList.remove('open');
-});
+$('#btnSidebar').addEventListener('click', () => { sidebar.classList.toggle('open'); propsPanel.classList.remove('open'); });
+$('#btnPropsPanel').addEventListener('click', () => { propsPanel.classList.toggle('open'); sidebar.classList.remove('open'); });
 
-/* =========================================================
-   26. INICIALIZACIÓN
-   ========================================================= */
 (function init(){
   app.items.push(newDefaultItem());
-  renderTabs();
-  syncSidebar();
-  renderAll();
-  renderProps();
+  renderTabs(); syncSidebar(); renderAll(); renderProps();
 })();
 </script>
 </body>
