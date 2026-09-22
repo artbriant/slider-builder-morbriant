@@ -2,11 +2,13 @@
 Builder de Slider
 1.0:  Builder de Slider drag & drop con opción de importar y exportar en json y exportar en html
 1.1:  Agregadas opciones responsives.
-Versión: 1.1
+1.2:  Permitimos cambiar los breakpints en el Slider Builder.
+Versión: 1.2
 Autor: MorBriant
 ==========================================
 Responsive Editing & Device-Aware Design
 
+Versión 1.1:
 The editor works like a mini design tool where every element can have unique settings for desktop, tablet, and mobile.
 
     Device switcher: Use the top bar buttons to jump between desktop, tablet, and mobile. Each device has its own canvas size and background.
@@ -20,3 +22,7 @@ The editor works like a mini design tool where every element can have unique set
     Export & import: Save your entire project as JSON or export a standalone HTML file that automatically adapts to the viewer's screen size, using the same device-specific rules.
 
 Optimization Tip: You can adjust the default device dimensions and breakpoints in the blankProject() function and the pickDevice() breakpoints (1025px and 768px) to better fit your own responsive targets.
+
+
+Versión 1.2
+Here's the updated Slide Builder MorBriant with configurable breakpoints for tablet and mobile, integrated into the sidebar and the exported HTML.
