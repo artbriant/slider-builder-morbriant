@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Slider Builder MorBriant (Versión 2.0)</title>
+<title>Slider Builder MorBriant (Versión 2.1)</title>
 <style>
 :root{
   --bg:#0b1020; --panel:#121a2e; --panel2:#1a2440; --line:#26314f;
@@ -41,7 +41,6 @@ button.mob{display:none;}
 .devswitch .dlabel{display:none;}
 @media (min-width:1280px){ .devswitch .dlabel{display:inline;} }
 
-/* tab bar */
 .tabbar{display:flex;gap:2px;padding:0 8px;background:#0f1728;border-bottom:1px solid var(--line);
   overflow-x:auto;flex:0 0 auto;align-items:center;min-height:36px;}
 .tab{display:flex;align-items:center;gap:6px;padding:6px 12px;border:none;background:transparent;
@@ -77,6 +76,13 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 input[type=file]{font-size:11px;color:var(--muted);margin-top:6px;width:100%;}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 select option{background:#0d1428;color:#e6ecff;}
+
+/* ---- Fila de URL con botón ---- */
+.url-row{display:flex;gap:6px;align-items:stretch;}
+.url-row input[type=text]{flex:1;min-width:0;}
+.url-btn{flex:0 0 auto;padding:7px 10px;font-size:11.5px;font-weight:600;
+  background:#1e3a6b;border-color:#2b4f8a;color:#bfd8ff;letter-spacing:.3px;}
+.url-btn:hover{background:#2b4f8a;border-color:#4a7ec9;color:#fff;}
 
 .palette{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .pal{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;
@@ -150,7 +156,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
   border-radius:8px;padding:7px 9px;line-height:1.6;margin-top:8px;}
 .bp-preview span{color:#8fc0ff;font-weight:600;}
 
-/* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(5,8,18,.72);backdrop-filter:blur(5px);
   z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
@@ -247,8 +252,11 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
       <p class="hint" id="bgHint">Cada dispositivo puede tener su propio fondo para este item.</p>
       <label class="lbl">Color</label>
       <input type="color" id="bgColor" value="#0f172a">
-      <label class="lbl">Imagen de fondo (URL)</label>
-      <input type="text" id="bgImage" placeholder="https://...">
+      <label class="lbl">Imagen de fondo</label>
+      <div class="url-row">
+        <input type="text" id="bgImage" placeholder="https://...">
+        <button type="button" id="bgImagePrompt" class="url-btn" title="Introducir URL de la imagen de fondo">🔗 URL</button>
+      </div>
       <input type="file" id="bgFile" accept="image/*">
       <label class="lbl">Ajuste</label>
       <select id="bgFit">
@@ -281,7 +289,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
   <aside class="props" id="propsPanel"></aside>
 </div>
 
-<!-- ============ MODAL: CONFIGURACIÓN DEL SLIDER ============ -->
 <div class="modal-overlay" id="sliderModal">
   <div class="modal">
     <h2><span class="icon">⚙</span> Configuración del Slider</h2>
@@ -1101,7 +1108,11 @@ function renderProps(){
     h += chkHTML(o,'props.italic',P.italic,'Cursiva');
   }
   if(o.type === 'image'){
-    h += rowCtrl(o,'props.src','URL',`<input type="text" data-prop="props.src" value="${escAttr(P.src)}">`);
+    h += rowCtrl(o,'props.src','URL',
+      `<div class="url-row">
+         <input type="text" data-prop="props.src" value="${escAttr(P.src)}">
+         <button type="button" class="url-btn" data-url-prompt="props.src" title="Introducir / cambiar URL de la imagen">🔗 URL</button>
+       </div>`);
     h += `<input type="file" data-imgfile accept="image/*">`;
     h += rowCtrl(o,'props.fit','Ajuste', selectHTML('props.fit',
       [['cover','Cubrir'],['contain','Contener'],['fill','Estirar']], P.fit));
@@ -1175,6 +1186,24 @@ propsPanel.addEventListener('click', e => {
   clearOverride(o, btn.dataset.reset, curDevice());
   renderObjects(); renderProps();
 });
+
+/* ---------- NUEVO: prompt de URL para imágenes de objetos ---------- */
+propsPanel.addEventListener('click', e => {
+  const btn = e.target.closest('[data-url-prompt]');
+  if(!btn) return;
+  e.preventDefault();
+  const o = getSel(); if(!o) return;
+  const path = btn.dataset.urlPrompt; // 'props.src'
+  const cur = getVal(o, path, curDevice()) || '';
+  const url = prompt('Introduce la URL de la imagen:', cur);
+  if(url === null) return;       // cancelado
+  const clean = url.trim();
+  if(!clean) return;              // vacío → no cambiar
+  setVal(o, path, clean, curDevice());
+  renderProps();
+  renderObjects();
+});
+
 propsPanel.addEventListener('change', e => {
   const f = e.target.closest('[data-imgfile]');
   if(!f || !f.files || !f.files[0]) return;
@@ -1271,6 +1300,18 @@ $('#btnClearBg').addEventListener('click', () => {
   syncSidebar(); renderBg();
 });
 
+/* ---------- NUEVO: prompt de URL para el fondo de la imagen ---------- */
+$('#bgImagePrompt').addEventListener('click', () => {
+  const cur = ($('#bgImage').value || '').trim() || (getBg().image || '');
+  const url = prompt('Introduce la URL de la imagen de fondo:', cur);
+  if(url === null) return;
+  const clean = url.trim();
+  if(!clean) return;
+  setBg('image', clean);
+  $('#bgImage').value = clean.startsWith('data:') ? '' : clean;
+  renderBg();
+});
+
 /* =========================================================
    18. TECLADO
    ========================================================= */
@@ -1326,7 +1367,6 @@ $('#fileImport').addEventListener('change', e => {
       const data = JSON.parse(ev.target.result);
       if(!data || !Array.isArray(data.objects)) throw new Error('Formato inválido');
 
-      /* Validar dimensiones y breakpoints */
       const warns = [];
       if(data.devices){
         DEVICE_KEYS.forEach(k => {
@@ -1351,7 +1391,6 @@ $('#fileImport').addEventListener('change', e => {
         }
       }
 
-      /* Normalizar objetos */
       data.objects.forEach(o => {
         if(!o.r) o.r = { tablet:{}, mobile:{} };
         if(!o.r.tablet) o.r.tablet = {};
@@ -1362,8 +1401,6 @@ $('#fileImport').addEventListener('change', e => {
           o.props.borderW = o.props.borderW || 0;
         }
       });
-
-      /* Reasignar ids únicos a los objetos */
       data.objects.forEach(o => o.id = uid());
 
       const item = curItem();
@@ -1441,7 +1478,6 @@ function detectUsedFonts(){
   return Array.from(used);
 }
 
-/* --- Runtime JS común (cliente) para item y slider --- */
 function buildRuntimeJS(effectsMap){
   return `(function(){
     var EFFECTS = ${JSON.stringify(effectsMap)};
@@ -1572,7 +1608,6 @@ function buildRuntimeJS(effectsMap){
         for (var j = 0; j < bytes.length; j++) s += String.fromCharCode(bytes[j]);
         try { return decodeURIComponent(escape(s)); } catch(e){ return s; }
     }
-    /* --- Item stage --- */
     function initStage(el){
         if (el.dataset.sbmInit === '1') return;
         el.dataset.sbmInit = '1';
@@ -1605,7 +1640,6 @@ function buildRuntimeJS(effectsMap){
         });
         render();
     }
-    /* --- Slider (múltiples items) --- */
     function initSlider(el){
         if (el.dataset.sbmInit === '1') return;
         el.dataset.sbmInit = '1';
@@ -1700,7 +1734,6 @@ function generateItemHTML(item){
     objects: item.objects
   };
   const dataJSON = JSON.stringify(payload);
-  const runtimeJS = buildRuntimeJS(EFFECTS);
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -1852,7 +1885,6 @@ function generateItemShortcode(item){
  *      [slider_morbriant_item id="${item.id}"]
  *
  *  Pega este archivo al final de functions.php de tu tema.
- *  Es seguro pegarlo varias veces (el framework se registra una sola vez).
  * ============================================================
  */
 
@@ -1987,15 +2019,11 @@ function generateSliderShortcode(){
  *  · El parámetro "items" es una lista de números de pestaña separados por comas.
  *  · Solo se muestran los items cuyos shortcodes [slider_morbriant_item id="N"]
  *    hayan sido pegados previamente en functions.php.
- *  · Pega este archivo al final de functions.php.
  * ============================================================
  */
 
 if (!defined('ABSPATH')) { exit; }
 
-/* ------------------------------------------------------------
-   Registro de sliders (nombre → configuración)
-   ------------------------------------------------------------ */
 if (!isset($GLOBALS['slider_morbriant_sliders'])) {
     $GLOBALS['slider_morbriant_sliders'] = array();
 }
@@ -2005,9 +2033,6 @@ $GLOBALS['slider_morbriant_sliders'][${phpSQ(name)}] = array(
     'transitionTime' => ${parseInt(app.slider.transitionTime,10) || 4000}
 );
 
-/* ------------------------------------------------------------
-   Framework del slider (se registra una sola vez)
-   ------------------------------------------------------------ */
 if (!function_exists('slider_morbriant_render_slider')) {
 
 ${phpCSS}
@@ -2027,7 +2052,6 @@ ${phpJS}
         }
 ${phpFonts}
 
-        /* Aspect ratio basado en el primer item (todos comparten dims) */
         $dw = 1280; $dh = 720;
         foreach ($items as $it) {
             if (!empty($it['data']['devices']['desktop']['width'])) {
@@ -2113,9 +2137,7 @@ function openSliderModal(){
   updateCfgBpPreview();
   sliderModal.classList.add('open');
 }
-function closeSliderModal(){
-  sliderModal.classList.remove('open');
-}
+function closeSliderModal(){ sliderModal.classList.remove('open'); }
 function updateCfgBpPreview(){
   const t = parseInt($('#cfgBpTablet').value) || 1024;
   const m = parseInt($('#cfgBpMobile').value) || 767;
@@ -2159,7 +2181,6 @@ $('#cfgSave').addEventListener('click', () => {
   renderProps();
 });
 
-/* Exportar JSON del slider */
 $('#cfgExport').addEventListener('click', () => {
   const name = $('#cfgName').value.trim() || app.slider.name || 'slider';
   const payload = {
@@ -2181,7 +2202,6 @@ $('#cfgExport').addEventListener('click', () => {
   download('slider-morbriant-config.json', JSON.stringify(payload, null, 2), 'application/json');
 });
 
-/* Importar JSON del slider */
 $('#cfgImport').addEventListener('click', () => $('#cfgFileImport').click());
 $('#cfgFileImport').addEventListener('change', e => {
   const f = e.target.files && e.target.files[0];
@@ -2212,7 +2232,7 @@ $('#cfgFileImport').addEventListener('change', e => {
   e.target.value = '';
 });
 
-/* Botón para exportar el shortcode principal — lo añadimos al topbar */
+/* Botón para exportar el shortcode principal del slider */
 (function addSliderShortcodeButton(){
   const btn = document.createElement('button');
   btn.className = 'wp';
