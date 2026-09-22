@@ -4,7 +4,7 @@ Builder de Slider
 1.1:  Agregadas opciones responsives.
 1.2:  Permitimos cambiar los breakpints en el Slider Builder.
 1.3:  Agregamos la opción de crear un shortcode para wordpress con el slider que hayamos creado.
-      SHortcode: [slider_morbriant id="1"]
+      Shortcode: [slider_morbriant id="1"]
 Versión: 1.3
 Autor: MorBriant
 ==========================================
