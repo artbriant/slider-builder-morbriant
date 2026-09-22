@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Slider Builder MorBriant (Versión 2.3.1)</title>
+<title>Slider Builder MorBriant (Versión 2.3.2)</title>
 <style>
 :root{--bg:#0b1020;--panel:#121a2e;--panel2:#1a2440;--line:#26314f;--txt:#e6ecff;--muted:#8b9ac4;--accent:#6366f1;--dev:#4f9cf9;}
 *{box-sizing:border-box;}
@@ -57,6 +57,13 @@ select option{background:#0d1428;color:#e6ecff;}
 .url-row input[type=text]{flex:1;min-width:0;}
 .url-btn{flex:0 0 auto;padding:7px 10px;font-size:11.5px;font-weight:600;background:#1e3a6b;border-color:#2b4f8a;color:#bfd8ff;letter-spacing:.3px;}
 .url-btn:hover{background:#2b4f8a;border-color:#4a7ec9;color:#fff;}
+.sbm-url-check{margin-top:6px;font-size:11.5px;padding:7px 9px;background:#0d1428;border:1px solid var(--line);border-radius:7px;display:flex;align-items:center;gap:8px;color:#cbd5ff;cursor:pointer;transition:.15s;}
+.sbm-url-check input[type=checkbox]{accent-color:#22c55e;width:15px;height:15px;cursor:pointer;flex:0 0 auto;margin:0;}
+.sbm-url-check.disabled{opacity:.45;cursor:not-allowed;}
+.sbm-url-check.disabled input[type=checkbox]{cursor:not-allowed;}
+.sbm-url-check .urlicon{font-size:12px;}
+.sbm-url-note{font-size:10.5px;color:#7ddfa0;margin-top:4px;padding:4px 6px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:5px;line-height:1.4;}
+.sbm-url-note.b64{color:#ffc98b;background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3);}
 .palette{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .pal{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;background:var(--panel2);border:1px dashed #35446b;border-radius:10px;cursor:grab;font-size:11.5px;color:#cbd5ff;user-select:none;transition:.15s;}
 .pal:hover{background:#22305a;border-color:var(--accent);transform:translateY(-1px);}
@@ -343,6 +350,15 @@ const DEVICE_KEYS = ['desktop','tablet','mobile'];
 const DEVICE_META = { desktop:{label:'Escritorio',short:'desktop'}, tablet:{label:'Tablet',short:'tablet'}, mobile:{label:'Móvil',short:'mobile'} };
 function deviceChain(d){ if(d==='desktop')return['desktop']; if(d==='tablet')return['desktop','tablet']; return ['desktop','tablet','mobile']; }
 
+/* === Utilidad: ¿es una URL real (no un data URI base64)? === */
+function isUrlLike(s){
+  return typeof s === 'string' && s.trim().length > 0 && !s.trim().startsWith('data:');
+}
+/* === Utilidad: ¿es un data URI base64? === */
+function isBase64Like(s){
+  return typeof s === 'string' && s.trim().startsWith('data:');
+}
+
 let app = {
   slider: {
     name: 'Mi Slider',
@@ -400,7 +416,7 @@ function makeObject(type, cx, cy, device){
   let w = 200, h = 120;
   if(type === 'box'){ w = 260; h = 170; base.props = { bg:'#3b82f6', radius:16, borderW:0, borderColor:'#ffffff', shadow:true }; }
   if(type === 'text'){ w = 440; h = 96; base.props = { text:'Tu texto aquí', color:'#ffffff', fontSize:56, bold:true, italic:false, align:'center', family:FONTS[0].stack, lineHeight:1.2, letterSpacing:0, padding:8 }; }
-  if(type === 'image'){ w = 320; h = 220; base.props = { src:'https://picsum.photos/640/440', fit:'cover', radius:12, shadow:true, loading:'lazy', lazyClass:'', fetchpriority:'auto' }; }
+  if(type === 'image'){ w = 320; h = 220; base.props = { src:'https://picsum.photos/640/440', fit:'cover', radius:12, shadow:true, loading:'lazy', lazyClass:'', fetchpriority:'auto', useUrlInShortcode:false }; }
   if(type === 'button'){ w = 220; h = 64; base.props = { text:'Comenzar', href:'#', bg:'#22c55e', color:'#04121f', fontSize:20, radius:32, shadow:true }; }
   base.w = w; base.h = h;
   base.x = Math.round(dx - w/2); base.y = Math.round(dy - h/2);
@@ -624,7 +640,7 @@ function renderProps(){
     return;
   }
   const g = p => getVal(o, p, dev);
-  const P = { bg:g('props.bg'), radius:g('props.radius'), borderW:g('props.borderW'), borderColor:g('props.borderColor'), shadow:g('props.shadow'), text:g('props.text'), color:g('props.color'), fontSize:g('props.fontSize'), bold:g('props.bold'), italic:g('props.italic'), align:g('props.align'), family:g('props.family'), lineHeight:g('props.lineHeight'), letterSpacing:g('props.letterSpacing'), padding:g('props.padding'), src:g('props.src'), fit:g('props.fit'), href:g('props.href'), loading:g('props.loading'), lazyClass:g('props.lazyClass'), fetchpriority:g('props.fetchpriority') };
+  const P = { bg:g('props.bg'), radius:g('props.radius'), borderW:g('props.borderW'), borderColor:g('props.borderColor'), shadow:g('props.shadow'), text:g('props.text'), color:g('props.color'), fontSize:g('props.fontSize'), bold:g('props.bold'), italic:g('props.italic'), align:g('props.align'), family:g('props.family'), lineHeight:g('props.lineHeight'), letterSpacing:g('props.letterSpacing'), padding:g('props.padding'), src:g('props.src'), fit:g('props.fit'), href:g('props.href'), loading:g('props.loading'), lazyClass:g('props.lazyClass'), fetchpriority:g('props.fetchpriority'), useUrlInShortcode:g('props.useUrlInShortcode') };
   const A = { effect:g('animation.effect'), duration:g('animation.duration'), delay:g('animation.delay'), distance:g('animation.distance'), easing:g('animation.easing') };
   let h = '';
   if(dev !== 'desktop') h += `<div class="info-banner">Editando para <b>${DEVICE_META[dev].label}</b>. Los valores heredados vienen de ${dev === 'mobile' ? '<b>Tablet</b> o <b>Escritorio</b>' : '<b>Escritorio</b>'}.</div>`;
@@ -651,8 +667,26 @@ function renderProps(){
     h += chkHTML(o,'props.italic',P.italic,'Cursiva');
   }
   if(o.type === 'image'){
-    h += rowCtrl(o,'props.src','URL',`<div class="url-row"><input type="text" data-prop="props.src" value="${escAttr(P.src)}"><button type="button" class="url-btn" data-url-prompt="props.src" title="Introducir / cambiar URL de la imagen">🔗 URL</button></div>`);
+    const hasUrl = isUrlLike(P.src);
+    const isBase64 = isBase64Like(P.src);
+    const urlChecked = hasUrl && P.useUrlInShortcode === true;
+    h += rowCtrl(o,'props.src','URL / Archivo',
+      `<div class="url-row">
+         <input type="text" data-prop="props.src" value="${hasUrl ? escAttr(P.src) : ''}" placeholder="https://...">
+         <button type="button" class="url-btn" data-url-prompt="props.src" title="Introducir / cambiar URL de la imagen">🔗 URL</button>
+       </div>`);
     h += `<input type="file" data-imgfile accept="image/*">`;
+    h += `<label class="sbm-url-check${hasUrl ? '' : ' disabled'}" data-url-check-wrap="props.src">
+            <input type="checkbox" data-prop="props.useUrlInShortcode"${urlChecked ? ' checked' : ''}${hasUrl ? '' : ' disabled'}>
+            <span class="urlicon">🌐</span> Usar URL en shortcode
+          </label>`;
+    if(urlChecked){
+      h += `<p class="sbm-url-note">✓ El shortcode usará la URL en <code>src="..."</code>. Sin base64.</p>`;
+    } else if(isBase64){
+      h += `<p class="sbm-url-note b64">▣ El shortcode usará la imagen en <b>base64</b> (data URI) dentro de <code>src="..."</code>.</p>`;
+    } else if(hasUrl){
+      h += `<p class="sbm-url-note b64">▣ El shortcode usará la URL actual. Marca la casilla para confirmar que quieres usar la URL.</p>`;
+    }
     h += rowCtrl(o,'props.fit','Ajuste', selectHTML('props.fit', [['cover','Cubrir'],['contain','Contener'],['fill','Estirar']], P.fit));
     h += rangeRow(o,'props.radius','Redondeo',P.radius,0,300,1,' px');
     h += chkHTML(o,'props.shadow',P.shadow,'Sombra');
@@ -667,7 +701,6 @@ function renderProps(){
     h += chkHTML(o,'props.shadow',P.shadow,'Sombra');
   }
   h += `</div>`;
-  /* Sección específica para imágenes: loading / clase / fetchpriority */
   if(o.type === 'image'){
     h += `<div class="sec"><h3>Rendimiento de la imagen</h3>
       ${rowCtrl(o,'props.loading','Loading',
@@ -684,6 +717,18 @@ function renderProps(){
   const ta = propsPanel.querySelector('textarea[data-textarea]'); if(ta) ta.value = P.text;
 }
 
+function refreshImageUrlCheckbox(o, urlValue){
+  const wrap = propsPanel.querySelector('[data-url-check-wrap="props.src"]'); if(!wrap) return;
+  const cb = wrap.querySelector('input[data-prop="props.useUrlInShortcode"]'); if(!cb) return;
+  const hasUrl = isUrlLike(urlValue);
+  if(!hasUrl){
+    if(cb.checked) setVal(o,'props.useUrlInShortcode',false,curDevice());
+    cb.checked = false; cb.disabled = true; wrap.classList.add('disabled');
+  } else {
+    cb.disabled = false; wrap.classList.remove('disabled');
+  }
+}
+
 function onPropChange(e){
   const inp = e.target.closest('[data-prop]'); if(!inp) return;
   const o = getSel(); if(!o) return;
@@ -695,10 +740,11 @@ function onPropChange(e){
   if(path === 'z') o.z = Math.round(val) || 1;
   else setVal(o, path, val, curDevice());
   if(inp.type === 'range'){ const span = propsPanel.querySelector(`[data-valfor="${path}"]`); if(span) span.textContent = (Math.round(val*100)/100) + (inp.dataset.suffix||''); }
+  if(path === 'props.src') refreshImageUrlCheckbox(o, inp.value);
   renderObjects();
 }
 propsPanel.addEventListener('input', onPropChange);
-propsPanel.addEventListener('change', e => { onPropChange(e); if(e.target.closest('[data-prop]')) renderProps(); });
+propsPanel.addEventListener('change', e => { onPropChange(e); if(e.target.closest('[data-prop]') && e.target.dataset.prop !== 'props.src') renderProps(); });
 propsPanel.addEventListener('click', e => {
   const btn = e.target.closest('[data-reset]'); if(!btn) return;
   const o = getSel(); if(!o) return;
@@ -721,7 +767,12 @@ propsPanel.addEventListener('change', e => {
   const f = e.target.closest('[data-imgfile]'); if(!f || !f.files || !f.files[0]) return;
   const o = getSel(); if(!o) return;
   const reader = new FileReader();
-  reader.onload = ev => { setVal(o,'props.src',ev.target.result,curDevice()); renderProps(); renderObjects(); };
+  reader.onload = ev => {
+    setVal(o,'props.src',ev.target.result,curDevice());
+    /* Al subir archivo → es base64 → desmarcar y deshabilitar el checkbox */
+    setVal(o,'props.useUrlInShortcode',false,curDevice());
+    renderProps(); renderObjects();
+  };
   reader.readAsDataURL(f.files[0]);
 });
 propsPanel.addEventListener('click', e => {
@@ -766,7 +817,6 @@ $('#btnClearBg').addEventListener('click', () => {
   else clearBgOverride(curDevice());
   syncSidebar(); renderBg();
 });
-/* NUEVO: borrar SOLO la imagen de fondo del dispositivo actual */
 $('#btnRemoveBgDevice').addEventListener('click', () => {
   const dev = curDevice();
   if(dev === 'desktop'){
@@ -833,6 +883,9 @@ $('#fileImport').addEventListener('change', e => {
           if(o.props.loading === undefined) o.props.loading = 'lazy';
           if(o.props.lazyClass === undefined) o.props.lazyClass = '';
           if(o.props.fetchpriority === undefined) o.props.fetchpriority = 'auto';
+          if(o.props.useUrlInShortcode === undefined) o.props.useUrlInShortcode = false;
+          /* Si está marcado pero el src no es URL real, desmarcar */
+          if(o.props.useUrlInShortcode && !isUrlLike(o.props.src)) o.props.useUrlInShortcode = false;
         }
       });
       data.objects.forEach(o => o.id = uid());
@@ -1003,6 +1056,12 @@ const SHARED_KEYFRAMES = {
   sbmKFlip:  '@keyframes sbmKFlip{from{opacity:0;transform:perspective(900px) rotateY(90deg)}to{opacity:var(--sbm-op,1);transform:perspective(900px) rotateY(0deg) rotate(var(--sbm-rot,0deg))}}'
 };
 
+/* =====================================================================
+   Genera CSS+HTML estático de un item.
+   - Si la imagen tiene useUrlInShortcode === true Y su src es URL real,
+     se emite la URL en src="..." (sin base64).
+   - En cualquier otro caso, el src se emite TAL CUAL (URL o data URI base64).
+   ===================================================================== */
 function generateItemAssets(item, opts){
   opts = opts || {};
   const goClass = opts.goClass !== false;
@@ -1014,7 +1073,6 @@ function generateItemAssets(item, opts){
   const css = [];
   const html = [];
 
-  /* ----- Valores RAW de fondo para detectar overrides (incluidos los '') ----- */
   const rawD = item.bg.desktop || {};
   const rawT = item.bg.tablet  || {};
   const rawM = item.bg.mobile  || {};
@@ -1044,21 +1102,13 @@ function generateItemAssets(item, opts){
   if (rawM.color !== undefined && rawM.color !== effColorT) mobileRules.push('background-color:' + rawM.color);
   css.push('@media (max-width:' + bpc.mobile + 'px){' + scope + '{' + mobileRules.join(';') + ';}}');
 
-  /* ----- Inner slide ----- */
   css.push(scope + ' .sbm-slide{position:absolute;top:0;left:0;right:0;bottom:0;}');
-
-  /* ----- Capas de fondo ----- */
   css.push(scope + ' .sbm-bg{position:absolute;inset:0;background-position:center;background-repeat:no-repeat;}');
   css.push(scope + ' .sbm-bg-ov{position:absolute;inset:0;pointer-events:none;}');
 
-  if (rawD.image) {
-    css.push(scope + ' .sbm-bg{background-image:url(\'' + escCssUrl(rawD.image) + '\');background-size:' + fitD + ';}');
-  }
-  if (ovD > 0) {
-    css.push(scope + ' .sbm-bg-ov{background:rgba(0,0,0,' + (ovD/100).toFixed(3) + ');}');
-  }
+  if (rawD.image) css.push(scope + ' .sbm-bg{background-image:url(\'' + escCssUrl(rawD.image) + '\');background-size:' + fitD + ';}');
+  if (ovD > 0) css.push(scope + ' .sbm-bg-ov{background:rgba(0,0,0,' + (ovD/100).toFixed(3) + ');}');
 
-  /* Tablet (respecto a desktop) */
   (function(){
     const rules = [];
     if (rawT.image !== undefined && rawT.image !== rawD.image) {
@@ -1066,33 +1116,28 @@ function generateItemAssets(item, opts){
     }
     if (rawT.fit !== undefined && rawT.fit !== fitD) rules.push('background-size:' + rawT.fit);
     if (rules.length) css.push('@media (max-width:' + bpc.tablet + 'px){' + scope + ' .sbm-bg{' + rules.join(';') + ';}}');
-
     if (rawT.overlay !== undefined && rawT.overlay !== ovD) {
       const ov = rawT.overlay > 0 ? 'rgba(0,0,0,' + (rawT.overlay/100).toFixed(3) + ')' : 'transparent';
       css.push('@media (max-width:' + bpc.tablet + 'px){' + scope + ' .sbm-bg-ov{background:' + ov + ';}}');
     }
   })();
 
-  /* Mobile (respecto a valores efectivos de tablet) */
   (function(){
     const effImage = rawT.image !== undefined ? rawT.image : rawD.image;
     const effFit = rawT.fit !== undefined ? rawT.fit : fitD;
     const effOv = rawT.overlay !== undefined ? rawT.overlay : ovD;
-
     const rules = [];
     if (rawM.image !== undefined && rawM.image !== effImage) {
       rules.push(rawM.image ? 'background-image:url(\'' + escCssUrl(rawM.image) + '\')' : 'background-image:none');
     }
     if (rawM.fit !== undefined && rawM.fit !== effFit) rules.push('background-size:' + rawM.fit);
     if (rules.length) css.push('@media (max-width:' + bpc.mobile + 'px){' + scope + ' .sbm-bg{' + rules.join(';') + ';}}');
-
     if (rawM.overlay !== undefined && rawM.overlay !== effOv) {
       const ov = rawM.overlay > 0 ? 'rgba(0,0,0,' + (rawM.overlay/100).toFixed(3) + ')' : 'transparent';
       css.push('@media (max-width:' + bpc.mobile + 'px){' + scope + ' .sbm-bg-ov{background:' + ov + ';}}');
     }
   })();
 
-  /* ----- Objetos ----- */
   const usedKeyframes = {};
 
   item.objects.slice().sort((a,b) => a.z - b.z).forEach(o => {
@@ -1109,7 +1154,6 @@ function generateItemAssets(item, opts){
     const mDiff = cssDiff(propsM, propsT);
     if (mDiff) css.push('@media (max-width:' + bpc.mobile + 'px){' + sel + '{' + mDiff + '}}');
 
-    /* Animaciones */
     const aD = animVarsFor(o, 'desktop');
     const aT = animVarsFor(o, 'tablet');
     const aM = animVarsFor(o, 'mobile');
@@ -1124,7 +1168,6 @@ function generateItemAssets(item, opts){
       css.push(scope + '.sbm-go ' + cls + '{animation:var(--sbm-an) var(--sbm-ad) var(--sbm-ae) var(--sbm-al) both;}');
     }
 
-    /* ----- HTML del objeto ----- */
     const text = getVal(o, 'props.text', 'desktop');
     if (o.type === 'button'){
       const href = escHtmlAttr(getVal(o, 'props.href', 'desktop') || '#');
@@ -1132,8 +1175,20 @@ function generateItemAssets(item, opts){
     } else if (o.type === 'text'){
       html.push('        <div class="sbm-o-' + o.id + '">' + escHtml(text) + '</div>');
     } else if (o.type === 'image'){
-      /* --- NUEVO: atributos de rendimiento --- */
-      const src = escHtmlAttr(getVal(o, 'props.src', 'desktop') || '');
+      /* === RESOLUCIÓN DEL SRC ===
+         - Si "Usar URL en shortcode" está marcado Y el src es una URL real → se usa esa URL.
+         - Si no, se emite el src tal cual (URL o data URI base64). */
+      const rawSrc = getVal(o, 'props.src', 'desktop') || '';
+      const useUrl = getVal(o, 'props.useUrlInShortcode', 'desktop') === true;
+      let finalSrc = rawSrc;
+      if (useUrl && isUrlLike(rawSrc)) {
+        finalSrc = rawSrc;                       // URL directa
+      } else if (isBase64Like(rawSrc)) {
+        finalSrc = rawSrc;                       // data URI base64 — se emite tal cual
+      } else {
+        finalSrc = rawSrc;                       // URL o lo que haya
+      }
+      const srcAttr = escHtmlAttr(finalSrc);
       const loading = getVal(o, 'props.loading', 'desktop') || 'lazy';
       const lazyClass = getVal(o, 'props.lazyClass', 'desktop') || '';
       const fp = getVal(o, 'props.fetchpriority', 'desktop') || 'auto';
@@ -1141,7 +1196,7 @@ function generateItemAssets(item, opts){
       const attrs = ' loading="' + loading + '"'
                   + ' fetchpriority="' + fp + '"'
                   + ' decoding="async"';
-      html.push('        <img class="' + clsStr + '" src="' + src + '" alt=""' + attrs + '>');
+      html.push('        <img class="' + clsStr + '" src="' + srcAttr + '" alt=""' + attrs + '>');
     } else {
       html.push('        <div class="sbm-o-' + o.id + '"></div>');
     }
@@ -1149,7 +1204,6 @@ function generateItemAssets(item, opts){
 
   Object.keys(usedKeyframes).forEach(k => { css.push(SHARED_KEYFRAMES[k]); });
 
-  /* ----- HTML final del item ----- */
   const goSuffix = goClass ? ' sbm-go' : '';
   const lines = [];
   lines.push('    <div class="sbm-item' + goSuffix + '" id="sbm-item-' + item.id + '" data-sbm-item="' + item.id + '">');
@@ -1215,6 +1269,10 @@ function generateItemShortcode(item){
   const cssSafe = assets.css.split(cssNowdoc).join(cssNowdoc + '_X');
   const htmlSafe = assets.html.split(htmlNowdoc).join(htmlNowdoc + '_X');
 
+  /* Resumen del tipo de src para comentario informativo */
+  const base64Count = item.objects.filter(o => o.type === 'image' && isBase64Like(getVal(o, 'props.src', 'desktop'))).length;
+  const urlCount = item.objects.filter(o => o.type === 'image' && getVal(o, 'props.useUrlInShortcode', 'desktop') === true && isUrlLike(getVal(o, 'props.src', 'desktop'))).length;
+
   return `<?php
 /**
  * ============================================================
@@ -1222,10 +1280,16 @@ function generateItemShortcode(item){
  * ============================================================
  *  Shortcode:  [slider_morbriant_item id="${item.id}"]
  *
- *  · Imprime HTML y CSS reales (nada de base64 ni inyección JS).
- *  · Las imágenes se emiten como <img src="..." loading="..." fetchpriority="...">.
- *  · Los fondos como background-image:url(...) en <style>.
- *  · Layout responsivo por media queries + container queries (cqw).
+ *  · Imágenes en base64 (data URI): ${base64Count}
+ *  · Imágenes con URL directa (checkbox "Usar URL" marcado): ${urlCount}
+ *
+ *  Comportamiento:
+ *  ─ Las imágenes con la casilla "Usar URL en shortcode" MARCADA usan
+ *    su URL en src="...".
+ *  ─ Las imágenes con la casilla DESMARCADA emiten su src tal cual.
+ *    Si el usuario subió un archivo (data URI), se usa base64;
+ *    si escribió una URL, se usa esa URL.
+ *  ─ Nunca se hace fetch ni conversión dinámica.
  * ============================================================
  */
 
@@ -1254,9 +1318,6 @@ if (!function_exists('slider_morbriant_item_shortcode')) {
     }
 }
 
-/* ============================================================
-   ITEM ${item.id} — CSS
-   ============================================================ */
 if (!function_exists('slider_morbriant_item_${item.id}_css')) {
     function slider_morbriant_item_${item.id}_css(){
         return <<<'${cssNowdoc}'
@@ -1265,9 +1326,6 @@ ${cssNowdoc};
     }
 }
 
-/* ============================================================
-   ITEM ${item.id} — HTML
-   ============================================================ */
 if (!function_exists('slider_morbriant_item_${item.id}_html')) {
     function slider_morbriant_item_${item.id}_html(){
         return <<<'${htmlNowdoc}'
@@ -1276,9 +1334,6 @@ ${htmlNowdoc};
     }
 }
 
-/* ============================================================
-   ITEM ${item.id} — Render
-   ============================================================ */
 if (!function_exists('slider_morbriant_item_${item.id}_render')) {
     function slider_morbriant_item_${item.id}_render(){
         $out  = slider_morbriant_print_item_css(${phpInt(item.id)});
