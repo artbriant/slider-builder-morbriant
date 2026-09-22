@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Slider Builder MorBriant (Versión 2.3)</title>
+<title>Slider Builder MorBriant (Versión 2.3.2) [Falla]</title>
 <style>
 :root{--bg:#0b1020;--panel:#121a2e;--panel2:#1a2440;--line:#26314f;--txt:#e6ecff;--muted:#8b9ac4;--accent:#6366f1;--dev:#4f9cf9;}
 *{box-sizing:border-box;}
@@ -20,6 +20,8 @@ button.wp{background:linear-gradient(135deg,#21759b,#00a0d2);border-color:transp
 button.wp:hover{filter:brightness(1.12);}
 button.cfg{background:linear-gradient(135deg,#f59e0b,#f97316);border-color:transparent;color:#1a0f00;font-weight:700;}
 button.cfg:hover{filter:brightness(1.12);}
+button.danger{background:#3b1220;border-color:#6b2038;color:#ff9db1;}
+button.danger:hover{background:#5a1a2e;border-color:#8a2846;}
 button.mob{display:none;}
 .devswitch{display:flex;gap:2px;background:#0d1428;padding:3px;border-radius:10px;border:1px solid var(--line);}
 .devswitch button{padding:6px 11px;font-size:12px;border:none;background:transparent;border-radius:7px;display:flex;align-items:center;gap:6px;color:var(--muted);font-weight:500;}
@@ -55,6 +57,13 @@ select option{background:#0d1428;color:#e6ecff;}
 .url-row input[type=text]{flex:1;min-width:0;}
 .url-btn{flex:0 0 auto;padding:7px 10px;font-size:11.5px;font-weight:600;background:#1e3a6b;border-color:#2b4f8a;color:#bfd8ff;letter-spacing:.3px;}
 .url-btn:hover{background:#2b4f8a;border-color:#4a7ec9;color:#fff;}
+.sbm-url-check{margin-top:6px;font-size:11.5px;padding:7px 9px;background:#0d1428;border:1px solid var(--line);border-radius:7px;display:flex;align-items:center;gap:8px;color:#cbd5ff;cursor:pointer;transition:.15s;}
+.sbm-url-check input[type=checkbox]{accent-color:#22c55e;width:15px;height:15px;cursor:pointer;flex:0 0 auto;margin:0;}
+.sbm-url-check.disabled{opacity:.45;cursor:not-allowed;}
+.sbm-url-check.disabled input[type=checkbox]{cursor:not-allowed;}
+.sbm-url-check .urlicon{font-size:12px;}
+.sbm-url-note{font-size:10.5px;color:#7ddfa0;margin-top:4px;padding:4px 6px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:5px;line-height:1.4;}
+.sbm-url-note.b64{color:#ffc98b;background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3);}
 .palette{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .pal{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;background:var(--panel2);border:1px dashed #35446b;border-radius:10px;cursor:grab;font-size:11.5px;color:#cbd5ff;user-select:none;transition:.15s;}
 .pal:hover{background:#22305a;border-color:var(--accent);transform:translateY(-1px);}
@@ -192,6 +201,8 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
         <button type="button" id="bgImagePrompt" class="url-btn" title="Introducir URL de la imagen de fondo">🔗 URL</button>
       </div>
       <input type="file" id="bgFile" accept="image/*">
+      <button id="btnRemoveBgDevice" class="danger" style="width:100%;margin-top:8px;font-size:11.5px;">🚫 Sin imagen de fondo en este dispositivo</button>
+      <p class="hint" style="margin-top:6px;">Borra la imagen solo para <b id="bgDevLabel">Escritorio</b>. Los demás dispositivos conservan la suya.</p>
       <label class="lbl">Ajuste</label>
       <select id="bgFit">
         <option value="cover">Cubrir (cover)</option>
@@ -200,7 +211,7 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
       </select>
       <label class="lbl">Oscurecer: <span id="ovVal">0%</span></label>
       <input type="range" id="bgOverlay" min="0" max="100" value="0">
-      <button id="btnClearBg" style="width:100%;margin-top:10px;font-size:11.5px;">↺ Limpiar fondo de este dispositivo</button>
+      <button id="btnClearBg" style="width:100%;margin-top:10px;font-size:11.5px;">↺ Limpiar todos los cambios de fondo de este dispositivo</button>
     </div>
   </aside>
 
@@ -339,6 +350,15 @@ const DEVICE_KEYS = ['desktop','tablet','mobile'];
 const DEVICE_META = { desktop:{label:'Escritorio',short:'desktop'}, tablet:{label:'Tablet',short:'tablet'}, mobile:{label:'Móvil',short:'mobile'} };
 function deviceChain(d){ if(d==='desktop')return['desktop']; if(d==='tablet')return['desktop','tablet']; return ['desktop','tablet','mobile']; }
 
+/* === Utilidad: ¿es una URL real (no un data URI base64)? === */
+function isUrlLike(s){
+  return typeof s === 'string' && s.trim().length > 0 && !s.trim().startsWith('data:');
+}
+/* === Utilidad: ¿es un data URI base64? === */
+function isBase64Like(s){
+  return typeof s === 'string' && s.trim().startsWith('data:');
+}
+
 let app = {
   slider: {
     name: 'Mi Slider',
@@ -377,11 +397,10 @@ function getVal(o, path, device){ device = device || curDevice(); const chain = 
 function setVal(o, path, val, device){ device = device || curDevice(); if(device === 'desktop'){ setPath(o, path, val); return; } if(!o.r) o.r = {}; if(!o.r[device]) o.r[device] = {}; setPath(o.r[device], path, val); }
 function isOverridden(o, path, device){ device = device || curDevice(); if(device === 'desktop') return false; const b = o.r && o.r[device]; if(!b) return false; return getPath(b, path) !== undefined; }
 function clearOverride(o, path, device){ device = device || curDevice(); if(device === 'desktop') return; const b = o.r && o.r[device]; if(!b) return; const p = path.split('.'); let c = b; for(let i=0;i<p.length-1;i++){ if(c[p[i]]==null) return; c = c[p[i]]; } delete c[p[p.length-1]]; }
-function getBg(device){ device = device || curDevice(); const item = curItem(); const chain = deviceChain(device); const r = Object.assign({}, item.bg.desktop); for(let i=1;i<chain.length;i++) Object.assign(r, item.bg[chain[i]] || {}); return r; }
-function setBg(key, val, device){ device = device || curDevice(); const item = curItem(); if(device === 'desktop'){ item.bg.desktop[key] = val; } else { item.bg[device][key] = val; } }
+function getBg(device){ device = device || curDevice(); const item = curItem(); const chain = deviceChain(device); const r = Object.assign({ color:'#0f172a', image:'', fit:'cover', overlay:0 }, item.bg.desktop); for(let i=1;i<chain.length;i++) Object.assign(r, item.bg[chain[i]] || {}); return r; }
+function setBg(key, val, device){ device = device || curDevice(); const item = curItem(); if(device === 'desktop'){ item.bg.desktop[key] = val; } else { if(!item.bg[device]) item.bg[device] = {}; item.bg[device][key] = val; } }
 function clearBgOverride(device){ device = device || curDevice(); if(device === 'desktop') return; curItem().bg[device] = {}; }
 
-/* Acceso al fondo de un item concreto, no el del editor */
 function getItemBgForDevice(item, device){
   const chain = deviceChain(device);
   const r = Object.assign({ color:'#0f172a', image:'', fit:'cover', overlay:0 }, item.bg.desktop);
@@ -397,7 +416,7 @@ function makeObject(type, cx, cy, device){
   let w = 200, h = 120;
   if(type === 'box'){ w = 260; h = 170; base.props = { bg:'#3b82f6', radius:16, borderW:0, borderColor:'#ffffff', shadow:true }; }
   if(type === 'text'){ w = 440; h = 96; base.props = { text:'Tu texto aquí', color:'#ffffff', fontSize:56, bold:true, italic:false, align:'center', family:FONTS[0].stack, lineHeight:1.2, letterSpacing:0, padding:8 }; }
-  if(type === 'image'){ w = 320; h = 220; base.props = { src:'https://picsum.photos/640/440', fit:'cover', radius:12, shadow:true }; }
+  if(type === 'image'){ w = 320; h = 220; base.props = { src:'https://picsum.photos/640/440', fit:'cover', radius:12, shadow:true, loading:'lazy', lazyClass:'', fetchpriority:'auto', useUrlInShortcode:false }; }
   if(type === 'button'){ w = 220; h = 64; base.props = { text:'Comenzar', href:'#', bg:'#22c55e', color:'#04121f', fontSize:20, radius:32, shadow:true }; }
   base.w = w; base.h = h;
   base.x = Math.round(dx - w/2); base.y = Math.round(dy - h/2);
@@ -429,7 +448,6 @@ function newDefaultItem(){
   return item;
 }
 
-/* ===== ESTILOS EN EL EDITOR (sigue funcionando como antes) ===== */
 const cssUrl = u => `url('${String(u).replace(/'/g, '%27')}')`;
 function objStyleString(o, device, animate){
   device = device || curDevice();
@@ -488,6 +506,7 @@ function updateDeviceUI(){
   $('#devbarSize').textContent = d.width + ' × ' + d.height;
   $('#cvDevTag').textContent = DEVICE_META[dev].short;
   $('#bgDevTag').textContent = DEVICE_META[dev].short;
+  const lbl = $('#bgDevLabel'); if(lbl) lbl.textContent = DEVICE_META[dev].label;
   const item = curItem(); $('#devbarItem').textContent = item ? ('item-'+item.id) : '—';
   $$('.devswitch button').forEach(b => b.classList.toggle('active', b.dataset.device === dev));
 }
@@ -621,7 +640,7 @@ function renderProps(){
     return;
   }
   const g = p => getVal(o, p, dev);
-  const P = { bg:g('props.bg'), radius:g('props.radius'), borderW:g('props.borderW'), borderColor:g('props.borderColor'), shadow:g('props.shadow'), text:g('props.text'), color:g('props.color'), fontSize:g('props.fontSize'), bold:g('props.bold'), italic:g('props.italic'), align:g('props.align'), family:g('props.family'), lineHeight:g('props.lineHeight'), letterSpacing:g('props.letterSpacing'), padding:g('props.padding'), src:g('props.src'), fit:g('props.fit'), href:g('props.href') };
+  const P = { bg:g('props.bg'), radius:g('props.radius'), borderW:g('props.borderW'), borderColor:g('props.borderColor'), shadow:g('props.shadow'), text:g('props.text'), color:g('props.color'), fontSize:g('props.fontSize'), bold:g('props.bold'), italic:g('props.italic'), align:g('props.align'), family:g('props.family'), lineHeight:g('props.lineHeight'), letterSpacing:g('props.letterSpacing'), padding:g('props.padding'), src:g('props.src'), fit:g('props.fit'), href:g('props.href'), loading:g('props.loading'), lazyClass:g('props.lazyClass'), fetchpriority:g('props.fetchpriority'), useUrlInShortcode:g('props.useUrlInShortcode') };
   const A = { effect:g('animation.effect'), duration:g('animation.duration'), delay:g('animation.delay'), distance:g('animation.distance'), easing:g('animation.easing') };
   let h = '';
   if(dev !== 'desktop') h += `<div class="info-banner">Editando para <b>${DEVICE_META[dev].label}</b>. Los valores heredados vienen de ${dev === 'mobile' ? '<b>Tablet</b> o <b>Escritorio</b>' : '<b>Escritorio</b>'}.</div>`;
@@ -648,8 +667,26 @@ function renderProps(){
     h += chkHTML(o,'props.italic',P.italic,'Cursiva');
   }
   if(o.type === 'image'){
-    h += rowCtrl(o,'props.src','URL',`<div class="url-row"><input type="text" data-prop="props.src" value="${escAttr(P.src)}"><button type="button" class="url-btn" data-url-prompt="props.src" title="Introducir / cambiar URL de la imagen">🔗 URL</button></div>`);
+    const hasUrl = isUrlLike(P.src);
+    const isBase64 = isBase64Like(P.src);
+    const urlChecked = hasUrl && P.useUrlInShortcode === true;
+    h += rowCtrl(o,'props.src','URL / Archivo',
+      `<div class="url-row">
+         <input type="text" data-prop="props.src" value="${hasUrl ? escAttr(P.src) : ''}" placeholder="https://...">
+         <button type="button" class="url-btn" data-url-prompt="props.src" title="Introducir / cambiar URL de la imagen">🔗 URL</button>
+       </div>`);
     h += `<input type="file" data-imgfile accept="image/*">`;
+    h += `<label class="sbm-url-check${hasUrl ? '' : ' disabled'}" data-url-check-wrap="props.src">
+            <input type="checkbox" data-prop="props.useUrlInShortcode"${urlChecked ? ' checked' : ''}${hasUrl ? '' : ' disabled'}>
+            <span class="urlicon">🌐</span> Usar URL en shortcode
+          </label>`;
+    if(urlChecked){
+      h += `<p class="sbm-url-note">✓ El shortcode usará la URL en <code>src="..."</code>. Sin base64.</p>`;
+    } else if(isBase64){
+      h += `<p class="sbm-url-note b64">▣ El shortcode usará la imagen en <b>base64</b> (data URI) dentro de <code>src="..."</code>.</p>`;
+    } else if(hasUrl){
+      h += `<p class="sbm-url-note b64">▣ El shortcode usará la URL actual. Marca la casilla para confirmar que quieres usar la URL.</p>`;
+    }
     h += rowCtrl(o,'props.fit','Ajuste', selectHTML('props.fit', [['cover','Cubrir'],['contain','Contener'],['fill','Estirar']], P.fit));
     h += rangeRow(o,'props.radius','Redondeo',P.radius,0,300,1,' px');
     h += chkHTML(o,'props.shadow',P.shadow,'Sombra');
@@ -664,9 +701,32 @@ function renderProps(){
     h += chkHTML(o,'props.shadow',P.shadow,'Sombra');
   }
   h += `</div>`;
+  if(o.type === 'image'){
+    h += `<div class="sec"><h3>Rendimiento de la imagen</h3>
+      ${rowCtrl(o,'props.loading','Loading',
+        selectHTML('props.loading', [['lazy','lazy'], ['eager','eager']], P.loading || 'lazy'))}
+      ${rowCtrl(o,'props.lazyClass','Clase lazy',
+        selectHTML('props.lazyClass', [['','(ninguna)'], ['skip-lazy','skip-lazy'], ['no-lazy','no-lazy']], P.lazyClass || ''))}
+      ${rowCtrl(o,'props.fetchpriority','Fetch priority',
+        selectHTML('props.fetchpriority', [['auto','auto'], ['high','high'], ['low','low']], P.fetchpriority || 'auto'))}
+      <p class="hint" style="margin-top:6px;">Estos atributos se aplican a la etiqueta &lt;img&gt; del shortcode.</p>
+    </div>`;
+  }
   h += `<div class="sec"><h3>Animación de entrada</h3>${rowCtrl(o,'animation.effect','Efecto', selectHTML('animation.effect', [['none','Ninguno'],['fade','Aparecer (fade)'],['left','Entrar desde la izquierda'],['right','Entrar desde la derecha'],['up','Subir desde abajo'],['down','Bajar desde arriba'],['zoom','Zoom'],['rotate','Rotar'],['flip','Voltear (3D)']], A.effect))}${rangeRow(o,'animation.duration','Duración',A.duration,100,4000,50,' ms')}${rangeRow(o,'animation.delay','Retardo',A.delay,0,4000,50,' ms')}${rangeRow(o,'animation.distance','Distancia',A.distance,0,800,10,' px')}${rowCtrl(o,'animation.easing','Curva', selectHTML('animation.easing', [['linear','Linear'],['ease','Ease'],['ease-in','Ease In'],['ease-out','Ease Out'],['ease-in-out','Ease In Out'],['cubic-bezier(.34,1.56,.64,1)','Rebote (back)']], A.easing))}</div>`;
   propsPanel.innerHTML = h;
   const ta = propsPanel.querySelector('textarea[data-textarea]'); if(ta) ta.value = P.text;
+}
+
+function refreshImageUrlCheckbox(o, urlValue){
+  const wrap = propsPanel.querySelector('[data-url-check-wrap="props.src"]'); if(!wrap) return;
+  const cb = wrap.querySelector('input[data-prop="props.useUrlInShortcode"]'); if(!cb) return;
+  const hasUrl = isUrlLike(urlValue);
+  if(!hasUrl){
+    if(cb.checked) setVal(o,'props.useUrlInShortcode',false,curDevice());
+    cb.checked = false; cb.disabled = true; wrap.classList.add('disabled');
+  } else {
+    cb.disabled = false; wrap.classList.remove('disabled');
+  }
 }
 
 function onPropChange(e){
@@ -680,10 +740,11 @@ function onPropChange(e){
   if(path === 'z') o.z = Math.round(val) || 1;
   else setVal(o, path, val, curDevice());
   if(inp.type === 'range'){ const span = propsPanel.querySelector(`[data-valfor="${path}"]`); if(span) span.textContent = (Math.round(val*100)/100) + (inp.dataset.suffix||''); }
+  if(path === 'props.src') refreshImageUrlCheckbox(o, inp.value);
   renderObjects();
 }
 propsPanel.addEventListener('input', onPropChange);
-propsPanel.addEventListener('change', e => { onPropChange(e); if(e.target.closest('[data-prop]')) renderProps(); });
+propsPanel.addEventListener('change', e => { onPropChange(e); if(e.target.closest('[data-prop]') && e.target.dataset.prop !== 'props.src') renderProps(); });
 propsPanel.addEventListener('click', e => {
   const btn = e.target.closest('[data-reset]'); if(!btn) return;
   const o = getSel(); if(!o) return;
@@ -706,7 +767,12 @@ propsPanel.addEventListener('change', e => {
   const f = e.target.closest('[data-imgfile]'); if(!f || !f.files || !f.files[0]) return;
   const o = getSel(); if(!o) return;
   const reader = new FileReader();
-  reader.onload = ev => { setVal(o,'props.src',ev.target.result,curDevice()); renderProps(); renderObjects(); };
+  reader.onload = ev => {
+    setVal(o,'props.src',ev.target.result,curDevice());
+    /* Al subir archivo → es base64 → desmarcar y deshabilitar el checkbox */
+    setVal(o,'props.useUrlInShortcode',false,curDevice());
+    renderProps(); renderObjects();
+  };
   reader.readAsDataURL(f.files[0]);
 });
 propsPanel.addEventListener('click', e => {
@@ -749,6 +815,16 @@ $('#bgOverlay').addEventListener('input', e => { setBg('overlay', +e.target.valu
 $('#btnClearBg').addEventListener('click', () => {
   if(curDevice() === 'desktop') curItem().bg.desktop = { color:'#0f172a', image:'', fit:'cover', overlay:0 };
   else clearBgOverride(curDevice());
+  syncSidebar(); renderBg();
+});
+$('#btnRemoveBgDevice').addEventListener('click', () => {
+  const dev = curDevice();
+  if(dev === 'desktop'){
+    curItem().bg.desktop.image = '';
+  } else {
+    if(!curItem().bg[dev]) curItem().bg[dev] = {};
+    curItem().bg[dev].image = '';
+  }
   syncSidebar(); renderBg();
 });
 $('#bgImagePrompt').addEventListener('click', () => {
@@ -803,6 +879,14 @@ $('#fileImport').addEventListener('change', e => {
         if(!o.r.mobile) o.r.mobile = {};
         o.animation = Object.assign({ effect:'none', duration:800, delay:0, easing:'ease-out', distance:150 }, o.animation || {});
         if(o.type === 'box' && o.props && o.props.borderColor === undefined){ o.props.borderColor = '#ffffff'; o.props.borderW = o.props.borderW || 0; }
+        if(o.type === 'image' && o.props){
+          if(o.props.loading === undefined) o.props.loading = 'lazy';
+          if(o.props.lazyClass === undefined) o.props.lazyClass = '';
+          if(o.props.fetchpriority === undefined) o.props.fetchpriority = 'auto';
+          if(o.props.useUrlInShortcode === undefined) o.props.useUrlInShortcode = false;
+          /* Si está marcado pero el src no es URL real, desmarcar */
+          if(o.props.useUrlInShortcode && !isUrlLike(o.props.src)) o.props.useUrlInShortcode = false;
+        }
       });
       data.objects.forEach(o => o.id = uid());
       const item = curItem();
@@ -832,9 +916,6 @@ function download(filename, content, mime){
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
-/* ============================================================
-   DETECCIÓN DE FUENTES USADAS
-   ============================================================ */
 function detectUsedFontsForItem(item){
   const used = new Set();
   item.objects.forEach(o => {
@@ -851,17 +932,10 @@ function detectUsedFontsForItem(item){
   return Array.from(used);
 }
 
-/* ============================================================
-   HELPERS DE GENERACIÓN CSS/HTML
-   ============================================================ */
 function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escHtmlAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escCssUrl(u){
-  // escapa ' y \ para url('...')
-  return String(u).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-}
+function escCssUrl(u){ return String(u).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
-/* Genera el mapa de declaraciones CSS (nombre -> valor) para un objeto en un dispositivo */
 function cssPropsFor(o, device){
   const g = function(path){ return getVal(o, path, device); };
   const gp = function(k){ return getVal(o, 'props.'+k, device); };
@@ -949,7 +1023,6 @@ function cssDiff(a, b){
   return out.length ? out.join(';') + ';' : '';
 }
 
-/* Variables de animación por dispositivo */
 function animVarsFor(o, device){
   const g = function(p){ return getVal(o, 'animation.'+p, device); };
   const eff = g('effect') || 'none';
@@ -972,7 +1045,6 @@ function animVarsFor(o, device){
   };
 }
 
-const EFFECT_TO_KF = { fade:'sbmKFade', left:'sbmKLeft', right:'sbmKRight', up:'sbmKUp', down:'sbmKDown', zoom:'sbmKZoom', rotate:'sbmKRotate', flip:'sbmKFlip' };
 const SHARED_KEYFRAMES = {
   sbmKFade:  '@keyframes sbmKFade{from{opacity:0}to{opacity:var(--sbm-op,1)}}',
   sbmKLeft:  '@keyframes sbmKLeft{from{opacity:0;transform:translateX(calc(-1 * var(--sbm-dist,150px))) rotate(var(--sbm-rot,0deg))}to{opacity:var(--sbm-op,1);transform:translateX(0) rotate(var(--sbm-rot,0deg))}}',
@@ -984,98 +1056,89 @@ const SHARED_KEYFRAMES = {
   sbmKFlip:  '@keyframes sbmKFlip{from{opacity:0;transform:perspective(900px) rotateY(90deg)}to{opacity:var(--sbm-op,1);transform:perspective(900px) rotateY(0deg) rotate(var(--sbm-rot,0deg))}}'
 };
 
-/* ============================================================
-   GENERADOR PRINCIPAL: CSS + HTML estáticos de un item
-   ============================================================ */
+/* =====================================================================
+   Genera CSS+HTML estático de un item.
+   - Si la imagen tiene useUrlInShortcode === true Y su src es URL real,
+     se emite la URL en src="..." (sin base64).
+   - En cualquier otro caso, el src se emite TAL CUAL (URL o data URI base64).
+   ===================================================================== */
 function generateItemAssets(item, opts){
   opts = opts || {};
-  const wrapInItem = opts.wrapInItem !== false;  // por defecto true
-  const goClass = opts.goClass !== false;        // por defecto true
+  const goClass = opts.goClass !== false;
 
-  const bp = app.slider.breakpoints;
+  const bpc = app.slider.breakpoints;
   const devices = app.slider.devices;
   const dd = devices.desktop, dt = devices.tablet, dm = devices.mobile;
   const scope = '#sbm-item-' + item.id;
   const css = [];
   const html = [];
 
-  /* --- Root: aspect ratio y variables --- */
-  const bgs = {
-    desktop: getItemBgForDevice(item, 'desktop'),
-    tablet:  getItemBgForDevice(item, 'tablet'),
-    mobile:  getItemBgForDevice(item, 'mobile')
-  };
+  const rawD = item.bg.desktop || {};
+  const rawT = item.bg.tablet  || {};
+  const rawM = item.bg.mobile  || {};
+
+  const fitD = rawD.fit || 'cover';
+  const ovD = rawD.overlay || 0;
+  const colorD = rawD.color || '#0f172a';
 
   css.push(scope + '{position:relative;width:100%;box-sizing:border-box;overflow:hidden;'
     + 'aspect-ratio:' + dd.width + ' / ' + dd.height + ';'
     + '--sbm-dw:' + dd.width + ';--sbm-dh:' + dd.height + ';'
-    + 'background-color:' + (bgs.desktop.color || '#0f172a') + ';}');
+    + 'background-color:' + colorD + ';'
+    + '--sbm-em:calc(100cqw / var(--sbm-dw));container-type:inline-size;}');
 
-  /* Cambios en tablet */
   const tabletRules = [];
-  if (dt.width !== dd.width || dt.height !== dd.height) {
-    tabletRules.push('aspect-ratio:' + dt.width + ' / ' + dt.height);
-  }
+  if (dt.width !== dd.width || dt.height !== dd.height) tabletRules.push('aspect-ratio:' + dt.width + ' / ' + dt.height);
   tabletRules.push('--sbm-dw:' + dt.width);
   tabletRules.push('--sbm-dh:' + dt.height);
-  if (bgs.tablet.color && bgs.tablet.color !== bgs.desktop.color) {
-    tabletRules.push('background-color:' + bgs.tablet.color);
-  }
-  css.push('@media (max-width:' + bp.tablet + 'px){' + scope + '{' + tabletRules.join(';') + ';}}');
+  if (rawT.color !== undefined && rawT.color !== colorD) tabletRules.push('background-color:' + rawT.color);
+  css.push('@media (max-width:' + bpc.tablet + 'px){' + scope + '{' + tabletRules.join(';') + ';}}');
 
-  /* Cambios en mobile */
   const mobileRules = [];
-  if (dm.width !== dt.width || dm.height !== dt.height) {
-    mobileRules.push('aspect-ratio:' + dm.width + ' / ' + dm.height);
-  }
+  if (dm.width !== dt.width || dm.height !== dt.height) mobileRules.push('aspect-ratio:' + dm.width + ' / ' + dm.height);
   mobileRules.push('--sbm-dw:' + dm.width);
   mobileRules.push('--sbm-dh:' + dm.height);
-  if (bgs.mobile.color && bgs.mobile.color !== bgs.tablet.color) {
-    mobileRules.push('background-color:' + bgs.mobile.color);
-  }
-  css.push('@media (max-width:' + bp.mobile + 'px){' + scope + '{' + mobileRules.join(';') + ';}}');
+  const effColorT = rawT.color !== undefined ? rawT.color : colorD;
+  if (rawM.color !== undefined && rawM.color !== effColorT) mobileRules.push('background-color:' + rawM.color);
+  css.push('@media (max-width:' + bpc.mobile + 'px){' + scope + '{' + mobileRules.join(';') + ';}}');
 
-  /* --- Inner slide --- */
-  css.push(scope + ' .sbm-slide{position:absolute;top:0;left:0;right:0;bottom:0;'
-    + 'font-size:calc(100cqw / var(--sbm-dw));}');
-  /* Definimos --sbm-em como custom property que se hereda a los hijos */
-  css.push(scope + '{--sbm-em:calc(100cqw / var(--sbm-dw));container-type:inline-size;}');
-
-  /* --- Fondo --- */
+  css.push(scope + ' .sbm-slide{position:absolute;top:0;left:0;right:0;bottom:0;}');
   css.push(scope + ' .sbm-bg{position:absolute;inset:0;background-position:center;background-repeat:no-repeat;}');
   css.push(scope + ' .sbm-bg-ov{position:absolute;inset:0;pointer-events:none;}');
 
-  const bg = { d: bgs.desktop, t: bgs.tablet, m: bgs.mobile };
-  if (bg.d.image) {
-    css.push(scope + ' .sbm-bg{background-image:url(\'' + escCssUrl(bg.d.image) + '\');background-size:' + (bg.d.fit||'cover') + ';}');
-  }
-  if (bg.t.image && bg.t.image !== bg.d.image || (bg.t.fit && bg.t.fit !== bg.d.fit)) {
-    const rules = [];
-    if (bg.t.image && bg.t.image !== bg.d.image) rules.push('background-image:url(\'' + escCssUrl(bg.t.image) + '\')');
-    if (bg.t.fit && bg.t.fit !== bg.d.fit) rules.push('background-size:' + bg.t.fit);
-    if (rules.length) css.push('@media (max-width:' + bp.tablet + 'px){' + scope + ' .sbm-bg{' + rules.join(';') + ';}}');
-  }
-  if (bg.m.image && bg.m.image !== bg.t.image || (bg.m.fit && bg.m.fit !== bg.t.fit)) {
-    const rules = [];
-    if (bg.m.image && bg.m.image !== bg.t.image) rules.push('background-image:url(\'' + escCssUrl(bg.m.image) + '\')');
-    if (bg.m.fit && bg.m.fit !== bg.t.fit) rules.push('background-size:' + bg.m.fit);
-    if (rules.length) css.push('@media (max-width:' + bp.mobile + 'px){' + scope + ' .sbm-bg{' + rules.join(';') + ';}}');
-  }
+  if (rawD.image) css.push(scope + ' .sbm-bg{background-image:url(\'' + escCssUrl(rawD.image) + '\');background-size:' + fitD + ';}');
+  if (ovD > 0) css.push(scope + ' .sbm-bg-ov{background:rgba(0,0,0,' + (ovD/100).toFixed(3) + ');}');
 
-  /* Overlay */
-  if (bg.d.overlay > 0) css.push(scope + ' .sbm-bg-ov{background:rgba(0,0,0,' + (bg.d.overlay/100).toFixed(3) + ');}');
-  const tOv = (bg.t.overlay === undefined) ? bg.d.overlay : bg.t.overlay;
-  if (tOv !== bg.d.overlay) {
-    css.push('@media (max-width:' + bp.tablet + 'px){' + scope + ' .sbm-bg-ov{background:' + (tOv > 0 ? 'rgba(0,0,0,' + (tOv/100).toFixed(3) + ')' : 'transparent') + ';}}');
-  }
-  const mOv = (bg.m.overlay === undefined) ? tOv : bg.m.overlay;
-  if (mOv !== tOv) {
-    css.push('@media (max-width:' + bp.mobile + 'px){' + scope + ' .sbm-bg-ov{background:' + (mOv > 0 ? 'rgba(0,0,0,' + (mOv/100).toFixed(3) + ')' : 'transparent') + ';}}');
-  }
+  (function(){
+    const rules = [];
+    if (rawT.image !== undefined && rawT.image !== rawD.image) {
+      rules.push(rawT.image ? 'background-image:url(\'' + escCssUrl(rawT.image) + '\')' : 'background-image:none');
+    }
+    if (rawT.fit !== undefined && rawT.fit !== fitD) rules.push('background-size:' + rawT.fit);
+    if (rules.length) css.push('@media (max-width:' + bpc.tablet + 'px){' + scope + ' .sbm-bg{' + rules.join(';') + ';}}');
+    if (rawT.overlay !== undefined && rawT.overlay !== ovD) {
+      const ov = rawT.overlay > 0 ? 'rgba(0,0,0,' + (rawT.overlay/100).toFixed(3) + ')' : 'transparent';
+      css.push('@media (max-width:' + bpc.tablet + 'px){' + scope + ' .sbm-bg-ov{background:' + ov + ';}}');
+    }
+  })();
 
-  /* --- Objetos --- */
+  (function(){
+    const effImage = rawT.image !== undefined ? rawT.image : rawD.image;
+    const effFit = rawT.fit !== undefined ? rawT.fit : fitD;
+    const effOv = rawT.overlay !== undefined ? rawT.overlay : ovD;
+    const rules = [];
+    if (rawM.image !== undefined && rawM.image !== effImage) {
+      rules.push(rawM.image ? 'background-image:url(\'' + escCssUrl(rawM.image) + '\')' : 'background-image:none');
+    }
+    if (rawM.fit !== undefined && rawM.fit !== effFit) rules.push('background-size:' + rawM.fit);
+    if (rules.length) css.push('@media (max-width:' + bpc.mobile + 'px){' + scope + ' .sbm-bg{' + rules.join(';') + ';}}');
+    if (rawM.overlay !== undefined && rawM.overlay !== effOv) {
+      const ov = rawM.overlay > 0 ? 'rgba(0,0,0,' + (rawM.overlay/100).toFixed(3) + ')' : 'transparent';
+      css.push('@media (max-width:' + bpc.mobile + 'px){' + scope + ' .sbm-bg-ov{background:' + ov + ';}}');
+    }
+  })();
+
   const usedKeyframes = {};
-  const anyAnimation = { d:false, t:false, m:false };
 
   item.objects.slice().sort((a,b) => a.z - b.z).forEach(o => {
     const cls = '.sbm-o-' + o.id;
@@ -1087,29 +1150,24 @@ function generateItemAssets(item, opts){
     css.push(sel + '{' + cssDeclarations(propsD) + '}');
 
     const tDiff = cssDiff(propsT, propsD);
-    if (tDiff) css.push('@media (max-width:' + bp.tablet + 'px){' + sel + '{' + tDiff + '}}');
+    if (tDiff) css.push('@media (max-width:' + bpc.tablet + 'px){' + sel + '{' + tDiff + '}}');
     const mDiff = cssDiff(propsM, propsT);
-    if (mDiff) css.push('@media (max-width:' + bp.mobile + 'px){' + sel + '{' + mDiff + '}}');
+    if (mDiff) css.push('@media (max-width:' + bpc.mobile + 'px){' + sel + '{' + mDiff + '}}');
 
-    /* Animaciones */
     const aD = animVarsFor(o, 'desktop');
     const aT = animVarsFor(o, 'tablet');
     const aM = animVarsFor(o, 'mobile');
     const hasAnim = (aD['--sbm-an'] !== 'none') || (aT['--sbm-an'] !== 'none') || (aM['--sbm-an'] !== 'none');
     if (hasAnim) {
-      [aD['--sbm-an'], aT['--sbm-an'], aM['--sbm-an']].forEach(n => {
-        if (n && n !== 'none') usedKeyframes[n] = true;
-      });
+      [aD['--sbm-an'], aT['--sbm-an'], aM['--sbm-an']].forEach(n => { if (n && n !== 'none') usedKeyframes[n] = true; });
       css.push(sel + '{' + cssDeclarations(aD) + '}');
       const at = cssDiff(aT, aD);
-      if (at) css.push('@media (max-width:' + bp.tablet + 'px){' + sel + '{' + at + '}}');
+      if (at) css.push('@media (max-width:' + bpc.tablet + 'px){' + sel + '{' + at + '}}');
       const am = cssDiff(aM, aT);
-      if (am) css.push('@media (max-width:' + bp.mobile + 'px){' + sel + '{' + am + '}}');
-      /* Dispara la animación sólo cuando el item tiene .sbm-go */
+      if (am) css.push('@media (max-width:' + bpc.mobile + 'px){' + sel + '{' + am + '}}');
       css.push(scope + '.sbm-go ' + cls + '{animation:var(--sbm-an) var(--sbm-ad) var(--sbm-ae) var(--sbm-al) both;}');
     }
 
-    /* --- HTML del objeto --- */
     const text = getVal(o, 'props.text', 'desktop');
     if (o.type === 'button'){
       const href = escHtmlAttr(getVal(o, 'props.href', 'desktop') || '#');
@@ -1117,40 +1175,53 @@ function generateItemAssets(item, opts){
     } else if (o.type === 'text'){
       html.push('        <div class="sbm-o-' + o.id + '">' + escHtml(text) + '</div>');
     } else if (o.type === 'image'){
-      const src = escHtmlAttr(getVal(o, 'props.src', 'desktop') || '');
-      html.push('        <img class="sbm-o-' + o.id + '" src="' + src + '" alt="" loading="lazy" decoding="async">');
+      /* === RESOLUCIÓN DEL SRC ===
+         - Si "Usar URL en shortcode" está marcado Y el src es una URL real → se usa esa URL.
+         - Si no, se emite el src tal cual (URL o data URI base64). */
+      const rawSrc = getVal(o, 'props.src', 'desktop') || '';
+      const useUrl = getVal(o, 'props.useUrlInShortcode', 'desktop') === true;
+      let finalSrc = rawSrc;
+      if (useUrl && isUrlLike(rawSrc)) {
+        finalSrc = rawSrc;                       // URL directa
+      } else if (isBase64Like(rawSrc)) {
+        finalSrc = rawSrc;                       // data URI base64 — se emite tal cual
+      } else {
+        finalSrc = rawSrc;                       // URL o lo que haya
+      }
+      const srcAttr = escHtmlAttr(finalSrc);
+      const loading = getVal(o, 'props.loading', 'desktop') || 'lazy';
+      const lazyClass = getVal(o, 'props.lazyClass', 'desktop') || '';
+      const fp = getVal(o, 'props.fetchpriority', 'desktop') || 'auto';
+      const clsStr = 'sbm-o-' + o.id + (lazyClass ? ' ' + lazyClass : '');
+      const attrs = ' loading="' + loading + '"'
+                  + ' fetchpriority="' + fp + '"'
+                  + ' decoding="async"';
+      html.push('        <img class="' + clsStr + '" src="' + srcAttr + '" alt=""' + attrs + '>');
     } else {
       html.push('        <div class="sbm-o-' + o.id + '"></div>');
     }
   });
 
-  /* --- Keyframes usadas --- */
   Object.keys(usedKeyframes).forEach(k => { css.push(SHARED_KEYFRAMES[k]); });
 
-  /* --- HTML final del item --- */
   const goSuffix = goClass ? ' sbm-go' : '';
-  html.unshift('    <div class="sbm-item' + goSuffix + '" id="sbm-item-' + item.id + '" data-sbm-item="' + item.id + '">');
-  html.unshift('');  // saltamos índice 0
-  html[0] = '    <div class="sbm-item' + goSuffix + '" id="sbm-item-' + item.id + '" data-sbm-item="' + item.id + '">';
-  html.splice(1, 0, '      <div class="sbm-slide">');
-  if (bg.d.image) html.splice(2, 0, '        <div class="sbm-bg"></div>');
-  if (bg.d.overlay > 0) html.splice(bg.d.image ? 3 : 2, 0, '        <div class="sbm-bg-ov"></div>');
-  html.push('      </div>');
-  html.push('    </div>');
+  const lines = [];
+  lines.push('    <div class="sbm-item' + goSuffix + '" id="sbm-item-' + item.id + '" data-sbm-item="' + item.id + '">');
+  lines.push('      <div class="sbm-slide">');
+  lines.push('        <div class="sbm-bg"></div>');
+  lines.push('        <div class="sbm-bg-ov"></div>');
+  for (const ln of html) lines.push(ln);
+  lines.push('      </div>');
+  lines.push('    </div>');
 
-  /* Escapamos "</" en el CSS para no cerrar <style> antes de tiempo */
   const cssStr = css.join('\n').replace(/<\//g, '<\\/');
-
   return {
     css: cssStr,
-    html: html.join('\n'),
+    html: lines.join('\n'),
     fonts: detectUsedFontsForItem(item)
   };
 }
 
-/* ============================================================
-   GENERADOR: HTML estático (para vista previa / descarga suelta)
-   ============================================================ */
 function generateItemHTML(item){
   const assets = generateItemAssets(item, { goClass: true });
   const fontLink = assets.fonts.length
@@ -1184,14 +1255,6 @@ ${assets.html}
 </html>`;
 }
 
-/* ============================================================
-   GENERADOR: SHORTCODE de un item (PHP puro, sin JS de inyección)
-   ============================================================ */
-function phpNowdoc(label, content){
-  // Asegura que la etiqueta final no aparezca dentro del contenido
-  return { label, content };
-}
-
 function generateItemShortcode(item){
   const assets = generateItemAssets(item, { goClass: true });
 
@@ -1203,10 +1266,12 @@ function generateItemShortcode(item){
 
   const cssNowdoc = 'SBM_ITEM_CSS_' + item.id;
   const htmlNowdoc = 'SBM_ITEM_HTML_' + item.id;
-
-  /* Si por casualidad aparece la etiqueta de cierre dentro, la rompemos */
   const cssSafe = assets.css.split(cssNowdoc).join(cssNowdoc + '_X');
   const htmlSafe = assets.html.split(htmlNowdoc).join(htmlNowdoc + '_X');
+
+  /* Resumen del tipo de src para comentario informativo */
+  const base64Count = item.objects.filter(o => o.type === 'image' && isBase64Like(getVal(o, 'props.src', 'desktop'))).length;
+  const urlCount = item.objects.filter(o => o.type === 'image' && getVal(o, 'props.useUrlInShortcode', 'desktop') === true && isUrlLike(getVal(o, 'props.src', 'desktop'))).length;
 
   return `<?php
 /**
@@ -1215,38 +1280,32 @@ function generateItemShortcode(item){
  * ============================================================
  *  Shortcode:  [slider_morbriant_item id="${item.id}"]
  *
- *  Este archivo genera HTML y CSS REALES en el código fuente.
- *  No usa base64 ni inyección dinámica por JavaScript.
+ *  · Imágenes en base64 (data URI): ${base64Count}
+ *  · Imágenes con URL directa (checkbox "Usar URL" marcado): ${urlCount}
  *
- *  · Las imágenes se imprimen como <img src="...">.
- *  · Los fondos como background-image:url(...) en <style>.
- *  · El layout responsivo se resuelve con media queries + container
- *    queries (cqw), sin JavaScript.
+ *  Comportamiento:
+ *  ─ Las imágenes con la casilla "Usar URL en shortcode" MARCADA usan
+ *    su URL en src="...".
+ *  ─ Las imágenes con la casilla DESMARCADA emiten su src tal cual.
+ *    Si el usuario subió un archivo (data URI), se usa base64;
+ *    si escribió una URL, se usa esa URL.
+ *  ─ Nunca se hace fetch ni conversión dinámica.
  * ============================================================
  */
 
 if (!defined('ABSPATH')) { exit; }
 
-/* ============================================================
-   FRAMEWORK (una sola vez)
-   ============================================================ */
 if (!function_exists('slider_morbriant_item_shortcode')) {
-
     function slider_morbriant_item_shortcode($atts) {
         $atts = shortcode_atts(array('id' => '1'), $atts, 'slider_morbriant_item');
         $id   = (string) $atts['id'];
         $fn   = 'slider_morbriant_item_' . $id . '_render';
-        if (function_exists($fn)) {
-            return call_user_func($fn);
-        }
-        if (current_user_can('manage_options')) {
-            return '<!-- Slider MorBriant: no existe el item "' . esc_html($id) . '" -->';
-        }
+        if (function_exists($fn)) return call_user_func($fn);
+        if (current_user_can('manage_options')) return '<!-- Slider MorBriant: no existe el item "' . esc_html($id) . '" -->';
         return '';
     }
     add_shortcode('slider_morbriant_item', 'slider_morbriant_item_shortcode');
 
-    /* Helper: asegurar que el CSS de un item sólo se imprime una vez por página */
     if (!function_exists('slider_morbriant_print_item_css')) {
         function slider_morbriant_print_item_css($id) {
             static $done = array();
@@ -1259,9 +1318,6 @@ if (!function_exists('slider_morbriant_item_shortcode')) {
     }
 }
 
-/* ============================================================
-   ITEM ${item.id} — CSS
-   ============================================================ */
 if (!function_exists('slider_morbriant_item_${item.id}_css')) {
     function slider_morbriant_item_${item.id}_css(){
         return <<<'${cssNowdoc}'
@@ -1270,9 +1326,6 @@ ${cssNowdoc};
     }
 }
 
-/* ============================================================
-   ITEM ${item.id} — HTML
-   ============================================================ */
 if (!function_exists('slider_morbriant_item_${item.id}_html')) {
     function slider_morbriant_item_${item.id}_html(){
         return <<<'${htmlNowdoc}'
@@ -1281,9 +1334,6 @@ ${htmlNowdoc};
     }
 }
 
-/* ============================================================
-   ITEM ${item.id} — Render
-   ============================================================ */
 if (!function_exists('slider_morbriant_item_${item.id}_render')) {
     function slider_morbriant_item_${item.id}_render(){
         $out  = slider_morbriant_print_item_css(${phpInt(item.id)});
@@ -1295,15 +1345,12 @@ ${fontLines}
 `;
 }
 
-function phpInt(n){ return '\\'' + String(n).replace(/[^0-9]/g,'') + '\\''; }
+function phpInt(n){ return "'" + String(n).replace(/[^0-9]/g,'') + "'"; }
+function phpSQ(s){ return "'" + String(s).replace(/\\/g,'\\\\').replace(/'/g, "\\'") + "'"; }
 
-/* ============================================================
-   GENERADOR: SHORTCODE del slider
-   ============================================================ */
 function generateSliderShortcode(){
   const name = (app.slider.name || '').trim();
   if(!name){ alert('El nombre del slider no puede estar vacío. Configúralo en ⚙ Slider antes de exportar.'); return null; }
-
   const ids = app.items.map(it => String(it.id));
   const itemsList = ids.join(',');
 
@@ -1316,30 +1363,18 @@ function generateSliderShortcode(){
  *  Items  : ${itemsList}
  *
  *  Shortcode:  [slider_morbriant nombre="${name}" items="${itemsList}"]
- *
- *  Este archivo contiene SÓLO el código del slider.
- *  Cada item debe estar pegado también en functions.php con su
- *  propio archivo .shortcode ([slider_morbriant_item id="N"]).
  * ============================================================
  */
 
 if (!defined('ABSPATH')) { exit; }
 
-/* ============================================================
-   REGISTRO DE SLIDERS (nombre → configuración)
-   ============================================================ */
-if (!isset($GLOBALS['slider_morbriant_sliders'])) {
-    $GLOBALS['slider_morbriant_sliders'] = array();
-}
+if (!isset($GLOBALS['slider_morbriant_sliders'])) $GLOBALS['slider_morbriant_sliders'] = array();
 $GLOBALS['slider_morbriant_sliders'][${phpString(name)}] = array(
     'name'           => ${phpString(name)},
     'transition'     => ${phpString(app.slider.transition)},
     'transitionTime' => ${parseInt(app.slider.transitionTime,10) || 4000}
 );
 
-/* ============================================================
-   CSS Y JS DEL SLIDER (una sola vez)
-   ============================================================ */
 if (!function_exists('slider_morbriant_get_slider_css')) {
     function slider_morbriant_get_slider_css(){
         return <<<'SBM_SLIDER_CSS'
@@ -1348,7 +1383,6 @@ if (!function_exists('slider_morbriant_get_slider_css')) {
 .sbm-slider-slides{position:absolute;top:0;left:0;right:0;bottom:0;}
 .sbm-slider-slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .55s ease, transform .55s ease;}
 .sbm-slider-slide.sbm-active{opacity:1;visibility:visible;}
-
 .sbm-slider[data-sbm-transition="none"] .sbm-slider-slide{transition:none;}
 .sbm-slider[data-sbm-transition="slide-left"] .sbm-slider-slide{transform:translateX(100%);opacity:1;visibility:visible;}
 .sbm-slider[data-sbm-transition="slide-left"] .sbm-slider-slide.sbm-active{transform:translateX(0);}
@@ -1379,29 +1413,22 @@ if (!function_exists('slider_morbriant_get_slider_js')) {
         slider.setAttribute('data-sbm-init', '1');
         var slides = slider.querySelectorAll('.sbm-slider-slide');
         if (slides.length === 0) return;
-
         function show(idx){
           for (var k = 0; k < slides.length; k++) {
             var s = slides[k];
+            var items = s.querySelectorAll('.sbm-item');
             if (k === idx) {
               s.classList.add('sbm-active');
-              // Reinicia la animación retirando y volviendo a poner sbm-go
-              var items = s.querySelectorAll('.sbm-item');
               for (var j = 0; j < items.length; j++) {
-                items[j].classList.remove('sbm-go');
-                void items[j].offsetWidth;
-                items[j].classList.add('sbm-go');
+                items[j].classList.remove('sbm-go'); void items[j].offsetWidth; items[j].classList.add('sbm-go');
               }
             } else {
               s.classList.remove('sbm-active');
-              var itemsOff = s.querySelectorAll('.sbm-item');
-              for (var j2 = 0; j2 < itemsOff.length; j2++) itemsOff[j2].classList.remove('sbm-go');
+              for (var j2 = 0; j2 < items.length; j2++) items[j2].classList.remove('sbm-go');
             }
           }
         }
-
         show(0);
-
         var time = parseInt(slider.getAttribute('data-sbm-time'), 10) || 4000;
         if (slides.length > 1 && time > 0) {
           setInterval(function(){
@@ -1418,69 +1445,36 @@ SBM_SLIDER_JS;
     }
 }
 
-/* ============================================================
-   SHORTCODE
-   ============================================================ */
 if (!function_exists('slider_morbriant_shortcode')) {
     function slider_morbriant_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'nombre' => '',
-            'items'  => ''
-        ), $atts, 'slider_morbriant');
-
+        $atts = shortcode_atts(array('nombre' => '', 'items' => ''), $atts, 'slider_morbriant');
         $nombre = trim((string)$atts['nombre']);
         if ($nombre === '') {
-            if (current_user_can('manage_options')) {
-                return '<!-- Slider MorBriant: falta el parámetro obligatorio "nombre" -->';
-            }
+            if (current_user_can('manage_options')) return '<!-- Slider MorBriant: falta "nombre" -->';
             return '';
         }
-
-        $config = isset($GLOBALS['slider_morbriant_sliders'][$nombre])
-            ? $GLOBALS['slider_morbriant_sliders'][$nombre]
-            : array('name'=>$nombre, 'transition'=>'fade', 'transitionTime'=>4000);
-
+        $config = isset($GLOBALS['slider_morbriant_sliders'][$nombre]) ? $GLOBALS['slider_morbriant_sliders'][$nombre] : array('name'=>$nombre, 'transition'=>'fade', 'transitionTime'=>4000);
         $raw = trim((string)$atts['items']);
         $ids = array_filter(array_map('trim', explode(',', $raw)));
-
-        /* Filtrar sólo items que existan (función de render definida) */
         $available = array();
-        foreach ($ids as $id) {
-            if (function_exists('slider_morbriant_item_' . $id . '_render')) {
-                $available[] = $id;
-            }
-        }
+        foreach ($ids as $id) if (function_exists('slider_morbriant_item_' . $id . '_render')) $available[] = $id;
         if (empty($available)) {
-            if (current_user_can('manage_options')) {
-                return '<!-- Slider MorBriant: no se encontró ninguno de los items indicados -->';
-            }
+            if (current_user_can('manage_options')) return '<!-- Slider MorBriant: no se encontró ninguno de los items indicados -->';
             return '';
         }
-
-        /* CSS de los items que vamos a usar (una vez por página) */
         $out = '';
-        foreach ($available as $id) {
-            $out .= slider_morbriant_print_item_css($id);
-        }
-
-        /* CSS + JS del slider (una vez por página) */
+        foreach ($available as $id) $out .= slider_morbriant_print_item_css($id);
         static $slider_assets_done = false;
         if (!$slider_assets_done) {
             $out .= '<style id="sbm-slider-styles">' . slider_morbriant_get_slider_css() . '</style>';
             $out .= '<script id="sbm-slider-runtime">' . slider_morbriant_get_slider_js() . '</' . 'script>';
             $slider_assets_done = true;
         }
-
-        /* Aspect ratio y --sbm-dw/dh del slider = el del primer item */
         $dims = slider_morbriant_get_slider_dims($available[0]);
         $transition = $config['transition'];
         $time = (int)$config['transitionTime'];
-
-        $out .= '<div class="sbm-slider" data-sbm-transition="' . esc_attr($transition) . '"'
-              . ' data-sbm-time="' . esc_attr($time) . '"'
-              . ' style="aspect-ratio:' . esc_attr($dims['w'] . ' / ' . $dims['h']) . '">';
+        $out .= '<div class="sbm-slider" data-sbm-transition="' . esc_attr($transition) . '" data-sbm-time="' . esc_attr($time) . '" style="aspect-ratio:' . esc_attr($dims['w'] . ' / ' . $dims['h']) . '">';
         $out .= '<div class="sbm-slider-slides">';
-
         foreach ($available as $i => $id) {
             $active = ($i === 0) ? ' sbm-active' : '';
             $fn = 'slider_morbriant_item_' . $id . '_html';
@@ -1488,7 +1482,6 @@ if (!function_exists('slider_morbriant_shortcode')) {
             $out .= call_user_func($fn);
             $out .= '</div>';
         }
-
         $out .= '</div></div>';
         return $out;
     }
@@ -1497,13 +1490,8 @@ if (!function_exists('slider_morbriant_shortcode')) {
 `;
 }
 
-function phpString(s){
-  return "'" + String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'") + "'";
-}
+function phpString(s){ return "'" + String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'") + "'"; }
 
-/* ============================================================
-   MODAL CONFIG
-   ============================================================ */
 const sliderModal = $('#sliderModal');
 function openSliderModal(){
   $('#cfgName').value = app.slider.name;
