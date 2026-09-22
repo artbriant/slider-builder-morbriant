@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Slider Builder MorBriant (Versión 1.3.1)</title>
+<title>Slider Builder MorBriant (Versión 2.0)</title>
 <style>
 :root{
   --bg:#0b1020; --panel:#121a2e; --panel2:#1a2440; --line:#26314f;
@@ -15,7 +15,6 @@ html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,"Segoe 
   background:var(--bg);color:var(--txt);overflow:hidden;}
 body{display:flex;flex-direction:column;height:100vh;}
 
-/* ---------- TOPBAR ---------- */
 .topbar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--panel);
   border-bottom:1px solid var(--line);flex-wrap:wrap;flex:0 0 auto;z-index:120;}
 .brand{font-weight:800;letter-spacing:.3px;font-size:15px;margin-right:6px;
@@ -28,9 +27,10 @@ button.primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);border-color:t
 button.primary:hover{filter:brightness(1.12);}
 button.wp{background:linear-gradient(135deg,#21759b,#00a0d2);border-color:transparent;color:#fff;font-weight:600;}
 button.wp:hover{filter:brightness(1.12);}
+button.cfg{background:linear-gradient(135deg,#f59e0b,#f97316);border-color:transparent;color:#1a0f00;font-weight:700;}
+button.cfg:hover{filter:brightness(1.12);}
 button.mob{display:none;}
 
-/* ---------- DEVICE SWITCHER ---------- */
 .devswitch{display:flex;gap:2px;background:#0d1428;padding:3px;border-radius:10px;border:1px solid var(--line);}
 .devswitch button{padding:6px 11px;font-size:12px;border:none;background:transparent;border-radius:7px;
   display:flex;align-items:center;gap:6px;color:var(--muted);font-weight:500;}
@@ -39,12 +39,23 @@ button.mob{display:none;}
   box-shadow:0 4px 14px rgba(79,156,249,.35);}
 .devswitch button svg{width:15px;height:15px;display:block;}
 .devswitch .dlabel{display:none;}
-@media (min-width:1200px){ .devswitch .dlabel{display:inline;} }
+@media (min-width:1280px){ .devswitch .dlabel{display:inline;} }
 
-/* ---------- LAYOUT ---------- */
+/* tab bar */
+.tabbar{display:flex;gap:2px;padding:0 8px;background:#0f1728;border-bottom:1px solid var(--line);
+  overflow-x:auto;flex:0 0 auto;align-items:center;min-height:36px;}
+.tab{display:flex;align-items:center;gap:6px;padding:6px 12px;border:none;background:transparent;
+  color:var(--muted);border-radius:6px 6px 0 0;cursor:pointer;font-size:12px;white-space:nowrap;
+  position:relative;border-top:2px solid transparent;margin-bottom:-1px;}
+.tab:hover{background:#1a2440;color:#cbd5ff;}
+.tab.active{background:var(--panel);color:var(--txt);border-top-color:var(--accent);font-weight:600;}
+.tab-close{font-size:14px;opacity:.4;padding:1px 4px;border-radius:3px;line-height:1;}
+.tab-close:hover{background:rgba(255,90,90,.25);opacity:1;color:#ff9db1;}
+.tab-add{padding:4px 10px;font-size:16px;background:transparent;border:1px dashed var(--line);
+  color:var(--muted);border-radius:6px;cursor:pointer;line-height:1;}
+.tab-add:hover{background:var(--panel2);color:var(--txt);border-color:var(--accent);}
+
 .layout{flex:1;display:flex;min-height:0;position:relative;}
-
-/* ---------- SIDEBAR / PROPS ---------- */
 .sidebar{width:248px;flex:0 0 248px;background:var(--panel);border-right:1px solid var(--line);
   overflow-y:auto;padding:12px;z-index:60;}
 .props{width:312px;flex:0 0 312px;background:var(--panel);border-left:1px solid var(--line);
@@ -67,7 +78,6 @@ input[type=file]{font-size:11px;color:var(--muted);margin-top:6px;width:100%;}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 select option{background:#0d1428;color:#e6ecff;}
 
-/* ---------- PALETTE ---------- */
 .palette{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .pal{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;
   background:var(--panel2);border:1px dashed #35446b;border-radius:10px;cursor:grab;
@@ -76,7 +86,6 @@ select option{background:#0d1428;color:#e6ecff;}
 .pal:active{cursor:grabbing;}
 .pal .ic{font-size:19px;line-height:1;}
 
-/* ---------- STAGE ---------- */
 .stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;
   overflow:hidden;min-width:0;flex-direction:column;gap:8px;
   background-image:
@@ -92,7 +101,6 @@ select option{background:#0d1428;color:#e6ecff;}
 .bg-layer{position:absolute;inset:0;pointer-events:none;}
 .objects-layer{position:absolute;inset:0;}
 
-/* ---------- OBJECTS ---------- */
 .obj{position:absolute;user-select:none;-webkit-user-select:none;}
 .objects-layer:not(.previewing) .obj{cursor:move;}
 .obj.selected{outline:2px dashed #6366f1;outline-offset:0;}
@@ -108,7 +116,6 @@ select option{background:#0d1428;color:#e6ecff;}
 .handle[data-dir="sw"]{left:-6px;bottom:-6px;cursor:nesw-resize;}
 .handle[data-dir="w"]{left:-6px;top:calc(50% - 5.5px);cursor:ew-resize;}
 
-/* ---------- PROPS PANEL ---------- */
 .empty{color:var(--muted);font-size:13px;text-align:center;padding:40px 10px;line-height:1.6;}
 .ptitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;
   padding-bottom:10px;border-bottom:1px solid var(--line);}
@@ -139,10 +146,28 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
 .info-banner{font-size:11px;background:#12203a;border:1px solid #1e3a6b;color:#8fc0ff;
   padding:8px 10px;border-radius:8px;line-height:1.5;margin-bottom:10px;}
 .info-banner b{color:#bfd8ff;}
-
 .bp-preview{font-size:10.5px;color:#9fb1dd;background:#0d1428;border:1px solid var(--line);
   border-radius:8px;padding:7px 9px;line-height:1.6;margin-top:8px;}
 .bp-preview span{color:#8fc0ff;font-weight:600;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(5,8,18,.72);backdrop-filter:blur(5px);
+  z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  max-width:640px;width:100%;max-height:90vh;overflow-y:auto;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.7);}
+.modal h2{margin:0 0 4px;font-size:18px;display:flex;align-items:center;gap:10px;}
+.modal h2 .icon{background:linear-gradient(135deg,#f59e0b,#f97316);width:28px;height:28px;
+  border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.modal .sub{color:var(--muted);font-size:12px;margin-bottom:18px;}
+.modal .msec{padding:14px 0;border-top:1px solid var(--line);}
+.modal .msec:first-of-type{border-top:none;padding-top:6px;}
+.modal .msec h4{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.7px;
+  color:#8fc0ff;font-weight:700;}
+.modal .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;
+  padding-top:16px;border-top:1px solid var(--line);flex-wrap:wrap;}
+.modal .actions .left{margin-right:auto;display:flex;gap:8px;}
+.required{color:#ffb4b4;font-size:11px;}
 
 @media (max-width:900px){
   .sidebar,.props{position:fixed;top:0;bottom:0;z-index:200;box-shadow:0 0 50px rgba(0,0,0,.7);}
@@ -182,15 +207,18 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
     </button>
   </div>
 
+  <button id="btnSliderConfig" class="cfg" title="Configuración global del slider">⚙ Slider</button>
+
   <div class="spacer"></div>
-  <button id="btnNew">✨ Nuevo</button>
-  <button id="btnImport">📂 Importar</button>
-  <button id="btnExportJson">⬇ JSON</button>
-  <button id="btnExportShortcode" class="wp" title="Exportar como shortcode de WordPress">⬇ Shortcode WP</button>
+  <button id="btnImport">📂 Importar item</button>
+  <button id="btnExportJson">⬇ JSON item</button>
+  <button id="btnExportShortcode" class="wp" title="Exportar este item como shortcode">⬇ Shortcode item</button>
   <button id="btnPreview">▶ Previsualizar</button>
-  <button id="btnExportHtml" class="primary">⬇ Exportar HTML</button>
+  <button id="btnExportHtml" class="primary">⬇ HTML item</button>
   <input type="file" id="fileImport" accept=".json,application/json" hidden>
 </header>
+
+<div class="tabbar" id="tabbar"></div>
 
 <div class="layout">
   <aside class="sidebar" id="sidebar">
@@ -207,26 +235,16 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
 
     <div class="sec">
       <h3>Lienzo <span class="devtag" id="cvDevTag">escritorio</span></h3>
+      <p class="hint">Las dimensiones se configuran globalmente en ⚙ Slider.</p>
       <div class="two">
-        <div><label class="lbl">Ancho</label><input type="number" id="cvW" value="1280" step="10"></div>
-        <div><label class="lbl">Alto</label><input type="number" id="cvH" value="720" step="10"></div>
+        <div><label class="lbl">Ancho</label><input type="number" id="cvW" readonly></div>
+        <div><label class="lbl">Alto</label><input type="number" id="cvH" readonly></div>
       </div>
     </div>
 
     <div class="sec">
-      <h3>Breakpoints</h3>
-      <p class="hint">Puntos de ruptura para tablet y móvil (en píxeles). El escritorio es la base.</p>
-      <div class="two">
-        <div><label class="lbl">Tablet ≤</label><input type="number" id="bpTablet" value="1024" step="1" min="320"></div>
-        <div><label class="lbl">Móvil ≤</label><input type="number" id="bpMobile" value="767" step="1" min="240"></div>
-      </div>
-      <div class="bp-preview" id="bpPreview"></div>
-      <button id="btnResetBp" style="width:100%;margin-top:8px;font-size:11.5px;">↺ Valores por defecto</button>
-    </div>
-
-    <div class="sec">
-      <h3>Fondo <span class="devtag" id="bgDevTag">escritorio</span></h3>
-      <p class="hint" id="bgHint">Cada dispositivo puede tener su propio fondo.</p>
+      <h3>Fondo del item <span class="devtag" id="bgDevTag">escritorio</span></h3>
+      <p class="hint" id="bgHint">Cada dispositivo puede tener su propio fondo para este item.</p>
       <label class="lbl">Color</label>
       <input type="color" id="bgColor" value="#0f172a">
       <label class="lbl">Imagen de fondo (URL)</label>
@@ -246,11 +264,11 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
 
   <main class="stage" id="stage">
     <div class="devbar" id="devbar">
+      <span>Item: <b id="devbarItem">item-1</b></span>
+      <span>·</span>
       <span>Viendo: <b id="devbarName">Escritorio</b></span>
       <span>·</span>
       <span id="devbarSize">1280 × 720</span>
-      <span>·</span>
-      <span id="devbarBp">Breakpoints: T ≤ 1024 · M ≤ 767</span>
     </div>
     <div class="slide-wrap" id="slideWrap">
       <div class="slide" id="slide">
@@ -261,6 +279,67 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
   </main>
 
   <aside class="props" id="propsPanel"></aside>
+</div>
+
+<!-- ============ MODAL: CONFIGURACIÓN DEL SLIDER ============ -->
+<div class="modal-overlay" id="sliderModal">
+  <div class="modal">
+    <h2><span class="icon">⚙</span> Configuración del Slider</h2>
+    <p class="sub">Estas opciones afectan a todos los items/pestañas del slider.</p>
+
+    <div class="msec">
+      <h4>General</h4>
+      <label class="lbl">Nombre del slider <span class="required">* obligatorio</span></label>
+      <input type="text" id="cfgName" placeholder="Mi Slider">
+      <label class="lbl">Tipo de transición</label>
+      <select id="cfgTransition">
+        <option value="none">Sin transición</option>
+        <option value="fade">Desvanecer (fade)</option>
+        <option value="slide-left">Deslizar a la izquierda</option>
+        <option value="slide-right">Deslizar a la derecha</option>
+        <option value="slide-up">Deslizar hacia arriba</option>
+        <option value="slide-down">Deslizar hacia abajo</option>
+        <option value="zoom">Zoom</option>
+      </select>
+      <label class="lbl">Tiempo de transición (ms) — cada cuánto pasa de item a item</label>
+      <input type="number" id="cfgTime" min="500" max="60000" step="100" value="4000">
+    </div>
+
+    <div class="msec">
+      <h4>Breakpoints</h4>
+      <div class="two">
+        <div><label class="lbl">Tablet ≤ (px)</label><input type="number" id="cfgBpTablet" min="320"></div>
+        <div><label class="lbl">Móvil ≤ (px)</label><input type="number" id="cfgBpMobile" min="240"></div>
+      </div>
+      <div class="bp-preview" id="cfgBpPreview"></div>
+    </div>
+
+    <div class="msec">
+      <h4>Dimensiones del lienzo por dispositivo</h4>
+      <div class="two" style="margin-bottom:8px;">
+        <div><label class="lbl">Escritorio — Ancho</label><input type="number" id="cfgDwW" step="10"></div>
+        <div><label class="lbl">Escritorio — Alto</label><input type="number" id="cfgDwH" step="10"></div>
+      </div>
+      <div class="two" style="margin-bottom:8px;">
+        <div><label class="lbl">Tablet — Ancho</label><input type="number" id="cfgDtW" step="10"></div>
+        <div><label class="lbl">Tablet — Alto</label><input type="number" id="cfgDtH" step="10"></div>
+      </div>
+      <div class="two">
+        <div><label class="lbl">Móvil — Ancho</label><input type="number" id="cfgDmW" step="10"></div>
+        <div><label class="lbl">Móvil — Alto</label><input type="number" id="cfgDmH" step="10"></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="left">
+        <button id="cfgImport">📂 Importar JSON</button>
+        <button id="cfgExport">⬇ Exportar JSON</button>
+      </div>
+      <button id="cfgCancel">Cancelar</button>
+      <button id="cfgSave" class="primary">Guardar</button>
+      <input type="file" id="cfgFileImport" accept=".json,application/json" hidden>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -343,24 +422,40 @@ const KEYFRAMES = `
 })();
 
 /* =========================================================
-   2. SISTEMA DE DISPOSITIVOS
+   2. DISPOSITIVOS
    ========================================================= */
-const DEVICE_KEYS = ['desktop', 'tablet', 'mobile'];
+const DEVICE_KEYS = ['desktop','tablet','mobile'];
 const DEVICE_META = {
-  desktop: { label:'Escritorio', short:'desktop' },
-  tablet:  { label:'Tablet',     short:'tablet'  },
-  mobile:  { label:'Móvil',      short:'mobile'  }
+  desktop:{ label:'Escritorio', short:'desktop' },
+  tablet: { label:'Tablet',     short:'tablet'  },
+  mobile: { label:'Móvil',      short:'mobile'  }
 };
-function deviceChain(device){
-  if(device === 'desktop') return ['desktop'];
-  if(device === 'tablet')  return ['desktop', 'tablet'];
-  return ['desktop', 'tablet', 'mobile'];
+function deviceChain(d){
+  if(d === 'desktop') return ['desktop'];
+  if(d === 'tablet')  return ['desktop','tablet'];
+  return ['desktop','tablet','mobile'];
 }
 
 /* =========================================================
    3. ESTADO
    ========================================================= */
-let project = blankProject();
+let app = {
+  slider: {
+    name: 'Mi Slider',
+    breakpoints: { tablet:1024, mobile:767 },
+    devices: {
+      desktop:{ width:1280, height:720  },
+      tablet: { width:768,  height:1024 },
+      mobile: { width:390,  height:844  }
+    },
+    transition: 'fade',
+    transitionTime: 4000
+  },
+  items: [],
+  currentTab: 0,
+  currentDevice: 'desktop',
+  nextItemId: 1
+};
 let selectedId = null;
 let scale = 1;
 let previewing = false;
@@ -374,142 +469,111 @@ const bgLayer      = $('#bgLayer');
 const objectsLayer = $('#objectsLayer');
 const propsPanel   = $('#propsPanel');
 const sidebar      = $('#sidebar');
+const tabbar       = $('#tabbar');
 
-function blankProject(){
-  return {
-    current: 'desktop',
-    breakpoints: { tablet: 1024, mobile: 767 },
-    devices: {
-      desktop: { width:1280, height:720,  bg:{ color:'#0f172a', image:'', fit:'cover', overlay:0 } },
-      tablet:  { width:768,  height:1024, bg:{} },
-      mobile:  { width:390,  height:844,  bg:{} }
-    },
-    objects: []
-  };
-}
-
-const uid = () => 'obj_' + Math.random().toString(36).slice(2, 9);
-const curDevice = () => project.current;
+const curItem    = () => app.items[app.currentTab];
+const curDevice  = () => app.currentDevice;
+const curDev     = () => app.slider.devices[app.currentDevice];
+const bp         = () => app.slider.breakpoints;
+const uid        = () => 'obj_' + Math.random().toString(36).slice(2,9);
 
 /* =========================================================
-   4. ACCESO A PROPIEDADES CON HERENCIA POR DISPOSITIVO
+   4. HELPERS GET/SET CON HERENCIA
    ========================================================= */
-function getPath(obj, path){
-  const parts = path.split('.');
-  let cur = obj;
-  for(let i = 0; i < parts.length; i++){
-    if(cur == null) return undefined;
-    cur = cur[parts[i]];
-  }
-  return cur;
+function getPath(o, path){
+  const p = path.split('.');
+  let c = o;
+  for(let i = 0; i < p.length; i++){ if(c == null) return undefined; c = c[p[i]]; }
+  return c;
 }
-function setPath(obj, path, val){
-  const parts = path.split('.');
-  let cur = obj;
-  for(let i = 0; i < parts.length - 1; i++){
-    if(cur[parts[i]] == null) cur[parts[i]] = {};
-    cur = cur[parts[i]];
-  }
-  cur[parts[parts.length - 1]] = val;
+function setPath(o, path, val){
+  const p = path.split('.');
+  let c = o;
+  for(let i = 0; i < p.length - 1; i++){ if(c[p[i]] == null) c[p[i]] = {}; c = c[p[i]]; }
+  c[p[p.length - 1]] = val;
 }
-
-function getVal(obj, path, device){
+function getVal(o, path, device){
   device = device || curDevice();
   const chain = deviceChain(device);
   for(let i = chain.length - 1; i >= 1; i--){
-    const bag = obj.r && obj.r[chain[i]];
-    if(bag){
-      const v = getPath(bag, path);
-      if(v !== undefined) return v;
-    }
+    const b = o.r && o.r[chain[i]];
+    if(b){ const v = getPath(b, path); if(v !== undefined) return v; }
   }
-  return getPath(obj, path);
+  return getPath(o, path);
 }
-
-function setVal(obj, path, val, device){
+function setVal(o, path, val, device){
   device = device || curDevice();
-  if(device === 'desktop'){
-    setPath(obj, path, val);
-  } else {
-    if(!obj.r) obj.r = {};
-    if(!obj.r[device]) obj.r[device] = {};
-    setPath(obj.r[device], path, val);
-  }
+  if(device === 'desktop'){ setPath(o, path, val); return; }
+  if(!o.r) o.r = {};
+  if(!o.r[device]) o.r[device] = {};
+  setPath(o.r[device], path, val);
 }
-
-function isOverridden(obj, path, device){
+function isOverridden(o, path, device){
   device = device || curDevice();
   if(device === 'desktop') return false;
-  const bag = obj.r && obj.r[device];
-  if(!bag) return false;
-  return getPath(bag, path) !== undefined;
+  const b = o.r && o.r[device];
+  if(!b) return false;
+  return getPath(b, path) !== undefined;
 }
-
-function clearOverride(obj, path, device){
+function clearOverride(o, path, device){
   device = device || curDevice();
   if(device === 'desktop') return;
-  const bag = obj.r && obj.r[device];
-  if(!bag) return;
-  const parts = path.split('.');
-  let cur = bag;
-  for(let i = 0; i < parts.length - 1; i++){
-    if(cur[parts[i]] == null) return;
-    cur = cur[parts[i]];
+  const b = o.r && o.r[device];
+  if(!b) return;
+  const p = path.split('.');
+  let c = b;
+  for(let i = 0; i < p.length - 1; i++){
+    if(c[p[i]] == null) return;
+    c = c[p[i]];
   }
-  delete cur[parts[parts.length - 1]];
+  delete c[p[p.length - 1]];
 }
 
-/* ---------- Fondo con herencia ---------- */
+/* --- Fondo (por item, con herencia por dispositivo) --- */
 function getBg(device){
   device = device || curDevice();
-  const d = project.devices;
+  const item = curItem();
   const chain = deviceChain(device);
-  const r = Object.assign({}, d.desktop.bg);
+  const r = Object.assign({}, item.bg.desktop);
   for(let i = 1; i < chain.length; i++){
-    Object.assign(r, d[chain[i]].bg || {});
+    Object.assign(r, item.bg[chain[i]] || {});
   }
   return r;
 }
 function setBg(key, val, device){
   device = device || curDevice();
-  if(device === 'desktop'){
-    project.devices.desktop.bg[key] = val;
-  } else {
-    project.devices[device].bg[key] = val;
-  }
+  const item = curItem();
+  if(device === 'desktop'){ item.bg.desktop[key] = val; }
+  else { item.bg[device][key] = val; }
 }
 function isBgOverridden(key, device){
   device = device || curDevice();
   if(device === 'desktop') return false;
-  return project.devices[device].bg && project.devices[device].bg[key] !== undefined;
+  return curItem().bg[device] && curItem().bg[device][key] !== undefined;
 }
 function clearBgOverride(device){
   device = device || curDevice();
   if(device === 'desktop') return;
-  project.devices[device].bg = {};
+  curItem().bg[device] = {};
 }
 
 /* =========================================================
    5. FÁBRICA DE OBJETOS
    ========================================================= */
 function makeObject(type, cx, cy, device){
-  device = device || curDevice();
-  const d  = project.devices[device];
-  const dd = project.devices.desktop;
-
-  const nx = cx / d.width;
-  const ny = cy / d.height;
-  const dx = nx * dd.width;
-  const dy = ny * dd.height;
+  device = device || 'desktop';
+  const d  = app.slider.devices[device];
+  const dd = app.slider.devices.desktop;
+  const nx = cx / d.width, ny = cy / d.height;
+  const dx = nx * dd.width, dy = ny * dd.height;
 
   const base = {
     id: uid(), type, z: 1,
     x:0, y:0, w:200, h:120, rot:0, opacity:1,
-    props: {},
-    animation: { effect:'none', duration:800, delay:0, easing:'ease-out', distance:150 },
+    props:{},
+    animation:{ effect:'none', duration:800, delay:0, easing:'ease-out', distance:150 },
     r: { tablet:{}, mobile:{} }
   };
-
   let w = 200, h = 120;
   if(type === 'box'){
     w = 260; h = 170;
@@ -517,11 +581,8 @@ function makeObject(type, cx, cy, device){
   }
   if(type === 'text'){
     w = 440; h = 96;
-    base.props = {
-      text:'Tu texto aquí', color:'#ffffff', fontSize:56, bold:true, italic:false,
-      align:'center', family:FONTS[0].stack, lineHeight:1.2,
-      letterSpacing:0, padding:8
-    };
+    base.props = { text:'Tu texto aquí', color:'#ffffff', fontSize:56, bold:true, italic:false,
+      align:'center', family:FONTS[0].stack, lineHeight:1.2, letterSpacing:0, padding:8 };
   }
   if(type === 'image'){
     w = 320; h = 220;
@@ -529,10 +590,8 @@ function makeObject(type, cx, cy, device){
   }
   if(type === 'button'){
     w = 220; h = 64;
-    base.props = { text:'Comenzar', href:'#', bg:'#22c55e', color:'#04121f',
-                   fontSize:20, radius:32, shadow:true };
+    base.props = { text:'Comenzar', href:'#', bg:'#22c55e', color:'#04121f', fontSize:20, radius:32, shadow:true };
   }
-
   base.w = w; base.h = h;
   base.x = Math.round(dx - w/2);
   base.y = Math.round(dy - h/2);
@@ -541,26 +600,63 @@ function makeObject(type, cx, cy, device){
     const ratio = d.width / dd.width;
     const cw = Math.max(20, Math.round(w * ratio));
     const ch = Math.max(20, Math.round(h * ratio));
-    base.r[device] = {
-      x: Math.round(cx - cw/2),
-      y: Math.round(cy - ch/2),
-      w: cw,
-      h: ch
-    };
+    base.r[device] = { x: Math.round(cx - cw/2), y: Math.round(cy - ch/2), w: cw, h: ch };
   }
   return base;
 }
 
 /* =========================================================
-   6. ESTILOS  (CORREGIDO: usa getVal para props y animation)
+   6. ITEMS (pestañas)
+   ========================================================= */
+function newEmptyItem(){
+  const id = app.nextItemId++;
+  return {
+    id,
+    bg: {
+      desktop:{ color:'#0f172a', image:'', fit:'cover', overlay:0 },
+      tablet: {},
+      mobile: {}
+    },
+    objects: []
+  };
+}
+
+function newDefaultItem(){
+  const item = newEmptyItem();
+  const dw = app.slider.devices.desktop.width;
+  const dh = app.slider.devices.desktop.height;
+
+  const t = makeObject('text', dw/2, dh*0.3, 'desktop');
+  t.w = 900; t.h = 110; t.x = (dw - 900)/2; t.y = dh*0.2;
+  t.props.text = 'Bienvenido a Slider Builder MorBriant';
+  t.props.fontSize = 62;
+  t.animation = { effect:'down', duration:900, delay:0, easing:'ease-out', distance:120 };
+  t.z = 2;
+
+  const s = makeObject('text', dw/2, dh*0.45, 'desktop');
+  s.w = 760; s.h = 60; s.x = (dw - 760)/2; s.y = dh*0.4;
+  s.props.text = 'Arrastra objetos desde el panel izquierdo y personalízalos.';
+  s.props.fontSize = 24; s.props.bold = false; s.props.color = '#a9b8e8';
+  s.animation = { effect:'fade', duration:900, delay:250, easing:'ease-out', distance:150 };
+  s.z = 3;
+
+  const b = makeObject('button', dw/2, dh*0.62, 'desktop');
+  b.x = (dw - b.w)/2; b.y = dh*0.58;
+  b.animation = { effect:'zoom', duration:700, delay:550, easing:'cubic-bezier(.34,1.56,.64,1)', distance:150 };
+  b.z = 4;
+
+  item.objects.push(t, s, b);
+  return item;
+}
+
+/* =========================================================
+   7. ESTILOS
    ========================================================= */
 const cssUrl = u => `url('${String(u).replace(/'/g, '%27')}')`;
 
 function objStyleString(o, device, animate){
   device = device || curDevice();
-  /* Getter de props con herencia por dispositivo */
-  const gp = (p) => getVal(o, 'props.' + p, device);
-
+  const gp = p => getVal(o, 'props.' + p, device);
   const x   = getVal(o, 'x', device);
   const y   = getVal(o, 'y', device);
   const w   = getVal(o, 'w', device);
@@ -596,7 +692,6 @@ function objStyleString(o, device, animate){
       +  `border:none;overflow:hidden;`
       +  `box-shadow:${gp('shadow') ? '0 12px 28px rgba(0,0,0,.38)' : 'none'};`;
   }
-
   if(animate){
     const eff = getVal(o, 'animation.effect', device);
     if(eff && eff !== 'none' && EFFECTS[eff]){
@@ -604,53 +699,48 @@ function objStyleString(o, device, animate){
       const del  = getVal(o, 'animation.delay', device) || 0;
       const eas  = getVal(o, 'animation.easing', device) || 'ease-out';
       const dist = getVal(o, 'animation.distance', device) || 150;
-      s += `--dist:${dist}px;`
-        +  `animation:${EFFECTS[eff]} ${dur}ms ${eas} ${del}ms both;`;
+      s += `--dist:${dist}px;animation:${EFFECTS[eff]} ${dur}ms ${eas} ${del}ms both;`;
     }
   }
   return s;
 }
 
 /* =========================================================
-   7. RENDER
+   8. RENDER
    ========================================================= */
 function renderObjects(){
   objectsLayer.classList.toggle('previewing', previewing);
   objectsLayer.style.setProperty('--hs', (1/scale).toFixed(3));
   objectsLayer.innerHTML = '';
-
   const dev = curDevice();
-  project.objects
-    .slice()
-    .sort((a, b) => a.z - b.z)
-    .forEach(o => {
-      const el = document.createElement('div');
-      el.className = 'obj';
-      el.dataset.id = o.id;
-      el.dataset.type = o.type;
-      el.setAttribute('style', objStyleString(o, dev, previewing));
+  const item = curItem();
+  if(!item) return;
 
-      /* CORREGIDO: usa getVal para el contenido de texto/botón */
-      if(o.type === 'text' || o.type === 'button'){
-        const txt = getVal(o, 'props.text', dev);
-        el.textContent = txt != null ? txt : '';
-      }
-
-      if(!previewing && o.id === selectedId){
-        el.classList.add('selected');
-        ['nw','n','ne','e','se','s','sw','w'].forEach(d => {
-          const h = document.createElement('div');
-          h.className = 'handle';
-          h.dataset.dir = d;
-          el.appendChild(h);
-        });
-      }
-      objectsLayer.appendChild(el);
-    });
+  item.objects.slice().sort((a,b) => a.z - b.z).forEach(o => {
+    const el = document.createElement('div');
+    el.className = 'obj';
+    el.dataset.id = o.id;
+    el.dataset.type = o.type;
+    el.setAttribute('style', objStyleString(o, dev, previewing));
+    if(o.type === 'text' || o.type === 'button'){
+      const txt = getVal(o, 'props.text', dev);
+      el.textContent = txt != null ? txt : '';
+    }
+    if(!previewing && o.id === selectedId){
+      el.classList.add('selected');
+      ['nw','n','ne','e','se','s','sw','w'].forEach(d => {
+        const h = document.createElement('div');
+        h.className = 'handle';
+        h.dataset.dir = d;
+        el.appendChild(h);
+      });
+    }
+    objectsLayer.appendChild(el);
+  });
 }
 
 function renderBg(){
-  const bg = getBg(curDevice());
+  const bg = getBg();
   let html = '';
   if(bg.image){
     html += `<div style="position:absolute;inset:0;background-image:${cssUrl(bg.image)};`
@@ -664,7 +754,7 @@ function renderBg(){
 }
 
 function renderAll(){
-  const d = project.devices[curDevice()];
+  const d = curDev();
   slide.style.width  = d.width  + 'px';
   slide.style.height = d.height + 'px';
   renderBg();
@@ -675,28 +765,91 @@ function renderAll(){
 
 function updateDeviceUI(){
   const dev = curDevice();
-  const meta = DEVICE_META[dev];
-  const d = project.devices[dev];
-  const bp = project.breakpoints;
-  $('#devbarName').textContent = meta.label;
+  const d = curDev();
+  $('#devbarName').textContent = DEVICE_META[dev].label;
   $('#devbarSize').textContent = d.width + ' × ' + d.height;
-  $('#cvDevTag').textContent = meta.short;
-  $('#bgDevTag').textContent = meta.short;
-  $('#devbarBp').textContent = `Breakpoints: T ≤ ${bp.tablet} · M ≤ ${bp.mobile}`;
+  $('#cvDevTag').textContent = DEVICE_META[dev].short;
+  $('#bgDevTag').textContent = DEVICE_META[dev].short;
+  const item = curItem();
+  $('#devbarItem').textContent = item ? ('item-' + item.id) : '—';
   $$('.devswitch button').forEach(b => b.classList.toggle('active', b.dataset.device === dev));
 }
 
 /* =========================================================
-   8. AJUSTE AL VIEWPORT
+   9. TABS
+   ========================================================= */
+function renderTabs(){
+  tabbar.innerHTML = '';
+  app.items.forEach((item, i) => {
+    const t = document.createElement('button');
+    t.className = 'tab' + (i === app.currentTab ? ' active' : '');
+    t.dataset.i = i;
+    t.innerHTML = `item-${item.id}<span class="tab-close" title="Cerrar">×</span>`;
+    t.addEventListener('click', e => {
+      if(e.target.classList.contains('tab-close')){
+        e.stopPropagation();
+        closeTab(i);
+        return;
+      }
+      switchTab(i);
+    });
+    tabbar.appendChild(t);
+  });
+  const add = document.createElement('button');
+  add.className = 'tab-add';
+  add.title = 'Añadir nueva pestaña';
+  add.textContent = '+';
+  add.addEventListener('click', () => addTab());
+  tabbar.appendChild(add);
+}
+
+function switchTab(i){
+  if(i === app.currentTab) return;
+  app.currentTab = i;
+  selectedId = null;
+  previewing = false;
+  $('#btnPreview').textContent = '▶ Previsualizar';
+  $('#btnPreview').classList.remove('primary');
+  renderTabs();
+  syncSidebar();
+  renderAll();
+  renderProps();
+}
+
+function addTab(){
+  const item = newDefaultItem();
+  app.items.push(item);
+  switchTab(app.items.length - 1);
+}
+
+function closeTab(i){
+  if(app.items.length <= 1){
+    alert('Debe haber al menos un item.');
+    return;
+  }
+  const it = app.items[i];
+  if(it.objects.length > 0 && !confirm(`¿Cerrar "item-${it.id}"? Se perderán sus cambios.`)) return;
+  app.items.splice(i, 1);
+  if(app.currentTab >= app.items.length) app.currentTab = app.items.length - 1;
+  else if(app.currentTab > i) app.currentTab--;
+  else if(app.currentTab === i) app.currentTab = Math.max(0, i - 1);
+  selectedId = null;
+  renderTabs();
+  syncSidebar();
+  renderAll();
+  renderProps();
+}
+
+/* =========================================================
+   10. AJUSTE AL VIEWPORT
    ========================================================= */
 function fitSlide(){
   const padX = 56, padY = 78;
   const aw = Math.max(120, stage.clientWidth  - padX);
   const ah = Math.max(120, stage.clientHeight - padY);
-  const d = project.devices[curDevice()];
+  const d = curDev();
   scale = Math.min(aw / d.width, ah / d.height);
   scale = Math.max(0.05, Math.min(scale, 2));
-
   slide.style.width  = d.width  + 'px';
   slide.style.height = d.height + 'px';
   slide.style.transform = `scale(${scale})`;
@@ -704,67 +857,54 @@ function fitSlide(){
   slideWrap.style.height = (d.height * scale) + 'px';
   objectsLayer.style.setProperty('--hs', (1/scale).toFixed(3));
 }
-
 window.addEventListener('resize', fitSlide);
 if(window.ResizeObserver) new ResizeObserver(fitSlide).observe(stage);
 
 /* =========================================================
-   9. CAMBIO DE DISPOSITIVO
+   11. CAMBIO DE DISPOSITIVO
    ========================================================= */
 function setDevice(key){
   if(!DEVICE_KEYS.includes(key)) return;
-  project.current = key;
+  app.currentDevice = key;
   previewing = false;
   $('#btnPreview').textContent = '▶ Previsualizar';
   $('#btnPreview').classList.remove('primary');
   renderAll();
   renderProps();
   syncSidebar();
-  updateDeviceUI();
 }
 $$('.devswitch button').forEach(b => {
   b.addEventListener('click', () => setDevice(b.dataset.device));
 });
 
 /* =========================================================
-   10. SELECCIÓN
+   12. SELECCIÓN
    ========================================================= */
-function select(id){
-  selectedId = id;
-  renderObjects();
-  renderProps();
-}
-function getSel(){
-  return project.objects.find(x => x.id === selectedId);
-}
+function select(id){ selectedId = id; renderObjects(); renderProps(); }
+function getSel(){ return (curItem().objects || []).find(x => x.id === selectedId); }
 
 /* =========================================================
-   11. AÑADIR OBJETOS
+   13. AÑADIR OBJETOS
    ========================================================= */
 function addObject(type, x, y){
   const o = makeObject(type, x, y, curDevice());
-  o.z = project.objects.reduce((m, x) => Math.max(m, x.z), 0) + 1;
-  project.objects.push(o);
+  o.z = curItem().objects.reduce((m,x) => Math.max(m, x.z), 0) + 1;
+  curItem().objects.push(o);
   select(o.id);
   if(window.innerWidth <= 900) sidebar.classList.remove('open');
   return o;
 }
-
 $$('.pal').forEach(pal => {
   pal.addEventListener('dragstart', e => {
     e.dataTransfer.setData('text/plain', pal.dataset.type);
     e.dataTransfer.effectAllowed = 'copy';
   });
   pal.addEventListener('click', () => {
-    const d = project.devices[curDevice()];
+    const d = curDev();
     addObject(pal.dataset.type, d.width/2, d.height/2);
   });
 });
-
-stage.addEventListener('dragover', e => {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'copy';
-});
+stage.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
 stage.addEventListener('drop', e => {
   e.preventDefault();
   const type = e.dataTransfer.getData('text/plain');
@@ -776,18 +916,16 @@ stage.addEventListener('drop', e => {
 });
 
 /* =========================================================
-   12. MOVER / REDIMENSIONAR
+   14. MOVER / REDIMENSIONAR
    ========================================================= */
 objectsLayer.addEventListener('pointerdown', e => {
   if(previewing) return;
   const objEl = e.target.closest('.obj');
   if(!objEl){ select(null); return; }
-
   e.preventDefault();
   const id = objEl.dataset.id;
-  const o  = project.objects.find(x => x.id === id);
+  const o  = curItem().objects.find(x => x.id === id);
   if(!o) return;
-
   if(selectedId !== id) select(id);
   const freshEl = objectsLayer.querySelector(`.obj[data-id="${id}"]`);
   const handleEl = e.target.closest('.handle');
@@ -797,10 +935,7 @@ objectsLayer.addEventListener('pointerdown', e => {
 function startInteraction(e, o, dir, el){
   const startX = e.clientX, startY = e.clientY;
   const dev = curDevice();
-  const o0 = {
-    x: getVal(o, 'x', dev), y: getVal(o, 'y', dev),
-    w: getVal(o, 'w', dev), h: getVal(o, 'h', dev)
-  };
+  const o0 = { x:getVal(o,'x',dev), y:getVal(o,'y',dev), w:getVal(o,'w',dev), h:getVal(o,'h',dev) };
   const mode = dir ? 'resize' : 'move';
   const MIN = 24;
   if(mode === 'move') document.body.style.cursor = 'move';
@@ -809,42 +944,33 @@ function startInteraction(e, o, dir, el){
     const dx = (ev.clientX - startX) / scale;
     const dy = (ev.clientY - startY) / scale;
     let nx = o0.x, ny = o0.y, nw = o0.w, nh = o0.h;
-
     if(mode === 'move'){
-      nx = Math.round(o0.x + dx);
-      ny = Math.round(o0.y + dy);
+      nx = Math.round(o0.x + dx); ny = Math.round(o0.y + dy);
     } else {
       if(dir.includes('e')) nw = o0.w + dx;
       if(dir.includes('w')){ nw = o0.w - dx; nx = o0.x + dx; }
       if(dir.includes('s')) nh = o0.h + dy;
       if(dir.includes('n')){ nh = o0.h - dy; ny = o0.y + dy; }
-
       if(nw < MIN){ if(dir.includes('w')) nx = o0.x + o0.w - MIN; nw = MIN; }
       if(nh < MIN){ if(dir.includes('n')) ny = o0.y + o0.h - MIN; nh = MIN; }
       nw = Math.round(nw); nh = Math.round(nh);
     }
-
     setVal(o, 'x', Math.round(nx), dev);
     setVal(o, 'y', Math.round(ny), dev);
     setVal(o, 'w', Math.round(nw), dev);
     setVal(o, 'h', Math.round(nh), dev);
-
     if(el){
-      el.style.left   = nx + 'px';
-      el.style.top    = ny + 'px';
-      el.style.width  = nw + 'px';
-      el.style.height = nh + 'px';
+      el.style.left = nx + 'px'; el.style.top = ny + 'px';
+      el.style.width = nw + 'px'; el.style.height = nh + 'px';
     }
     syncGeometry(o);
   }
-
   function onUp(){
     document.removeEventListener('pointermove', onMove);
     document.removeEventListener('pointerup', onUp);
     document.body.style.cursor = '';
     renderProps();
   }
-
   document.addEventListener('pointermove', onMove);
   document.addEventListener('pointerup', onUp);
 }
@@ -858,18 +984,15 @@ function syncGeometry(o){
 }
 
 /* =========================================================
-   13. PANEL DE PROPIEDADES
+   15. PANEL DE PROPIEDADES
    ========================================================= */
 function escAttr(s){
-  return String(s == null ? '' : s)
-    .replace(/&/g,'&amp;').replace(/"/g,'&quot;')
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;')
     .replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 function escHTML(s){
-  return String(s == null ? '' : s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
-
 function devDot(o, path){
   if(curDevice() === 'desktop') return '';
   if(!isOverridden(o, path)) return '';
@@ -885,34 +1008,32 @@ function rangeRow(o, path, label, val, min, max, step, suffix){
   suffix = suffix || '';
   const v = Math.round(val * 100) / 100;
   return `<div class="row">${lblWith(o, path, label)}<div class="ctrl range">
-    <input type="range" data-prop="${path}" data-suffix="${suffix}"
-           min="${min}" max="${max}" step="${step}" value="${v}">
+    <input type="range" data-prop="${path}" data-suffix="${suffix}" min="${min}" max="${max}" step="${step}" value="${v}">
     <span class="val" data-valfor="${path}">${v}${suffix}</span></div></div>`;
 }
 function selectHTML(prop, opts, cur){
   return `<select data-prop="${prop}">` + opts.map(([v,l,st]) =>
-    `<option value="${escAttr(v)}"${String(v) === String(cur) ? ' selected' : ''}${st ? ` style="font-family:${st}"` : ''}>${l}</option>`
+    `<option value="${escAttr(v)}"${String(v)===String(cur)?' selected':''}${st?` style="font-family:${st}"`:''}>${l}</option>`
   ).join('') + `</select>`;
 }
 function chkHTML(o, path, checked, label){
-  return `<label class="chk"><input type="checkbox" data-prop="${path}"${checked ? ' checked' : ''}> ${label}${devDot(o, path)}</label>`;
+  return `<label class="chk"><input type="checkbox" data-prop="${path}"${checked?' checked':''}> ${label}${devDot(o,path)}</label>`;
 }
 
 function renderProps(){
   const o = getSel();
   const dev = curDevice();
-
   if(!o){
+    const it = curItem();
     propsPanel.innerHTML = `<div class="empty">
       Selecciona un objeto en el lienzo<br>para editar sus propiedades.
       <br><br>
-      <b style="color:#8fc0ff">Dispositivo actual:</b><br>
-      ${DEVICE_META[dev].label}
+      <b style="color:#8fc0ff">Item actual:</b> item-${it?it.id:'—'}<br>
+      <b style="color:#8fc0ff">Dispositivo:</b> ${DEVICE_META[dev].label}
     </div>`;
     return;
   }
-
-  const g = (p) => getVal(o, p, dev);
+  const g = p => getVal(o, p, dev);
   const P = {
     bg: g('props.bg'), radius: g('props.radius'), borderW: g('props.borderW'),
     borderColor: g('props.borderColor'), shadow: g('props.shadow'),
@@ -924,199 +1045,156 @@ function renderProps(){
   };
   const A = {
     effect: g('animation.effect'), duration: g('animation.duration'),
-    delay: g('animation.delay'), distance: g('animation.distance'),
-    easing: g('animation.easing')
+    delay: g('animation.delay'), distance: g('animation.distance'), easing: g('animation.easing')
   };
-
   let banner = '';
   if(dev !== 'desktop'){
     banner = `<div class="info-banner">
       Editando para <b>${DEVICE_META[dev].label}</b>. Los valores heredados vienen de
       ${dev === 'mobile' ? '<b>Tablet</b> o <b>Escritorio</b>' : '<b>Escritorio</b>'}.
-      Usa el <span class="devdots"></span> junto a una propiedad para volver a heredar.
+      Usa el <span class="devdots"></span> para volver a heredar.
     </div>`;
   }
-
   let h = banner;
-
   h += `<div class="ptitle">
     <span class="badge">${TYPE_LABEL[o.type]}</span>
     <div class="mini-actions">
-      <button data-act="dup"   title="Duplicar">⧉</button>
+      <button data-act="dup" title="Duplicar">⧉</button>
       <button data-act="front" title="Traer al frente">↑</button>
-      <button data-act="back"  title="Enviar al fondo">↓</button>
-      <button data-act="reset" title="Restablecer todo para este dispositivo">↺</button>
+      <button data-act="back" title="Enviar al fondo">↓</button>
+      <button data-act="reset" title="Restablecer para este dispositivo">↺</button>
       <button data-act="del" class="danger" title="Eliminar">🗑</button>
     </div></div>`;
 
   h += `<div class="sec"><h3>Posición y tamaño</h3>
     <div class="grid2">
-      <div>${lblWith(o, 'x', 'X')}<input type="number" data-prop="x" value="${Math.round(g('x'))}"></div>
-      <div>${lblWith(o, 'y', 'Y')}<input type="number" data-prop="y" value="${Math.round(g('y'))}"></div>
-      <div>${lblWith(o, 'w', 'Ancho')}<input type="number" data-prop="w" value="${Math.round(g('w'))}"></div>
-      <div>${lblWith(o, 'h', 'Alto')}<input type="number" data-prop="h" value="${Math.round(g('h'))}"></div>
+      <div>${lblWith(o,'x','X')}<input type="number" data-prop="x" value="${Math.round(g('x'))}"></div>
+      <div>${lblWith(o,'y','Y')}<input type="number" data-prop="y" value="${Math.round(g('y'))}"></div>
+      <div>${lblWith(o,'w','Ancho')}<input type="number" data-prop="w" value="${Math.round(g('w'))}"></div>
+      <div>${lblWith(o,'h','Alto')}<input type="number" data-prop="h" value="${Math.round(g('h'))}"></div>
     </div>
-    ${rangeRow(o, 'rot', 'Rotación', g('rot'), -180, 180, 1, '°')}
-    ${rangeRow(o, 'opacity', 'Opacidad', g('opacity'), 0, 1, 0.05, '')}
-    <div class="grid2"><div>${lblWith(o, 'z', 'Capa (z)')}
-      <input type="number" data-prop="z" value="${o.z}"></div></div>
+    ${rangeRow(o,'rot','Rotación', g('rot'), -180, 180, 1, '°')}
+    ${rangeRow(o,'opacity','Opacidad', g('opacity'), 0, 1, 0.05, '')}
+    <div class="grid2"><div>${lblWith(o,'z','Capa (z)')}<input type="number" data-prop="z" value="${o.z}"></div></div>
   </div>`;
 
   h += `<div class="sec"><h3>Apariencia</h3>`;
-
   if(o.type === 'box'){
-    h += rowCtrl(o, 'props.bg', 'Fondo', `<input type="color" data-prop="props.bg" value="${P.bg}">`);
-    h += rangeRow(o, 'props.radius', 'Redondeo', P.radius, 0, 200, 1, ' px');
-    h += rangeRow(o, 'props.borderW', 'Borde', P.borderW, 0, 20, 1, ' px');
-    h += rowCtrl(o, 'props.borderColor', 'Color borde', `<input type="color" data-prop="props.borderColor" value="${P.borderColor}">`);
-    h += chkHTML(o, 'props.shadow', P.shadow, 'Sombra');
+    h += rowCtrl(o,'props.bg','Fondo',`<input type="color" data-prop="props.bg" value="${P.bg}">`);
+    h += rangeRow(o,'props.radius','Redondeo', P.radius, 0, 200, 1, ' px');
+    h += rangeRow(o,'props.borderW','Borde', P.borderW, 0, 20, 1, ' px');
+    h += rowCtrl(o,'props.borderColor','Color borde',`<input type="color" data-prop="props.borderColor" value="${P.borderColor}">`);
+    h += chkHTML(o,'props.shadow',P.shadow,'Sombra');
   }
-
   if(o.type === 'text'){
-    h += rowCtrl(o, 'props.text', 'Texto', `<textarea data-prop="props.text" data-textarea="1"></textarea>`);
-    h += rowCtrl(o, 'props.family', 'Fuente',
-      selectHTML('props.family',
-        FONTS.map(f => [f.stack, f.name, f.stack.split(',')[0].replace(/"/g,'')]),
-        P.family));
-    h += rowCtrl(o, 'props.color', 'Color', `<input type="color" data-prop="props.color" value="${P.color}">`);
-    h += rangeRow(o, 'props.fontSize', 'Tamaño', P.fontSize, 8, 200, 1, ' px');
-    h += rowCtrl(o, 'props.align', 'Alineación', selectHTML('props.align', [
-      ['left','Izquierda'], ['center','Centro'], ['right','Derecha']
-    ], P.align));
-    h += rangeRow(o, 'props.lineHeight', 'Interlineado', P.lineHeight, 0.8, 3, 0.05, '');
-    h += rangeRow(o, 'props.letterSpacing', 'Espaciado', P.letterSpacing, -5, 20, 0.5, ' px');
-    h += rangeRow(o, 'props.padding', 'Relleno', P.padding, 0, 100, 1, ' px');
-    h += chkHTML(o, 'props.bold', P.bold, 'Negrita');
-    h += chkHTML(o, 'props.italic', P.italic, 'Cursiva');
+    h += rowCtrl(o,'props.text','Texto',`<textarea data-prop="props.text" data-textarea="1"></textarea>`);
+    h += rowCtrl(o,'props.family','Fuente', selectHTML('props.family',
+      FONTS.map(f => [f.stack, f.name, f.stack.split(',')[0].replace(/"/g,'')]), P.family));
+    h += rowCtrl(o,'props.color','Color',`<input type="color" data-prop="props.color" value="${P.color}">`);
+    h += rangeRow(o,'props.fontSize','Tamaño', P.fontSize, 8, 200, 1, ' px');
+    h += rowCtrl(o,'props.align','Alineación', selectHTML('props.align',
+      [['left','Izquierda'],['center','Centro'],['right','Derecha']], P.align));
+    h += rangeRow(o,'props.lineHeight','Interlineado', P.lineHeight, 0.8, 3, 0.05, '');
+    h += rangeRow(o,'props.letterSpacing','Espaciado', P.letterSpacing, -5, 20, 0.5, ' px');
+    h += rangeRow(o,'props.padding','Relleno', P.padding, 0, 100, 1, ' px');
+    h += chkHTML(o,'props.bold',P.bold,'Negrita');
+    h += chkHTML(o,'props.italic',P.italic,'Cursiva');
   }
-
   if(o.type === 'image'){
-    h += rowCtrl(o, 'props.src', 'URL', `<input type="text" data-prop="props.src" value="${escAttr(P.src)}">`);
+    h += rowCtrl(o,'props.src','URL',`<input type="text" data-prop="props.src" value="${escAttr(P.src)}">`);
     h += `<input type="file" data-imgfile accept="image/*">`;
-    h += rowCtrl(o, 'props.fit', 'Ajuste', selectHTML('props.fit', [
-      ['cover','Cubrir'], ['contain','Contener'], ['fill','Estirar']
-    ], P.fit));
-    h += rangeRow(o, 'props.radius', 'Redondeo', P.radius, 0, 300, 1, ' px');
-    h += chkHTML(o, 'props.shadow', P.shadow, 'Sombra');
+    h += rowCtrl(o,'props.fit','Ajuste', selectHTML('props.fit',
+      [['cover','Cubrir'],['contain','Contener'],['fill','Estirar']], P.fit));
+    h += rangeRow(o,'props.radius','Redondeo', P.radius, 0, 300, 1, ' px');
+    h += chkHTML(o,'props.shadow',P.shadow,'Sombra');
   }
-
   if(o.type === 'button'){
-    h += rowCtrl(o, 'props.text', 'Texto', `<input type="text" data-prop="props.text" value="${escAttr(P.text)}">`);
-    h += rowCtrl(o, 'props.href', 'Enlace', `<input type="text" data-prop="props.href" value="${escAttr(P.href)}">`);
-    h += rowCtrl(o, 'props.bg', 'Fondo', `<input type="color" data-prop="props.bg" value="${P.bg}">`);
-    h += rowCtrl(o, 'props.color', 'Texto color', `<input type="color" data-prop="props.color" value="${P.color}">`);
-    h += rangeRow(o, 'props.fontSize', 'Tamaño', P.fontSize, 8, 80, 1, ' px');
-    h += rangeRow(o, 'props.radius', 'Redondeo', P.radius, 0, 80, 1, ' px');
-    h += chkHTML(o, 'props.shadow', P.shadow, 'Sombra');
+    h += rowCtrl(o,'props.text','Texto',`<input type="text" data-prop="props.text" value="${escAttr(P.text)}">`);
+    h += rowCtrl(o,'props.href','Enlace',`<input type="text" data-prop="props.href" value="${escAttr(P.href)}">`);
+    h += rowCtrl(o,'props.bg','Fondo',`<input type="color" data-prop="props.bg" value="${P.bg}">`);
+    h += rowCtrl(o,'props.color','Texto color',`<input type="color" data-prop="props.color" value="${P.color}">`);
+    h += rangeRow(o,'props.fontSize','Tamaño', P.fontSize, 8, 80, 1, ' px');
+    h += rangeRow(o,'props.radius','Redondeo', P.radius, 0, 80, 1, ' px');
+    h += chkHTML(o,'props.shadow',P.shadow,'Sombra');
   }
-
   h += `</div>`;
 
   h += `<div class="sec"><h3>Animación de entrada</h3>
-    ${rowCtrl(o, 'animation.effect', 'Efecto', selectHTML('animation.effect', [
-      ['none','Ninguno'],
-      ['fade','Aparecer (fade)'],
-      ['left','Entrar desde la izquierda'],
-      ['right','Entrar desde la derecha'],
-      ['up','Subir desde abajo'],
-      ['down','Bajar desde arriba'],
-      ['zoom','Zoom'],
-      ['rotate','Rotar'],
-      ['flip','Voltear (3D)']
+    ${rowCtrl(o,'animation.effect','Efecto', selectHTML('animation.effect', [
+      ['none','Ninguno'],['fade','Aparecer (fade)'],['left','Entrar desde la izquierda'],
+      ['right','Entrar desde la derecha'],['up','Subir desde abajo'],['down','Bajar desde arriba'],
+      ['zoom','Zoom'],['rotate','Rotar'],['flip','Voltear (3D)']
     ], A.effect))}
-    ${rangeRow(o, 'animation.duration', 'Duración', A.duration, 100, 4000, 50, ' ms')}
-    ${rangeRow(o, 'animation.delay', 'Retardo', A.delay, 0, 4000, 50, ' ms')}
-    ${rangeRow(o, 'animation.distance', 'Distancia', A.distance, 0, 800, 10, ' px')}
-    ${rowCtrl(o, 'animation.easing', 'Curva', selectHTML('animation.easing', [
-      ['linear','Linear'],
-      ['ease','Ease'],
-      ['ease-in','Ease In'],
-      ['ease-out','Ease Out'],
-      ['ease-in-out','Ease In Out'],
-      ['cubic-bezier(.34,1.56,.64,1)','Rebote (back)']
+    ${rangeRow(o,'animation.duration','Duración', A.duration, 100, 4000, 50, ' ms')}
+    ${rangeRow(o,'animation.delay','Retardo', A.delay, 0, 4000, 50, ' ms')}
+    ${rangeRow(o,'animation.distance','Distancia', A.distance, 0, 800, 10, ' px')}
+    ${rowCtrl(o,'animation.easing','Curva', selectHTML('animation.easing', [
+      ['linear','Linear'],['ease','Ease'],['ease-in','Ease In'],['ease-out','Ease Out'],
+      ['ease-in-out','Ease In Out'],['cubic-bezier(.34,1.56,.64,1)','Rebote (back)']
     ], A.easing))}
   </div>`;
 
   propsPanel.innerHTML = h;
-
   const ta = propsPanel.querySelector('textarea[data-textarea]');
   if(ta) ta.value = P.text;
 }
 
 /* =========================================================
-   14. EVENTOS DEL PANEL DE PROPIEDADES
+   16. EVENTOS DEL PANEL DE PROPIEDADES
    ========================================================= */
 function onPropChange(e){
   const inp = e.target.closest('[data-prop]');
   if(!inp) return;
   const o = getSel();
   if(!o) return;
-
   const path = inp.dataset.prop;
   let val;
-  if(inp.type === 'checkbox')      val = inp.checked;
+  if(inp.type === 'checkbox') val = inp.checked;
   else if(inp.type === 'number' || inp.type === 'range'){
-    val = parseFloat(inp.value);
-    if(isNaN(val)) val = 0;
-  } else {
-    val = inp.value;
-  }
+    val = parseFloat(inp.value); if(isNaN(val)) val = 0;
+  } else val = inp.value;
 
-  if(path === 'z'){
-    o.z = Math.round(val) || 1;
-  } else {
-    setVal(o, path, val, curDevice());
-  }
+  if(path === 'z') o.z = Math.round(val) || 1;
+  else setVal(o, path, val, curDevice());
 
   if(inp.type === 'range'){
     const span = propsPanel.querySelector(`[data-valfor="${path}"]`);
     if(span) span.textContent = (Math.round(val*100)/100) + (inp.dataset.suffix || '');
   }
-
   renderObjects();
 }
-
-propsPanel.addEventListener('input', e => { onPropChange(e); });
+propsPanel.addEventListener('input', onPropChange);
 propsPanel.addEventListener('change', e => {
   onPropChange(e);
   if(e.target.closest('[data-prop]')) renderProps();
 });
-
 propsPanel.addEventListener('click', e => {
   const btn = e.target.closest('[data-reset]');
   if(!btn) return;
-  const o = getSel();
-  if(!o) return;
+  const o = getSel(); if(!o) return;
   clearOverride(o, btn.dataset.reset, curDevice());
-  renderObjects();
-  renderProps();
+  renderObjects(); renderProps();
 });
-
 propsPanel.addEventListener('change', e => {
   const f = e.target.closest('[data-imgfile]');
   if(!f || !f.files || !f.files[0]) return;
-  const o = getSel();
-  if(!o) return;
+  const o = getSel(); if(!o) return;
   const reader = new FileReader();
   reader.onload = ev => {
     setVal(o, 'props.src', ev.target.result, curDevice());
-    renderProps();
-    renderObjects();
+    renderProps(); renderObjects();
   };
   reader.readAsDataURL(f.files[0]);
 });
-
 propsPanel.addEventListener('click', e => {
   const btn = e.target.closest('[data-act]');
   if(!btn) return;
-  const o = getSel();
-  if(!o) return;
+  const o = getSel(); if(!o) return;
   const act = btn.dataset.act;
-
+  const item = curItem();
   if(act === 'del'){
-    project.objects = project.objects.filter(x => x.id !== o.id);
-    selectedId = null;
-    renderObjects(); renderProps();
+    item.objects = item.objects.filter(x => x.id !== o.id);
+    selectedId = null; renderObjects(); renderProps();
   }
   if(act === 'dup'){
     const copy = JSON.parse(JSON.stringify(o));
@@ -1131,159 +1209,87 @@ propsPanel.addEventListener('click', e => {
         }
       });
     }
-    copy.z = project.objects.reduce((m, x) => Math.max(m, x.z), 0) + 1;
-    project.objects.push(copy);
+    copy.z = item.objects.reduce((m,x)=>Math.max(m,x.z),0)+1;
+    item.objects.push(copy);
     select(copy.id);
   }
   if(act === 'front'){
-    o.z = project.objects.reduce((m, x) => Math.max(m, x.z), 0) + 1;
+    o.z = item.objects.reduce((m,x)=>Math.max(m,x.z),0)+1;
     renderObjects(); renderProps();
   }
   if(act === 'back'){
-    o.z = project.objects.reduce((m, x) => Math.min(m, x.z), 9999) - 1;
+    o.z = item.objects.reduce((m,x)=>Math.min(m,x.z),9999)-1;
     renderObjects(); renderProps();
   }
   if(act === 'reset'){
-    if(curDevice() !== 'desktop'){
-      if(o.r) o.r[curDevice()] = {};
-      renderObjects(); renderProps();
-    }
+    if(curDevice() !== 'desktop'){ if(o.r) o.r[curDevice()] = {}; renderObjects(); renderProps(); }
   }
 });
 
 /* =========================================================
-   15. CONTROLES DEL SIDEBAR
+   17. SIDEBAR
    ========================================================= */
-function updateBreakpointPreview(){
-  const bp = project.breakpoints;
-  const tabletRange = (bp.mobile + 1) + '–' + bp.tablet;
-  $('#bpPreview').innerHTML =
-    `Escritorio: &gt; <span>${bp.tablet}</span>px<br>` +
-    `Tablet: <span>${tabletRange}</span>px<br>` +
-    `Móvil: ≤ <span>${bp.mobile}</span>px`;
-  $('#devbarBp').textContent = `Breakpoints: T ≤ ${bp.tablet} · M ≤ ${bp.mobile}`;
-}
-
 function syncSidebar(){
-  const d = project.devices[curDevice()];
-  const bg = getBg(curDevice());
+  const d = curDev();
+  const bg = getBg();
   $('#cvW').value = d.width;
   $('#cvH').value = d.height;
-  $('#bgColor').value   = bg.color || '#0f172a';
-  $('#bgImage').value   = (bg.image && !bg.image.startsWith('data:')) ? bg.image : '';
-  $('#bgFit').value     = bg.fit || 'cover';
+  $('#bgColor').value = bg.color || '#0f172a';
+  $('#bgImage').value = (bg.image && !bg.image.startsWith('data:')) ? bg.image : '';
+  $('#bgFit').value = bg.fit || 'cover';
   $('#bgOverlay').value = bg.overlay || 0;
   $('#ovVal').textContent = (bg.overlay || 0) + '%';
-  $('#bpTablet').value = project.breakpoints.tablet;
-  $('#bpMobile').value = project.breakpoints.mobile;
-  updateBreakpointPreview();
-  updateDeviceUI();
-
   const dev = curDevice();
   $('#bgHint').innerHTML = dev === 'desktop'
-    ? 'El fondo del escritorio es la base para todos los dispositivos.'
-    : `El fondo de <b>${DEVICE_META[dev].label}</b> hereda del escritorio. Los cambios aquí solo afectan a este dispositivo.`;
+    ? 'El fondo de escritorio de este item es la base para los otros dispositivos.'
+    : `El fondo de <b>${DEVICE_META[dev].label}</b> hereda del escritorio. Los cambios aquí solo afectan a este item/dispositivo.`;
+  updateDeviceUI();
 }
 
-$('#bpTablet').addEventListener('change', e => {
-  let v = parseInt(e.target.value);
-  if(isNaN(v)) v = 1024;
-  v = Math.max(320, Math.min(5000, v));
-  const mobile = project.breakpoints.mobile;
-  if(v <= mobile) v = mobile + 1;
-  project.breakpoints.tablet = v;
-  e.target.value = v;
-  updateBreakpointPreview();
-});
-$('#bpMobile').addEventListener('change', e => {
-  let v = parseInt(e.target.value);
-  if(isNaN(v)) v = 767;
-  v = Math.max(240, Math.min(4999, v));
-  const tablet = project.breakpoints.tablet;
-  if(v >= tablet) v = tablet - 1;
-  project.breakpoints.mobile = v;
-  e.target.value = v;
-  updateBreakpointPreview();
-});
-$('#btnResetBp').addEventListener('click', () => {
-  project.breakpoints = { tablet: 1024, mobile: 767 };
-  syncSidebar();
-});
-
-$('#bgColor').addEventListener('input', e => {
-  setBg('color', e.target.value, curDevice());
-  renderBg();
-});
-$('#bgImage').addEventListener('input', e => {
-  setBg('image', e.target.value.trim(), curDevice());
-  renderBg();
-});
+$('#bgColor').addEventListener('input', e => { setBg('color', e.target.value); renderBg(); });
+$('#bgImage').addEventListener('input', e => { setBg('image', e.target.value.trim()); renderBg(); });
 $('#bgFile').addEventListener('change', e => {
   const f = e.target.files && e.target.files[0];
   if(!f) return;
   const r = new FileReader();
-  r.onload = ev => {
-    setBg('image', ev.target.result, curDevice());
-    $('#bgImage').value = '';
-    renderBg();
-  };
+  r.onload = ev => { setBg('image', ev.target.result); $('#bgImage').value = ''; renderBg(); };
   r.readAsDataURL(f);
   e.target.value = '';
 });
-$('#bgFit').addEventListener('change', e => {
-  setBg('fit', e.target.value, curDevice());
-  renderBg();
-});
+$('#bgFit').addEventListener('change', e => { setBg('fit', e.target.value); renderBg(); });
 $('#bgOverlay').addEventListener('input', e => {
-  setBg('overlay', +e.target.value, curDevice());
+  setBg('overlay', +e.target.value);
   $('#ovVal').textContent = e.target.value + '%';
   renderBg();
 });
 $('#btnClearBg').addEventListener('click', () => {
   if(curDevice() === 'desktop'){
-    project.devices.desktop.bg = { color:'#0f172a', image:'', fit:'cover', overlay:0 };
+    curItem().bg.desktop = { color:'#0f172a', image:'', fit:'cover', overlay:0 };
   } else {
     clearBgOverride(curDevice());
   }
-  syncSidebar();
-  renderBg();
-});
-
-$('#cvW').addEventListener('change', e => {
-  project.devices[curDevice()].width = Math.max(200, parseInt(e.target.value) || 1280);
-  renderAll();
-  renderProps();
-});
-$('#cvH').addEventListener('change', e => {
-  project.devices[curDevice()].height = Math.max(200, parseInt(e.target.value) || 720);
-  renderAll();
-  renderProps();
+  syncSidebar(); renderBg();
 });
 
 /* =========================================================
-   16. TECLADO
+   18. TECLADO
    ========================================================= */
 document.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toLowerCase();
   if(tag === 'input' || tag === 'textarea' || tag === 'select') return;
-
   if(e.key === 'Escape'){
     if(previewing) togglePreview();
     else select(null);
     return;
   }
-
-  const o = getSel();
-  if(!o) return;
-
+  const o = getSel(); if(!o) return;
   if(e.key === 'Delete' || e.key === 'Backspace'){
     e.preventDefault();
-    project.objects = project.objects.filter(x => x.id !== o.id);
-    selectedId = null;
-    renderObjects(); renderProps();
+    const item = curItem();
+    item.objects = item.objects.filter(x => x.id !== o.id);
+    selectedId = null; renderObjects(); renderProps();
     return;
   }
-
   const step = e.shiftKey ? 10 : 1;
   const dev = curDevice();
   let moved = false;
@@ -1295,33 +1301,20 @@ document.addEventListener('keydown', e => {
 });
 
 /* =========================================================
-   17. PREVISUALIZACIÓN
+   19. PREVISUALIZACIÓN
    ========================================================= */
 function togglePreview(){
   previewing = !previewing;
   if(previewing) selectedId = null;
   $('#btnPreview').textContent = previewing ? '⏹ Detener' : '▶ Previsualizar';
   $('#btnPreview').classList.toggle('primary', previewing);
-  renderObjects();
-  renderProps();
+  renderObjects(); renderProps();
 }
 $('#btnPreview').addEventListener('click', togglePreview);
 
 /* =========================================================
-   18. NUEVO / IMPORTAR / EXPORTAR
+   20. IMPORTAR / EXPORTAR ITEM (JSON y HTML)
    ========================================================= */
-$('#btnNew').addEventListener('click', () => {
-  if(project.objects.length && !confirm('¿Crear un slide nuevo? Se perderán los cambios no guardados.')) return;
-  project = blankProject();
-  selectedId = null;
-  previewing = false;
-  $('#btnPreview').textContent = '▶ Previsualizar';
-  $('#btnPreview').classList.remove('primary');
-  syncSidebar();
-  renderAll();
-  renderProps();
-});
-
 $('#btnImport').addEventListener('click', () => $('#fileImport').click());
 
 $('#fileImport').addEventListener('change', e => {
@@ -1333,34 +1326,55 @@ $('#fileImport').addEventListener('change', e => {
       const data = JSON.parse(ev.target.result);
       if(!data || !Array.isArray(data.objects)) throw new Error('Formato inválido');
 
-      if(!data.devices){
-        data.devices = blankProject().devices;
-        data.devices.desktop.width  = data.width  || 1280;
-        data.devices.desktop.height = data.height || 720;
-        data.devices.desktop.bg     = data.background || blankProject().devices.desktop.bg;
+      /* Validar dimensiones y breakpoints */
+      const warns = [];
+      if(data.devices){
+        DEVICE_KEYS.forEach(k => {
+          const curD = app.slider.devices[k];
+          const impD = data.devices[k];
+          if(impD && (impD.width !== curD.width || impD.height !== curD.height)){
+            warns.push(`· ${DEVICE_META[k].label}: ${curD.width}×${curD.height} → ${impD.width}×${impD.height}`);
+          }
+        });
       }
-      if(!data.current || !data.devices[data.current]) data.current = 'desktop';
-      if(!data.breakpoints) data.breakpoints = { tablet: 1024, mobile: 767 };
+      if(data.breakpoints && bp()){
+        if(data.breakpoints.tablet !== bp().tablet || data.breakpoints.mobile !== bp().mobile){
+          warns.push(`· Breakpoints: actuales T≤${bp().tablet} / M≤${bp().mobile} → importados T≤${data.breakpoints.tablet} / M≤${data.breakpoints.mobile}`);
+        }
+      }
+      if(warns.length){
+        if(!confirm('Las dimensiones del lienzo o los breakpoints del archivo importado difieren de los que tienes definidos globalmente.\n\n' +
+                    warns.join('\n') +
+                    '\n\nSe importará el contenido, pero se usarán las dimensiones y breakpoints GLOBALES actuales.\n\n¿Continuar?')) {
+          e.target.value = '';
+          return;
+        }
+      }
 
+      /* Normalizar objetos */
       data.objects.forEach(o => {
         if(!o.r) o.r = { tablet:{}, mobile:{} };
         if(!o.r.tablet) o.r.tablet = {};
         if(!o.r.mobile) o.r.mobile = {};
-        o.animation = Object.assign(
-          { effect:'none', duration:800, delay:0, easing:'ease-out', distance:150 },
-          o.animation || {}
-        );
+        o.animation = Object.assign({ effect:'none', duration:800, delay:0, easing:'ease-out', distance:150 }, o.animation || {});
         if(o.type === 'box' && o.props && o.props.borderColor === undefined){
           o.props.borderColor = '#ffffff';
           o.props.borderW = o.props.borderW || 0;
         }
       });
 
-      project = data;
+      /* Reasignar ids únicos a los objetos */
+      data.objects.forEach(o => o.id = uid());
+
+      const item = curItem();
+      item.objects = data.objects;
+      item.bg = {
+        desktop: Object.assign({ color:'#0f172a', image:'', fit:'cover', overlay:0 }, (data.bg && data.bg.desktop) || data.background || {}),
+        tablet:  (data.bg && data.bg.tablet) || {},
+        mobile:  (data.bg && data.bg.mobile) || {}
+      };
       selectedId = null;
-      syncSidebar();
-      renderAll();
-      renderProps();
+      syncSidebar(); renderAll(); renderProps();
     }catch(err){
       alert('No se pudo importar el archivo JSON:\n' + err.message);
     }
@@ -1370,34 +1384,33 @@ $('#fileImport').addEventListener('change', e => {
 });
 
 $('#btnExportJson').addEventListener('click', () => {
-  download('slider-morbriant.json', JSON.stringify(project, null, 2), 'application/json');
+  const item = curItem();
+  const payload = {
+    version: 2,
+    type: 'slider_morbriant_item',
+    id: item.id,
+    name: 'item-' + item.id,
+    breakpoints: JSON.parse(JSON.stringify(bp())),
+    devices: JSON.parse(JSON.stringify(app.slider.devices)),
+    bg: JSON.parse(JSON.stringify(item.bg)),
+    objects: JSON.parse(JSON.stringify(item.objects))
+  };
+  download('slider-morbriant-item-' + item.id + '.json', JSON.stringify(payload, null, 2), 'application/json');
 });
 
 $('#btnExportHtml').addEventListener('click', () => {
-  download('slider-morbriant.html', generateHTML(), 'text/html');
+  download('slider-morbriant-item-' + curItem().id + '.html', generateItemHTML(curItem()), 'text/html');
 });
 
 $('#btnExportShortcode').addEventListener('click', () => {
-  const raw = prompt(
-    'Introduce el ID del shortcode.\n\n' +
-    'Se generará: [slider_morbriant_item id="N"]\n\n' +
-    'Solo letras, números, guiones y guiones bajos.',
-    '1'
-  );
-  if(raw === null) return;
-  const id = String(raw).trim();
-  if(!id){ alert('El ID no puede estar vacío.'); return; }
-  if(!/^[a-zA-Z0-9_-]+$/.test(id)){
-    alert('El ID solo puede contener letras, números, guiones (-) y guiones bajos (_).');
-    return;
-  }
-  download('slider-morbriant-item-' + id + '.shortcode', generateShortcode(id), 'text/plain');
+  const item = curItem();
+  download('slider-morbriant-item-' + item.id + '.shortcode', generateItemShortcode(item), 'text/plain');
 });
 
 function download(filename, content, mime){
   const blob = new Blob([content], { type: mime + ';charset=utf-8' });
   const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
+  const a = document.createElement('a');
   a.href = url; a.download = filename;
   document.body.appendChild(a);
   a.click();
@@ -1406,290 +1419,32 @@ function download(filename, content, mime){
 }
 
 /* =========================================================
-   19. GENERADOR DE HTML EXPORTABLE
+   21. GENERADORES: HTML de un ITEM
    ========================================================= */
 function detectUsedFonts(){
   const used = new Set();
-  project.objects.forEach(o => {
-    /* Recorremos todos los dispositivos por si alguna fuente se definió solo en tablet/móvil */
-    const devices = ['desktop','tablet','mobile'];
-    devices.forEach(d => {
+  app.items.forEach(item => {
+    item.objects.forEach(o => {
       if(o.type === 'text'){
-        const stack = getVal(o, 'props.family', d);
-        if(stack && FONT_BY_STACK[stack] && FONT_BY_STACK[stack].google) used.add(FONT_BY_STACK[stack].google);
+        ['desktop','tablet','mobile'].forEach(d => {
+          const stack = getVal(o, 'props.family', d);
+          if(stack && FONT_BY_STACK[stack] && FONT_BY_STACK[stack].google) used.add(FONT_BY_STACK[stack].google);
+        });
+        const base = o.props && o.props.family;
+        if(base && FONT_BY_STACK[base] && FONT_BY_STACK[base].google) used.add(FONT_BY_STACK[base].google);
       }
     });
-    if(o.type === 'text'){
-      const stack = o.props && o.props.family;
-      if(stack && FONT_BY_STACK[stack] && FONT_BY_STACK[stack].google) used.add(FONT_BY_STACK[stack].google);
-    }
   });
-  if(project.objects.some(o => o.type === 'button')){
+  if(app.items.some(it => it.objects.some(o => o.type === 'button'))){
     used.add('Inter:wght@300;400;500;600;700;800;900');
   }
   return Array.from(used);
 }
 
-function generateHTML(){
-  const usedFonts = detectUsedFonts();
-  const fontLink = usedFonts.length
-    ? `<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?${usedFonts.map(f => 'family=' + f).join('&')}&display=swap" rel="stylesheet">`
-    : '';
-
-  const dataJSON = JSON.stringify(project);
-
-  return `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Slider Builder MorBriant</title>
-${fontLink}
-<style>
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#05070f;
-    font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
-  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-  #slide{position:relative;overflow:hidden;transform-origin:center center;flex:0 0 auto;}
-${KEYFRAMES}
-</style>
-</head>
-<body>
-<div id="stage"><div id="slide"></div></div>
-<script>
-const DATA = ${dataJSON};
-const EFFECTS = ${JSON.stringify(EFFECTS)};
-
-(function(){
-  var slide = document.getElementById('slide');
-  var currentDevice = null;
-
-  function pickDevice(w){
-    var bp = DATA.breakpoints || { tablet:1024, mobile:767 };
-    if(w > bp.tablet) return 'desktop';
-    if(w > bp.mobile) return 'tablet';
-    return 'mobile';
-  }
-  function deviceChain(d){
-    if(d === 'desktop') return ['desktop'];
-    if(d === 'tablet')  return ['desktop','tablet'];
-    return ['desktop','tablet','mobile'];
-  }
-  function getPath(o, p){
-    var parts = p.split('.');
-    var c = o;
-    for(var i = 0; i < parts.length; i++){
-      if(c == null) return undefined;
-      c = c[parts[i]];
-    }
-    return c;
-  }
-  function getVal(o, p, d){
-    var ch = deviceChain(d);
-    for(var i = ch.length - 1; i >= 1; i--){
-      var b = o.r && o.r[ch[i]];
-      if(b){ var v = getPath(b, p); if(v !== undefined) return v; }
-    }
-    return getPath(o, p);
-  }
-  function getBg(d){
-    var base = DATA.devices.desktop.bg;
-    var ch = deviceChain(d);
-    var r = {};
-    for(var k in base) r[k] = base[k];
-    for(var i = 1; i < ch.length; i++){
-      var b = DATA.devices[ch[i]].bg || {};
-      for(var k2 in b) r[k2] = b[k2];
-    }
-    return r;
-  }
-  function esc(s){
-    return String(s == null ? '' : s)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-  function escAttr(s){
-    return String(s == null ? '' : s)
-      .replace(/&/g,'&amp;').replace(/"/g,'&quot;')
-      .replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-  function cssUrl(u){ return "url('" + String(u).replace(/'/g, '%27') + "')"; }
-
-  /* CORREGIDO: usa getVal para props */
-  function styleFor(o, d){
-    var gp = function(p){ return getVal(o, 'props.' + p, d); };
-    var x = getVal(o,'x',d), y = getVal(o,'y',d);
-    var w = getVal(o,'w',d), h = getVal(o,'h',d);
-    var rot = getVal(o,'rot',d) || 0;
-    var op = getVal(o,'opacity',d); if(op == null) op = 1;
-
-    var s = 'position:absolute;left:' + x + 'px;top:' + y + 'px;'
-          + 'width:' + w + 'px;height:' + h + 'px;'
-          + 'z-index:' + o.z + ';opacity:' + op + ';'
-          + '--rot:' + rot + 'deg;--op:' + op + ';'
-          + 'transform:rotate(' + rot + 'deg);box-sizing:border-box;';
-
-    if(o.type === 'box'){
-      s += 'background:' + gp('bg') + ';border-radius:' + gp('radius') + 'px;'
-        +  'border:' + gp('borderW') + 'px solid ' + gp('borderColor') + ';'
-        +  'box-shadow:' + (gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none') + ';';
-    }
-    if(o.type === 'text'){
-      s += 'display:flex;flex-direction:column;justify-content:center;text-align:' + gp('align') + ';'
-        +  'color:' + gp('color') + ';font-size:' + gp('fontSize') + 'px;font-weight:' + (gp('bold') ? 700 : 400) + ';'
-        +  'font-style:' + (gp('italic') ? 'italic' : 'normal') + ';font-family:' + gp('family') + ';'
-        +  'line-height:' + gp('lineHeight') + ';letter-spacing:' + gp('letterSpacing') + 'px;'
-        +  'padding:' + gp('padding') + 'px;white-space:pre-wrap;word-break:break-word;overflow:hidden;';
-    }
-    if(o.type === 'image'){
-      s += 'background-image:' + cssUrl(gp('src')) + ';background-size:' + gp('fit') + ';'
-        +  'background-position:center;background-repeat:no-repeat;'
-        +  'border-radius:' + gp('radius') + 'px;'
-        +  'box-shadow:' + (gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none') + ';';
-    }
-    if(o.type === 'button'){
-      s += 'display:flex;align-items:center;justify-content:center;'
-        +  'background:' + gp('bg') + ';color:' + gp('color') + ';'
-        +  'font-size:' + gp('fontSize') + 'px;font-weight:600;border-radius:' + gp('radius') + 'px;'
-        +  'text-decoration:none;font-family:Inter,system-ui,sans-serif;cursor:pointer;'
-        +  'border:none;overflow:hidden;'
-        +  'box-shadow:' + (gp('shadow') ? '0 12px 28px rgba(0,0,0,.38)' : 'none') + ';';
-    }
-
-    var eff = getVal(o, 'animation.effect', d);
-    if(eff && eff !== 'none' && EFFECTS[eff]){
-      var dur  = getVal(o, 'animation.duration', d) || 800;
-      var del  = getVal(o, 'animation.delay', d) || 0;
-      var eas  = getVal(o, 'animation.easing', d) || 'ease-out';
-      var dist = getVal(o, 'animation.distance', d) || 150;
-      s += '--dist:' + dist + 'px;'
-        +  'animation:' + EFFECTS[eff] + ' ' + dur + 'ms ' + eas + ' ' + del + 'ms both;';
-    }
-    return s;
-  }
-
-  function buildSlide(d){
-    var dev = DATA.devices[d];
-    var bg = getBg(d);
-
-    slide.style.width  = dev.width + 'px';
-    slide.style.height = dev.height + 'px';
-    slide.style.background = bg.color;
-
-    var html = '';
-    if(bg.image){
-      html += '<div style="position:absolute;inset:0;background-image:' + cssUrl(bg.image) + ';'
-            + 'background-size:' + bg.fit + ';background-position:center;background-repeat:no-repeat;"></div>';
-    }
-    if(bg.overlay > 0){
-      html += '<div style="position:absolute;inset:0;background:rgba(0,0,0,' + (bg.overlay/100) + ');"></div>';
-    }
-
-    var objs = DATA.objects.slice().sort(function(a,b){ return a.z - b.z; });
-    for(var i = 0; i < objs.length; i++){
-      var o = objs[i];
-      var st = styleFor(o, d);
-      var txt = getVal(o, 'props.text', d);
-      if(txt == null) txt = '';
-      if(o.type === 'button'){
-        var href = getVal(o, 'props.href', d) || '#';
-        html += '<a href="' + escAttr(href) + '" style="' + st + '">' + esc(txt) + '</a>';
-      } else if(o.type === 'text'){
-        html += '<div style="' + st + '">' + esc(txt) + '</div>';
-      } else {
-        html += '<div style="' + st + '"></div>';
-      }
-    }
-    slide.innerHTML = html;
-  }
-
-  function fit(){
-    var d = currentDevice || pickDevice(window.innerWidth);
-    var dev = DATA.devices[d];
-    var s = Math.min(window.innerWidth / dev.width, window.innerHeight / dev.height);
-    slide.style.transform = 'scale(' + s + ')';
-  }
-
-  function render(){
-    var d = pickDevice(window.innerWidth);
-    if(d !== currentDevice){
-      currentDevice = d;
-      buildSlide(d);
-    }
-    fit();
-  }
-
-  var t;
-  window.addEventListener('resize', function(){
-    clearTimeout(t);
-    t = setTimeout(render, 120);
-  });
-  window.addEventListener('orientationchange', function(){
-    clearTimeout(t);
-    t = setTimeout(render, 220);
-  });
-  render();
-})();
-<\/script>
-</body>
-</html>`;
-}
-
-/* =========================================================
-   20. GENERADOR DE SHORTCODE PARA WORDPRESS
-   ========================================================= */
-function phpSQ(s){
-  return "'" + String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
-}
-
-function utf8ToBase64(str){
-  const bytes = new TextEncoder().encode(str);
-  let bin = '';
-  const chunk = 0x8000;
-  for(let i = 0; i < bytes.length; i += chunk){
-    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
-  }
-  return btoa(bin);
-}
-
-function generateShortcode(id){
-  const json = JSON.stringify(project);
-  const b64  = utf8ToBase64(json);
-
-  const usedFonts = detectUsedFonts();
-  const fontQuery = usedFonts.length
-    ? usedFonts.map(f => 'family=' + f).join('&') + '&display=swap'
-    : '';
-
-  const effectsSBM = {
-    none:null, fade:'sbmKFade', left:'sbmKLeft', right:'sbmKRight',
-    up:'sbmKUp', down:'sbmKDown', zoom:'sbmKZoom', rotate:'sbmKRotate', flip:'sbmKFlip'
-  };
-
-  const CSS_RUNTIME = `.sbm-stage{position:relative;width:100%;height:0;overflow:hidden;background:#05070f;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
-.sbm-stage *,.sbm-stage *::before,.sbm-stage *::after{box-sizing:border-box;}
-.sbm-slide{position:absolute;top:0;left:0;transform-origin:top left;overflow:hidden;}
-
-@keyframes sbmKFade{from{opacity:0}to{opacity:var(--op,1)}}
-@keyframes sbmKLeft{from{opacity:0;transform:translateX(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}
-                    to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
-@keyframes sbmKRight{from{opacity:0;transform:translateX(var(--dist,150px)) rotate(var(--rot,0deg))}
-                     to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
-@keyframes sbmKUp{from{opacity:0;transform:translateY(var(--dist,150px)) rotate(var(--rot,0deg))}
-                  to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
-@keyframes sbmKDown{from{opacity:0;transform:translateY(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}
-                    to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
-@keyframes sbmKZoom{from{opacity:0;transform:scale(.5) rotate(var(--rot,0deg))}
-                    to{opacity:var(--op,1);transform:scale(1) rotate(var(--rot,0deg))}}
-@keyframes sbmKRotate{from{opacity:0;transform:rotate(calc(var(--rot,0deg) - 30deg)) scale(.8)}
-                      to{opacity:var(--op,1);transform:rotate(var(--rot,0deg)) scale(1)}}
-@keyframes sbmKFlip{from{opacity:0;transform:perspective(900px) rotateY(90deg)}
-                    to{opacity:var(--op,1);transform:perspective(900px) rotateY(0deg) rotate(var(--rot,0deg))}}`;
-
-  /* CORREGIDO: styleFor usa getVal para props, buildSlide usa getVal para text/href */
-  const JS_RUNTIME = `(function(){
-    var EFFECTS = ${JSON.stringify(effectsSBM)};
+/* --- Runtime JS común (cliente) para item y slider --- */
+function buildRuntimeJS(effectsMap){
+  return `(function(){
+    var EFFECTS = ${JSON.stringify(effectsMap)};
     function getPath(o, p){
         var parts = p.split('.');
         var c = o;
@@ -1710,12 +1465,12 @@ function generateShortcode(id){
         return getPath(o, p);
     }
     function getBg(data, d){
-        var base = (data.devices.desktop.bg || {});
+        var base = (data.bg && data.bg.desktop) || {};
         var ch = deviceChain(d);
         var r = {};
         for (var k in base) r[k] = base[k];
         for (var i = 1; i < ch.length; i++){
-            var b = data.devices[ch[i]].bg || {};
+            var b = (data.bg && data.bg[ch[i]]) || {};
             for (var k2 in b) r[k2] = b[k2];
         }
         return r;
@@ -1782,8 +1537,7 @@ function generateShortcode(id){
         }
         return s;
     }
-    function buildSlide(data, d){
-        var dev = data.devices[d];
+    function buildItemHTML(data, d){
         var bg = getBg(data, d);
         var html = '';
         if (bg.image){
@@ -1797,8 +1551,7 @@ function generateShortcode(id){
         for (var i = 0; i < objs.length; i++){
             var o = objs[i];
             var st = styleFor(o, d);
-            var txt = getVal(o, 'props.text', d);
-            if (txt == null) txt = '';
+            var txt = getVal(o, 'props.text', d); if (txt == null) txt = '';
             if (o.type === 'button'){
                 var href = getVal(o, 'props.href', d) || '#';
                 html += '<a href="' + escAttr(href) + '" style="' + st + '">' + esc(txt) + '</a>';
@@ -1808,7 +1561,7 @@ function generateShortcode(id){
                 html += '<div style="' + st + '"></div>';
             }
         }
-        return { html: html, bg: bg, dev: dev };
+        return { html: html, bg: bg };
     }
     function b64DecodeUnicode(str){
         var bin = atob(str);
@@ -1819,17 +1572,16 @@ function generateShortcode(id){
         for (var j = 0; j < bytes.length; j++) s += String.fromCharCode(bytes[j]);
         try { return decodeURIComponent(escape(s)); } catch(e){ return s; }
     }
+    /* --- Item stage --- */
     function initStage(el){
         if (el.dataset.sbmInit === '1') return;
         el.dataset.sbmInit = '1';
         var data;
         try { data = JSON.parse(b64DecodeUnicode(el.getAttribute('data-sbm-b64'))); }
-        catch(e){ console.error('SBM: error decodificando datos', e); return; }
-
+        catch(e){ console.error('SBM: error decodificando', e); return; }
         var slide = document.createElement('div');
         slide.className = 'sbm-slide';
         el.appendChild(slide);
-
         var lastDevice = null;
         function render(){
             var d = pickDevice(window.innerWidth, data.breakpoints);
@@ -1837,7 +1589,7 @@ function generateShortcode(id){
             if (d !== lastDevice){
                 lastDevice = d;
                 el.style.paddingBottom = (dev.height / dev.width * 100) + '%';
-                var built = buildSlide(data, d);
+                var built = buildItemHTML(data, d);
                 slide.innerHTML = built.html;
                 slide.style.background = built.bg.color;
             }
@@ -1849,148 +1601,640 @@ function generateShortcode(id){
         }
         var t;
         window.addEventListener('resize', function(){
-            clearTimeout(t);
-            t = setTimeout(render, 120);
+            clearTimeout(t); t = setTimeout(render, 120);
         });
         render();
+    }
+    /* --- Slider (múltiples items) --- */
+    function initSlider(el){
+        if (el.dataset.sbmInit === '1') return;
+        el.dataset.sbmInit = '1';
+        var slides = el.querySelectorAll('.sbm-slider-slide[data-sbm-b64]');
+        if (!slides.length) return;
+        var decoded = [];
+        for (var i = 0; i < slides.length; i++){
+            try { decoded.push({ el: slides[i], data: JSON.parse(b64DecodeUnicode(slides[i].getAttribute('data-sbm-b64'))) }); }
+            catch(e){ decoded.push({ el: slides[i], data: null }); }
+        }
+        var transition = el.getAttribute('data-sbm-transition') || 'fade';
+        var time = parseInt(el.getAttribute('data-sbm-time')) || 4000;
+        var current = 0;
+        var lastDevice = null;
+
+        function applyDevice(){
+            var d = pickDevice(window.innerWidth, decoded[0].data ? decoded[0].data.breakpoints : null);
+            var dev = (decoded[0].data && decoded[0].data.devices[d]) || { width:1280, height:720 };
+            el.style.paddingBottom = (dev.height / dev.width * 100) + '%';
+            for (var i = 0; i < decoded.length; i++){
+                var item = decoded[i];
+                if (!item.data) continue;
+                var inner = item.el.querySelector('.sbm-slide');
+                if (!inner){
+                    inner = document.createElement('div');
+                    inner.className = 'sbm-slide';
+                    item.el.appendChild(inner);
+                }
+                var built = buildItemHTML(item.data, d);
+                inner.innerHTML = built.html;
+                inner.style.background = built.bg.color;
+                inner.style.width = dev.width + 'px';
+                inner.style.height = dev.height + 'px';
+            }
+            lastDevice = d;
+            fit();
+        }
+        function fit(){
+            var d = lastDevice;
+            var dev = (decoded[0].data && decoded[0].data.devices[d]) || { width:1280, height:720 };
+            var w = el.clientWidth || el.offsetWidth || 1;
+            var s = w / dev.width;
+            for (var i = 0; i < decoded.length; i++){
+                var inner = decoded[i].el.querySelector('.sbm-slide');
+                if (inner) inner.style.transform = 'scale(' + s + ')';
+            }
+        }
+        function show(idx){
+            for (var i = 0; i < decoded.length; i++){
+                decoded[i].el.classList.toggle('sbm-active', i === idx);
+            }
+        }
+        function next(){
+            current = (current + 1) % decoded.length;
+            show(current);
+        }
+        applyDevice();
+        show(0);
+        var t;
+        window.addEventListener('resize', function(){
+            clearTimeout(t); t = setTimeout(applyDevice, 120);
+        });
+        if (decoded.length > 1 && time > 0){
+            setInterval(next, Math.max(500, time));
+        }
     }
     function ready(){
         var stages = document.querySelectorAll('.sbm-stage[data-sbm-b64]');
         for (var i = 0; i < stages.length; i++) initStage(stages[i]);
+        var sliders = document.querySelectorAll('.sbm-slider');
+        for (var j = 0; j < sliders.length; j++) initSlider(sliders[j]);
     }
     if (document.readyState === 'loading'){
         document.addEventListener('DOMContentLoaded', ready);
-    } else {
-        ready();
-    }
-    setTimeout(ready, 200);
+    } else { ready(); }
+    setTimeout(ready, 250);
 })();`;
+}
 
-  const phpJS = "    function slider_morbriant_get_js(){\n        return <<<'SBM_JS'\n" + JS_RUNTIME + "\nSBM_JS;\n    }";
-  const phpCSS = "    function slider_morbriant_get_css(){\n        return <<<'SBM_CSS'\n" + CSS_RUNTIME + "\nSBM_CSS;\n    }";
+function generateItemHTML(item){
+  const usedFonts = detectUsedFonts();
+  const fontLink = usedFonts.length
+    ? `<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?${usedFonts.map(f=>'family='+f).join('&')}&display=swap" rel="stylesheet">`
+    : '';
+  const payload = {
+    id: item.id,
+    breakpoints: bp(),
+    devices: app.slider.devices,
+    bg: item.bg,
+    objects: item.objects
+  };
+  const dataJSON = JSON.stringify(payload);
+  const runtimeJS = buildRuntimeJS(EFFECTS);
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Item ${item.id} — Slider Builder MorBriant</title>
+${fontLink}
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#05070f;
+    font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  #slide{position:relative;overflow:hidden;transform-origin:center center;flex:0 0 auto;}
+${KEYFRAMES}
+</style>
+</head>
+<body>
+<div id="stage"><div id="slide"></div></div>
+<script>
+const DATA = ${dataJSON};
+const EFFECTS = ${JSON.stringify(EFFECTS)};
+(function(){
+  var slide = document.getElementById('slide');
+  var currentDevice = null;
+  function pickDevice(w){
+    var bp = DATA.breakpoints || { tablet:1024, mobile:767 };
+    if(w > bp.tablet) return 'desktop';
+    if(w > bp.mobile) return 'tablet';
+    return 'mobile';
+  }
+  function deviceChain(d){ if(d==='desktop')return['desktop']; if(d==='tablet')return['desktop','tablet']; return ['desktop','tablet','mobile']; }
+  function getPath(o,p){ var parts=p.split('.'),c=o; for(var i=0;i<parts.length;i++){if(c==null)return undefined;c=c[parts[i]];} return c; }
+  function getVal(o,p,d){ var ch=deviceChain(d); for(var i=ch.length-1;i>=1;i--){var b=o.r&&o.r[ch[i]];if(b){var v=getPath(b,p);if(v!==undefined)return v;}} return getPath(o,p); }
+  function getBg(d){ var base=(DATA.bg&&DATA.bg.desktop)||{}; var ch=deviceChain(d); var r={}; for(var k in base)r[k]=base[k]; for(var i=1;i<ch.length;i++){var b=(DATA.bg&&DATA.bg[ch[i]])||{};for(var k2 in b)r[k2]=b[k2];} return r; }
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function cssUrl(u){ return "url('"+String(u).replace(/'/g,'%27')+"')"; }
+  function styleFor(o,d){
+    var gp=function(p){return getVal(o,'props.'+p,d);};
+    var x=getVal(o,'x',d),y=getVal(o,'y',d),w=getVal(o,'w',d),h=getVal(o,'h',d);
+    var rot=getVal(o,'rot',d)||0; var op=getVal(o,'opacity',d); if(op==null)op=1;
+    var s='position:absolute;left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+h+'px;z-index:'+o.z+';opacity:'+op+';--rot:'+rot+'deg;--op:'+op+';transform:rotate('+rot+'deg);box-sizing:border-box;';
+    if(o.type==='box') s+='background:'+gp('bg')+';border-radius:'+gp('radius')+'px;border:'+gp('borderW')+'px solid '+gp('borderColor')+';box-shadow:'+(gp('shadow')?'0 14px 34px rgba(0,0,0,.4)':'none')+';';
+    if(o.type==='text') s+='display:flex;flex-direction:column;justify-content:center;text-align:'+gp('align')+';color:'+gp('color')+';font-size:'+gp('fontSize')+'px;font-weight:'+(gp('bold')?700:400)+';font-style:'+(gp('italic')?'italic':'normal')+';font-family:'+gp('family')+';line-height:'+gp('lineHeight')+';letter-spacing:'+gp('letterSpacing')+'px;padding:'+gp('padding')+'px;white-space:pre-wrap;word-break:break-word;overflow:hidden;';
+    if(o.type==='image') s+='background-image:'+cssUrl(gp('src'))+';background-size:'+gp('fit')+';background-position:center;background-repeat:no-repeat;border-radius:'+gp('radius')+'px;box-shadow:'+(gp('shadow')?'0 14px 34px rgba(0,0,0,.4)':'none')+';';
+    if(o.type==='button') s+='display:flex;align-items:center;justify-content:center;background:'+gp('bg')+';color:'+gp('color')+';font-size:'+gp('fontSize')+'px;font-weight:600;border-radius:'+gp('radius')+'px;text-decoration:none;font-family:Inter,system-ui,sans-serif;cursor:pointer;border:none;overflow:hidden;box-shadow:'+(gp('shadow')?'0 12px 28px rgba(0,0,0,.38)':'none')+';';
+    var eff=getVal(o,'animation.effect',d);
+    if(eff&&eff!=='none'&&EFFECTS[eff]){
+      var dur=getVal(o,'animation.duration',d)||800, del=getVal(o,'animation.delay',d)||0, eas=getVal(o,'animation.easing',d)||'ease-out', dist=getVal(o,'animation.distance',d)||150;
+      s+='--dist:'+dist+'px;animation:'+EFFECTS[eff]+' '+dur+'ms '+eas+' '+del+'ms both;';
+    }
+    return s;
+  }
+  function build(d){
+    var dev=DATA.devices[d]; var bg=getBg(d);
+    slide.style.width=dev.width+'px'; slide.style.height=dev.height+'px'; slide.style.background=bg.color;
+    var html='';
+    if(bg.image) html+='<div style="position:absolute;inset:0;background-image:'+cssUrl(bg.image)+';background-size:'+bg.fit+';background-position:center;background-repeat:no-repeat;"></div>';
+    if(bg.overlay>0) html+='<div style="position:absolute;inset:0;background:rgba(0,0,0,'+(bg.overlay/100)+');"></div>';
+    var objs=DATA.objects.slice().sort(function(a,b){return a.z-b.z;});
+    for(var i=0;i<objs.length;i++){
+      var o=objs[i], st=styleFor(o,d), txt=getVal(o,'props.text',d); if(txt==null)txt='';
+      if(o.type==='button') html+='<a href="'+escAttr(getVal(o,'props.href',d)||'#')+'" style="'+st+'">'+esc(txt)+'</a>';
+      else if(o.type==='text') html+='<div style="'+st+'">'+esc(txt)+'</div>';
+      else html+='<div style="'+st+'"></div>';
+    }
+    slide.innerHTML=html;
+  }
+  function fit(){
+    var d=currentDevice||pickDevice(window.innerWidth); var dev=DATA.devices[d];
+    var s=Math.min(window.innerWidth/dev.width, window.innerHeight/dev.height);
+    slide.style.transform='scale('+s+')';
+  }
+  function render(){
+    var d=pickDevice(window.innerWidth);
+    if(d!==currentDevice){ currentDevice=d; build(d); }
+    fit();
+  }
+  var t; window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(render,120);});
+  window.addEventListener('orientationchange',function(){clearTimeout(t);t=setTimeout(render,220);});
+  render();
+})();
+<\/script>
+</body>
+</html>`;
+}
 
-  const phpFontLinks = fontQuery
+/* =========================================================
+   22. GENERADOR: SHORTCODE de un ITEM
+   ========================================================= */
+function phpSQ(s){ return "'" + String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'") + "'"; }
+function utf8ToBase64(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = ''; const chunk = 0x8000;
+  for(let i = 0; i < bytes.length; i += chunk){
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  return btoa(bin);
+}
+
+function generateItemShortcode(item){
+  const payload = {
+    id: item.id,
+    breakpoints: bp(),
+    devices: app.slider.devices,
+    bg: item.bg,
+    objects: item.objects
+  };
+  const json = JSON.stringify(payload);
+  const b64 = utf8ToBase64(json);
+
+  const effectsSBM = {
+    none:null, fade:'sbmKFade', left:'sbmKLeft', right:'sbmKRight',
+    up:'sbmKUp', down:'sbmKDown', zoom:'sbmKZoom', rotate:'sbmKRotate', flip:'sbmKFlip'
+  };
+
+  const usedFonts = detectUsedFonts();
+  const fontQuery = usedFonts.length ? usedFonts.map(f=>'family='+f).join('&')+'&display=swap' : '';
+
+  const CSS_ITEM = `.sbm-stage{position:relative;width:100%;height:0;overflow:hidden;background:#05070f;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+.sbm-stage *,.sbm-stage *::before,.sbm-stage *::after{box-sizing:border-box;}
+.sbm-slide{position:absolute;top:0;left:0;transform-origin:top left;overflow:hidden;}
+@keyframes sbmKFade{from{opacity:0}to{opacity:var(--op,1)}}
+@keyframes sbmKLeft{from{opacity:0;transform:translateX(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKRight{from{opacity:0;transform:translateX(var(--dist,150px)) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKUp{from{opacity:0;transform:translateY(var(--dist,150px)) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKDown{from{opacity:0;transform:translateY(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKZoom{from{opacity:0;transform:scale(.5) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:scale(1) rotate(var(--rot,0deg))}}
+@keyframes sbmKRotate{from{opacity:0;transform:rotate(calc(var(--rot,0deg) - 30deg)) scale(.8)}to{opacity:var(--op,1);transform:rotate(var(--rot,0deg)) scale(1)}}
+@keyframes sbmKFlip{from{opacity:0;transform:perspective(900px) rotateY(90deg)}to{opacity:var(--op,1);transform:perspective(900px) rotateY(0deg) rotate(var(--rot,0deg))}}`;
+
+  const JS_ITEM = buildRuntimeJS(effectsSBM);
+
+  const phpCSS = "    function slider_morbriant_get_item_css(){\n        return <<<'SBM_CSS'\n" + CSS_ITEM + "\nSBM_CSS;\n    }";
+  const phpJS  = "    function slider_morbriant_get_item_js(){\n        return <<<'SBM_JS'\n" + JS_ITEM + "\nSBM_JS;\n    }";
+  const phpFonts = fontQuery
     ? "        $out .= '<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">';\n"
     + "        $out .= '<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>';\n"
     + "        $out .= '<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?" + fontQuery + "\">';\n"
-    : "        // Este slider no necesita Google Fonts\n";
+    : "        // Sin Google Fonts\n";
 
-  /* Shortcode renombrado a slider_morbriant_item */
-  const php = `<?php
+  return `<?php
 /**
  * ============================================================
- *  Slider Builder MorBriant — Shortcode de WordPress
+ *  Slider Builder MorBriant — Item ID = ${item.id}
  * ============================================================
+ *  Shortcode de este item:
  *
- *  Shortcode :  [slider_morbriant_item id="${id}"]
+ *      [slider_morbriant_item id="${item.id}"]
  *
- *  CÓMO USARLO
- *  -----------
- *  1. Abre el archivo functions.php de tu tema
- *     (Apariencia > Editor de archivos de temas > functions.php)
- *     o el de tu tema hijo / plugin personalizado.
- *
- *  2. Pega TODO el contenido de este archivo al final.
- *
- *  3. Guarda los cambios.
- *
- *  4. En cualquier página o entrada escribe:
- *
- *         [slider_morbriant_item id="${id}"]
- *
- *  NOTAS
- *  -----
- *  · Es seguro pegar este archivo varias veces (para varios IDs).
- *    El framework se registra una sola vez; los datos se añaden por ID.
- *  · Para crear otro slider, exporta de nuevo con un ID distinto
- *    (por ejemplo "2") y pega el nuevo bloque debajo de este.
- *  · El ID solo admite letras, números, guiones y guiones bajos.
+ *  Pega este archivo al final de functions.php de tu tema.
+ *  Es seguro pegarlo varias veces (el framework se registra una sola vez).
  * ============================================================
  */
 
 if (!defined('ABSPATH')) { exit; }
 
-/* ============================================================
-   FRAMEWORK (se registra una sola vez)
-   ============================================================ */
-if (!function_exists('slider_morbriant_render')) {
+if (!function_exists('slider_morbriant_render_item')) {
 
 ${phpCSS}
 
 ${phpJS}
 
-    /**
-     * Renderiza un slide dentro de un shortcode.
-     */
-    function slider_morbriant_render($data, $id) {
+    function slider_morbriant_render_item($data, $id) {
         static $assets_done = false;
-
         $slug = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $id);
         if ($slug === '') { $slug = substr(md5((string) $id), 0, 8); }
-        $uid = 'sbm-slider-' . $slug;
-
+        $uid = 'sbm-item-' . $slug;
         $json = function_exists('wp_json_encode') ? wp_json_encode($data) : json_encode($data);
         $b64  = base64_encode($json);
-
-        $dw = isset($data['devices']['desktop']['width'])  ? max(1, (int) $data['devices']['desktop']['width'])  : 1280;
-        $dh = isset($data['devices']['desktop']['height']) ? max(1, (int) $data['devices']['desktop']['height']) : 720;
+        $dw = isset($data['devices']['desktop']['width'])  ? max(1,(int)$data['devices']['desktop']['width'])  : 1280;
+        $dh = isset($data['devices']['desktop']['height']) ? max(1,(int)$data['devices']['desktop']['height']) : 720;
         $pad = ($dh / $dw) * 100;
-
         $out = '';
-
         if (!$assets_done) {
-            $out .= '<style id="sbm-styles">' . slider_morbriant_get_css() . '</style>';
-            $out .= '<script id="sbm-runtime">' . slider_morbriant_get_js() . '</script>';
+            $out .= '<style id="sbm-item-styles">' . slider_morbriant_get_item_css() . '</style>';
+            $out .= '<script id="sbm-item-runtime">' . slider_morbriant_get_item_js() . '<' . '/script>';
             $assets_done = true;
         }
-
-${phpFontLinks}
+${phpFonts}
         $out .= '<div class="sbm-stage" id="' . esc_attr($uid) . '"'
               . ' data-sbm-b64="' . esc_attr($b64) . '"'
               . ' style="padding-bottom:' . esc_attr(number_format($pad, 4, '.', '')) . '%">'
               . '</div>';
-
         return $out;
     }
 
-    /**
-     * Callback del shortcode [slider_morbriant_item id="N"]
-     */
     function slider_morbriant_item_shortcode($atts) {
         $atts = shortcode_atts(array('id' => '1'), $atts, 'slider_morbriant_item');
         $id   = (string) $atts['id'];
-
         if (empty($GLOBALS['slider_morbriant_data'][$id])) {
             if (current_user_can('manage_options')) {
-                return '<!-- Slider MorBriant: no existe el ID "' . esc_html($id) . '" -->';
+                return '<!-- Slider MorBriant: no existe el item "' . esc_html($id) . '" -->';
             }
             return '';
         }
-        return slider_morbriant_render($GLOBALS['slider_morbriant_data'][$id], $id);
+        return slider_morbriant_render_item($GLOBALS['slider_morbriant_data'][$id], $id);
     }
     add_shortcode('slider_morbriant_item', 'slider_morbriant_item_shortcode');
 }
 
-/* ============================================================
-   DATOS — Slider ID = "${id}"
-   ============================================================
-   Puedes pegar más bloques como este (con otros IDs) debajo.
-   ============================================================ */
 if (!isset($GLOBALS['slider_morbriant_data'])) {
     $GLOBALS['slider_morbriant_data'] = array();
 }
 
-$GLOBALS['slider_morbriant_data'][${phpSQ(String(id))}] = json_decode(
+$GLOBALS['slider_morbriant_data'][${phpSQ(String(item.id))}] = json_decode(
     base64_decode('${b64}'),
     true
 );
 `;
-
-  return php;
 }
 
 /* =========================================================
-   21. PANELES MÓVILES
+   23. GENERADOR: SHORTCODE del SLIDER (principal)
+   ========================================================= */
+function generateSliderShortcode(){
+  const name = (app.slider.name || '').trim();
+  if(!name){
+    alert('El nombre del slider no puede estar vacío. Configúralo en ⚙ Slider antes de exportar.');
+    return null;
+  }
+  const ids = app.items.map(it => String(it.id));
+
+  const effectsSBM = {
+    none:null, fade:'sbmKFade', left:'sbmKLeft', right:'sbmKRight',
+    up:'sbmKUp', down:'sbmKDown', zoom:'sbmKZoom', rotate:'sbmKRotate', flip:'sbmKFlip'
+  };
+
+  const usedFonts = detectUsedFonts();
+  const fontQuery = usedFonts.length ? usedFonts.map(f=>'family='+f).join('&')+'&display=swap' : '';
+
+  const CSS_MAIN = `.sbm-stage{position:relative;width:100%;height:0;overflow:hidden;background:#05070f;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+.sbm-stage *,.sbm-stage *::before,.sbm-stage *::after{box-sizing:border-box;}
+.sbm-slide{position:absolute;top:0;left:0;transform-origin:top left;overflow:hidden;}
+.sbm-slider{position:relative;width:100%;height:0;overflow:hidden;background:#05070f;}
+.sbm-slider *,.sbm-slider *::before,.sbm-slider *::after{box-sizing:border-box;}
+.sbm-slider-slides{position:absolute;inset:0;}
+.sbm-slider-slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .55s ease, transform .55s ease;}
+.sbm-slider-slide.sbm-active{opacity:1;visibility:visible;}
+.sbm-slider[data-sbm-transition="none"] .sbm-slider-slide{transition:none;}
+.sbm-slider[data-sbm-transition="fade"] .sbm-slider-slide{transform:none;}
+.sbm-slider[data-sbm-transition="slide-left"] .sbm-slider-slide{transform:translateX(100%);opacity:1;visibility:visible;}
+.sbm-slider[data-sbm-transition="slide-left"] .sbm-slider-slide.sbm-active{transform:translateX(0);}
+.sbm-slider[data-sbm-transition="slide-right"] .sbm-slider-slide{transform:translateX(-100%);opacity:1;visibility:visible;}
+.sbm-slider[data-sbm-transition="slide-right"] .sbm-slider-slide.sbm-active{transform:translateX(0);}
+.sbm-slider[data-sbm-transition="slide-up"] .sbm-slider-slide{transform:translateY(100%);opacity:1;visibility:visible;}
+.sbm-slider[data-sbm-transition="slide-up"] .sbm-slider-slide.sbm-active{transform:translateY(0);}
+.sbm-slider[data-sbm-transition="slide-down"] .sbm-slider-slide{transform:translateY(-100%);opacity:1;visibility:visible;}
+.sbm-slider[data-sbm-transition="slide-down"] .sbm-slider-slide.sbm-active{transform:translateY(0);}
+.sbm-slider[data-sbm-transition="zoom"] .sbm-slider-slide{transform:scale(1.15);opacity:0;}
+.sbm-slider[data-sbm-transition="zoom"] .sbm-slider-slide.sbm-active{transform:scale(1);opacity:1;}
+@keyframes sbmKFade{from{opacity:0}to{opacity:var(--op,1)}}
+@keyframes sbmKLeft{from{opacity:0;transform:translateX(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKRight{from{opacity:0;transform:translateX(var(--dist,150px)) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKUp{from{opacity:0;transform:translateY(var(--dist,150px)) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKDown{from{opacity:0;transform:translateY(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKZoom{from{opacity:0;transform:scale(.5) rotate(var(--rot,0deg))}to{opacity:var(--op,1);transform:scale(1) rotate(var(--rot,0deg))}}
+@keyframes sbmKRotate{from{opacity:0;transform:rotate(calc(var(--rot,0deg) - 30deg)) scale(.8)}to{opacity:var(--op,1);transform:rotate(var(--rot,0deg)) scale(1)}}
+@keyframes sbmKFlip{from{opacity:0;transform:perspective(900px) rotateY(90deg)}to{opacity:var(--op,1);transform:perspective(900px) rotateY(0deg) rotate(var(--rot,0deg))}}`;
+
+  const JS_MAIN = buildRuntimeJS(effectsSBM);
+
+  const phpCSS = "    function slider_morbriant_get_main_css(){\n        return <<<'SBM_CSS'\n" + CSS_MAIN + "\nSBM_CSS;\n    }";
+  const phpJS  = "    function slider_morbriant_get_main_js(){\n        return <<<'SBM_JS'\n" + JS_MAIN + "\nSBM_JS;\n    }";
+  const phpFonts = fontQuery
+    ? "            $out .= '<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">';\n"
+    + "            $out .= '<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>';\n"
+    + "            $out .= '<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?" + fontQuery + "\">';\n"
+    : "            // Sin Google Fonts";
+
+  return `<?php
+/**
+ * ============================================================
+ *  Slider Builder MorBriant — Shortcode principal del slider
+ * ============================================================
+ *  Nombre del slider : "${name}"
+ *  Items disponibles : ${ids.join(', ')}
+ *
+ *  Shortcode:
+ *
+ *      [slider_morbriant nombre="${name}" items="${ids.join(',')}"]
+ *
+ *  · El parámetro "nombre" es obligatorio (no puede estar vacío).
+ *  · El parámetro "items" es una lista de números de pestaña separados por comas.
+ *  · Solo se muestran los items cuyos shortcodes [slider_morbriant_item id="N"]
+ *    hayan sido pegados previamente en functions.php.
+ *  · Pega este archivo al final de functions.php.
+ * ============================================================
+ */
+
+if (!defined('ABSPATH')) { exit; }
+
+/* ------------------------------------------------------------
+   Registro de sliders (nombre → configuración)
+   ------------------------------------------------------------ */
+if (!isset($GLOBALS['slider_morbriant_sliders'])) {
+    $GLOBALS['slider_morbriant_sliders'] = array();
+}
+$GLOBALS['slider_morbriant_sliders'][${phpSQ(name)}] = array(
+    'name'           => ${phpSQ(name)},
+    'transition'     => ${phpSQ(app.slider.transition)},
+    'transitionTime' => ${parseInt(app.slider.transitionTime,10) || 4000}
+);
+
+/* ------------------------------------------------------------
+   Framework del slider (se registra una sola vez)
+   ------------------------------------------------------------ */
+if (!function_exists('slider_morbriant_render_slider')) {
+
+${phpCSS}
+
+${phpJS}
+
+    function slider_morbriant_render_slider($items, $config) {
+        static $assets_done = false;
+        $transition = isset($config['transition']) ? $config['transition'] : 'fade';
+        $time       = isset($config['transitionTime']) ? (int)$config['transitionTime'] : 4000;
+
+        $out = '';
+        if (!$assets_done) {
+            $out .= '<style id="sbm-main-styles">' . slider_morbriant_get_main_css() . '</style>';
+            $out .= '<script id="sbm-main-runtime">' . slider_morbriant_get_main_js() . '<' . '/script>';
+            $assets_done = true;
+        }
+${phpFonts}
+
+        /* Aspect ratio basado en el primer item (todos comparten dims) */
+        $dw = 1280; $dh = 720;
+        foreach ($items as $it) {
+            if (!empty($it['data']['devices']['desktop']['width'])) {
+                $dw = max(1, (int)$it['data']['devices']['desktop']['width']);
+                $dh = max(1, (int)$it['data']['devices']['desktop']['height']);
+                break;
+            }
+        }
+        $pad = ($dh / $dw) * 100;
+
+        $out .= '<div class="sbm-slider" data-sbm-transition="' . esc_attr($transition) . '"'
+              . ' data-sbm-time="' . esc_attr($time) . '"'
+              . ' style="padding-bottom:' . esc_attr(number_format($pad, 4, '.', '')) . '%">';
+        $out .= '<div class="sbm-slider-slides">';
+
+        foreach ($items as $entry) {
+            $json = function_exists('wp_json_encode') ? wp_json_encode($entry['data']) : json_encode($entry['data']);
+            $b64  = base64_encode($json);
+            $out .= '<div class="sbm-slider-slide" data-sbm-id="' . esc_attr($entry['id']) . '"'
+                  . ' data-sbm-b64="' . esc_attr($b64) . '"></div>';
+        }
+
+        $out .= '</div></div>';
+        return $out;
+    }
+
+    function slider_morbriant_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'nombre' => '',
+            'items'  => ''
+        ), $atts, 'slider_morbriant');
+
+        $nombre = trim((string)$atts['nombre']);
+        if ($nombre === '') {
+            if (current_user_can('manage_options')) {
+                return '<!-- Slider MorBriant: falta el parámetro obligatorio "nombre" -->';
+            }
+            return '';
+        }
+
+        $config = isset($GLOBALS['slider_morbriant_sliders'][$nombre])
+            ? $GLOBALS['slider_morbriant_sliders'][$nombre]
+            : array('name'=>$nombre, 'transition'=>'fade', 'transitionTime'=>4000);
+
+        $raw   = trim((string)$atts['items']);
+        $ids   = array_filter(array_map('trim', explode(',', $raw)));
+        $items = array();
+        foreach ($ids as $id) {
+            if (!empty($GLOBALS['slider_morbriant_data'][$id])) {
+                $items[] = array('id'=>$id, 'data'=>$GLOBALS['slider_morbriant_data'][$id]);
+            }
+        }
+        if (empty($items)) {
+            if (current_user_can('manage_options')) {
+                return '<!-- Slider MorBriant: no se encontró ninguno de los items indicados -->';
+            }
+            return '';
+        }
+        return slider_morbriant_render_slider($items, $config);
+    }
+    add_shortcode('slider_morbriant', 'slider_morbriant_shortcode');
+}
+`;
+}
+
+/* =========================================================
+   24. MODAL: CONFIGURACIÓN DEL SLIDER
+   ========================================================= */
+const sliderModal = $('#sliderModal');
+
+function openSliderModal(){
+  $('#cfgName').value = app.slider.name;
+  $('#cfgTransition').value = app.slider.transition;
+  $('#cfgTime').value = app.slider.transitionTime;
+  $('#cfgBpTablet').value = app.slider.breakpoints.tablet;
+  $('#cfgBpMobile').value = app.slider.breakpoints.mobile;
+  $('#cfgDwW').value = app.slider.devices.desktop.width;
+  $('#cfgDwH').value = app.slider.devices.desktop.height;
+  $('#cfgDtW').value = app.slider.devices.tablet.width;
+  $('#cfgDtH').value = app.slider.devices.tablet.height;
+  $('#cfgDmW').value = app.slider.devices.mobile.width;
+  $('#cfgDmH').value = app.slider.devices.mobile.height;
+  updateCfgBpPreview();
+  sliderModal.classList.add('open');
+}
+function closeSliderModal(){
+  sliderModal.classList.remove('open');
+}
+function updateCfgBpPreview(){
+  const t = parseInt($('#cfgBpTablet').value) || 1024;
+  const m = parseInt($('#cfgBpMobile').value) || 767;
+  const range = (m+1) + '–' + t;
+  $('#cfgBpPreview').innerHTML =
+    `Escritorio: &gt; <span>${t}</span>px<br>` +
+    `Tablet: <span>${range}</span>px<br>` +
+    `Móvil: ≤ <span>${m}</span>px`;
+}
+['#cfgBpTablet','#cfgBpMobile'].forEach(sel => $(sel).addEventListener('input', updateCfgBpPreview));
+
+$('#btnSliderConfig').addEventListener('click', openSliderModal);
+$('#cfgCancel').addEventListener('click', closeSliderModal);
+sliderModal.addEventListener('click', e => { if(e.target === sliderModal) closeSliderModal(); });
+
+$('#cfgSave').addEventListener('click', () => {
+  const name = $('#cfgName').value.trim();
+  if(!name){ alert('El nombre del slider no puede estar vacío.'); return; }
+
+  let t = parseInt($('#cfgBpTablet').value) || 1024;
+  let m = parseInt($('#cfgBpMobile').value) || 767;
+  t = Math.max(320, Math.min(5000, t));
+  m = Math.max(240, Math.min(4999, m));
+  if(m >= t) m = t - 1;
+
+  app.slider.name = name;
+  app.slider.transition = $('#cfgTransition').value;
+  app.slider.transitionTime = Math.max(500, Math.min(60000, parseInt($('#cfgTime').value) || 4000));
+  app.slider.breakpoints = { tablet:t, mobile:m };
+  app.slider.devices = {
+    desktop:{ width: Math.max(200, parseInt($('#cfgDwW').value) || 1280),
+              height:Math.max(200, parseInt($('#cfgDwH').value) || 720) },
+    tablet: { width: Math.max(200, parseInt($('#cfgDtW').value) || 768),
+              height:Math.max(200, parseInt($('#cfgDtH').value) || 1024) },
+    mobile: { width: Math.max(200, parseInt($('#cfgDmW').value) || 390),
+              height:Math.max(200, parseInt($('#cfgDmH').value) || 844) }
+  };
+  closeSliderModal();
+  syncSidebar();
+  renderAll();
+  renderProps();
+});
+
+/* Exportar JSON del slider */
+$('#cfgExport').addEventListener('click', () => {
+  const name = $('#cfgName').value.trim() || app.slider.name || 'slider';
+  const payload = {
+    version: 1,
+    type: 'slider_morbriant_slider',
+    name: name,
+    transition: $('#cfgTransition').value,
+    transitionTime: parseInt($('#cfgTime').value) || 4000,
+    breakpoints: {
+      tablet: parseInt($('#cfgBpTablet').value) || 1024,
+      mobile: parseInt($('#cfgBpMobile').value) || 767
+    },
+    devices: {
+      desktop: { width: parseInt($('#cfgDwW').value) || 1280, height: parseInt($('#cfgDwH').value) || 720 },
+      tablet:  { width: parseInt($('#cfgDtW').value) || 768,  height: parseInt($('#cfgDtH').value) || 1024 },
+      mobile:  { width: parseInt($('#cfgDmW').value) || 390,  height: parseInt($('#cfgDmH').value) || 844 }
+    }
+  };
+  download('slider-morbriant-config.json', JSON.stringify(payload, null, 2), 'application/json');
+});
+
+/* Importar JSON del slider */
+$('#cfgImport').addEventListener('click', () => $('#cfgFileImport').click());
+$('#cfgFileImport').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try{
+      const d = JSON.parse(ev.target.result);
+      if(!d || typeof d !== 'object') throw new Error('Formato inválido');
+      if(d.name != null) $('#cfgName').value = d.name;
+      if(d.transition) $('#cfgTransition').value = d.transition;
+      if(d.transitionTime) $('#cfgTime').value = d.transitionTime;
+      if(d.breakpoints){
+        if(d.breakpoints.tablet != null) $('#cfgBpTablet').value = d.breakpoints.tablet;
+        if(d.breakpoints.mobile != null) $('#cfgBpMobile').value = d.breakpoints.mobile;
+      }
+      if(d.devices){
+        if(d.devices.desktop){ $('#cfgDwW').value = d.devices.desktop.width; $('#cfgDwH').value = d.devices.desktop.height; }
+        if(d.devices.tablet) { $('#cfgDtW').value = d.devices.tablet.width;  $('#cfgDtH').value = d.devices.tablet.height; }
+        if(d.devices.mobile) { $('#cfgDmW').value = d.devices.mobile.width;  $('#cfgDmH').value = d.devices.mobile.height; }
+      }
+      updateCfgBpPreview();
+    }catch(err){
+      alert('No se pudo importar el JSON del slider:\n' + err.message);
+    }
+  };
+  r.readAsText(f);
+  e.target.value = '';
+});
+
+/* Botón para exportar el shortcode principal — lo añadimos al topbar */
+(function addSliderShortcodeButton(){
+  const btn = document.createElement('button');
+  btn.className = 'wp';
+  btn.id = 'btnExportSliderShortcode';
+  btn.title = 'Exportar shortcode principal del slider';
+  btn.textContent = '⬇ Shortcode slider';
+  btn.addEventListener('click', () => {
+    const php = generateSliderShortcode();
+    if(!php) return;
+    const name = (app.slider.name || 'slider').replace(/[^a-zA-Z0-9_-]+/g,'-');
+    download('slider-morbriant-' + name + '.shortcode', php, 'text/plain');
+  });
+  const spacer = document.querySelector('.topbar .spacer');
+  if(spacer && spacer.nextSibling){
+    spacer.parentNode.insertBefore(btn, spacer.nextSibling);
+  } else {
+    document.querySelector('.topbar').appendChild(btn);
+  }
+})();
+
+/* =========================================================
+   25. PANELES MÓVILES
    ========================================================= */
 $('#btnSidebar').addEventListener('click', () => {
   sidebar.classList.toggle('open');
@@ -2002,35 +2246,14 @@ $('#btnPropsPanel').addEventListener('click', () => {
 });
 
 /* =========================================================
-   22. INICIALIZACIÓN
+   26. INICIALIZACIÓN
    ========================================================= */
 (function init(){
-  const t = makeObject('text', 640, 220, 'desktop');
-  t.w = 900; t.h = 110; t.x = (1280 - 900)/2; t.y = 180;
-  t.props.text = 'Bienvenido a Slider Builder MorBriant';
-  t.props.fontSize = 62;
-  t.animation = { effect:'down', duration:900, delay:0, easing:'ease-out', distance:120 };
-  t.z = 2;
-
-  const s = makeObject('text', 640, 320, 'desktop');
-  s.w = 760; s.h = 60; s.x = (1280 - 760)/2; s.y = 310;
-  s.props.text = 'Arrastra objetos desde el panel izquierdo y personalízalos.';
-  s.props.fontSize = 24; s.props.bold = false; s.props.color = '#a9b8e8';
-  s.props.family = 'Inter, system-ui, sans-serif';
-  s.animation = { effect:'fade', duration:900, delay:250, easing:'ease-out', distance:150 };
-  s.z = 3;
-
-  const b = makeObject('button', 640, 470, 'desktop');
-  b.x = (1280 - b.w)/2; b.y = 440;
-  b.animation = { effect:'zoom', duration:700, delay:550, easing:'cubic-bezier(.34,1.56,.64,1)', distance:150 };
-  b.z = 4;
-
-  project.objects.push(t, s, b);
-
+  app.items.push(newDefaultItem());
+  renderTabs();
   syncSidebar();
   renderAll();
   renderProps();
-  updateDeviceUI();
 })();
 </script>
 </body>
