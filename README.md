@@ -3,7 +3,9 @@ Builder de Slider
 1.0:  Builder de Slider drag & drop con opción de importar y exportar en json y exportar en html
 1.1:  Agregadas opciones responsives.
 1.2:  Permitimos cambiar los breakpints en el Slider Builder.
-Versión: 1.2
+1.3:  Agregamos la opción de crear un shortcode para wordpress con el slider que hayamos creado.
+      SHortcode: [slider_morbriant id="1"]
+Versión: 1.3
 Autor: MorBriant
 ==========================================
 Responsive Editing & Device-Aware Design
@@ -26,3 +28,18 @@ Optimization Tip: You can adjust the default device dimensions and breakpoints i
 
 Versión 1.2
 Here's the updated Slide Builder MorBriant with configurable breakpoints for tablet and mobile, integrated into the sidebar and the exported HTML.
+
+Versión 1.3:
+Shortcode Export & Editor Enhancements
+
+The new WordPress export button sits right next to the existing JSON and HTML options. Here's what changed and what stayed the same.
+
+    Shortcode export flow: Clicking ⬇ Shortcode WP asks for an ID (like 1). It then downloads a .shortcode file containing self-contained PHP code. You paste that code into functions.php, and the shortcode [slider_morbriant id="1"] becomes available on your site.
+
+    Safe repeat use: The exported PHP registers its framework only once. If you later export another slider with a different ID and paste it below, the data is appended without breaking existing sliders.
+
+    Responsive engine included: The shortcode uses the same per-device inheritance, breakpoints, and animations you configured in the editor. It also handles Google Fonts and scales the slide to fit its container.
+
+    Everything else unchanged: Drag-and-drop objects, device switcher, per-device overrides, background controls, JSON import/export, and HTML export all work exactly as before.
+
+Optimization Tip: The shortcode ID must be unique per slider. If you export two sliders with the same ID and paste both into functions.php, the second one overwrites the first.
