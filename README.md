@@ -5,7 +5,9 @@ Builder de Slider
 1.2:  Permitimos cambiar los breakpints en el Slider Builder.
 1.3:  Agregamos la opción de crear un shortcode para wordpress con el slider que hayamos creado.
       Shortcode: [slider_morbriant id="1"]
-Versión: 1.3
+1.3.1:Corregido el bug que no mostraba los cambios de las propiedades de los objetos en las vistas de tablet y móviles.
+	  Cambiado el nombre del shortcode por [slider_morbriant_item id="1"].
+Versión: 1.3.1
 Autor: MorBriant
 ==========================================
 Responsive Editing & Device-Aware Design
@@ -43,3 +45,17 @@ The new WordPress export button sits right next to the existing JSON and HTML op
     Everything else unchanged: Drag-and-drop objects, device switcher, per-device overrides, background controls, JSON import/export, and HTML export all work exactly as before.
 
 Optimization Tip: The shortcode ID must be unique per slider. If you export two sliders with the same ID and paste both into functions.php, the second one overwrites the first.
+
+Versión 1.3.1:
+	Correcciones:
+1.    Bug de propiedades en tablet/móvil — El problema estaba en objStyleString() (y sus equivalentes en los exports HTML y shortcode): leían o.props.xxx directamente, ignorando las sobreescrituras guardadas en o.r.tablet.props.* y o.r.mobile.props.*. Ahora todas las propiedades de apariencia (bg, color, fontSize, radius, shadow, align, family, text, src, etc.) se leen con getVal(o, 'props.xxx', device), por lo que cualquier cambio hecho en la vista tablet o móvil se refleja al instante en el lienzo.
+
+2.    Contenido de texto y botones — El textContent también se leía directamente. Ahora usa getVal(o, 'props.text', dev) para que el texto pueda tener variantes por dispositivo.
+
+3.    Fuentes detectadas en el export — detectUsedFonts() ahora recorre los tres dispositivos para incluir también las fuentes que solo se hayan definido en tablet o móvil.
+
+4.    Shortcode renombrado — El nombre del shortcode ha pasado de slider_morbriant a slider_morbriant_item. Tanto el add_shortcode() como la función callback, el comentario de cabecera y el mensaje del prompt de exportación reflejan este cambio.
+
+	  El uso del shortcode queda como: [slider_morbriant_item id="1"]
+
+Todo lo demás intacto — Sistema de breakpoints, herencia por dispositivo, drag & drop, efectos de animación, exportación JSON/HTML/Shortcode y controles de fondo siguen funcionando exactamente igual.
