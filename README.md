@@ -14,10 +14,14 @@ Builder de Slider
 2.2:  He añadido el checkbox "Usar URL en shortcode" junto a cada campo de imagen (fondo e imágenes de objetos).
 	  El checkbox sólo se habilita si el src es una URL real (no un data: URI). Si es una URL, el shortcode extrae la URL y no incluye ningún base64.
 	  Si el usuario sube un archivo (base64), el checkbox queda deshabilitado y el shortcode usa el base64 como antes.
-2.3:  (Falla) Creamos el shortcode en HTML y CSS reales en el código fuente, sin base64 ni inyección dinámica.
-2.3.1:(Falla) Añadido tres selects por imagen (loading, clase lazy, fetch priority) que se aplican al <img> del shortcode y HTML estático,
+2.3:  Creamos el shortcode en HTML y CSS reales en el código fuente, sin base64 ni inyección dinámica.
+2.3.1:Añadido tres selects por imagen (loading, clase lazy, fetch priority) que se aplican al <img> del shortcode y HTML estático,
       y un botón específico para borrar sólo la imagen de fondo del dispositivo actual sin afectar al resto.
-Versión: 2.3.1
+2.3.2:Restaurado checkbox para usar URL en las imágenes.
+      Opciones del Checkbox:
+		Checkbox desmarcado (por defecto): la imagen se emite con su src tal cual → si es un data: URI (subida como archivo) se usa base64 en el shortcode.
+		Checkbox marcado (solo habilitado si hay URL real): se usa la URL en el shortcode.
+Versión: 2.3.2
 Autor: MorBriant
 ==========================================
 Responsive Editing & Device-Aware Design
@@ -185,7 +189,7 @@ Mejoras para PageSpeed
 
     5. El único JS (transición del slider) es mínimo y sólo se carga una vez por página.
 
-Versión 2.3.1 (Falla):
+Versión 2.3.1:
 Añadido tres selects por imagen (loading, clase lazy, fetch priority) que se aplican al <img> del shortcode y HTML estático, y un botón específico para borrar sólo la imagen de fondo del dispositivo actual sin afectar al resto.
 
 Cambios realizados
@@ -227,3 +231,51 @@ Cambios realizados
 
     ↺ Limpiar todos los cambios de fondo de este dispositivo: revierte todos los overrides (color, imagen, ajuste, oscurecido) y vuelve a heredar del dispositivo padre.
 
+Versión 2.3.2:
+Verificación del comportamiento
+
+Checkbox "Usar URL en shortcode" DESMARCADO (por defecto):
+
+    A) props.useUrlInShortcode = false
+
+    B) El src del <img> se emite tal cual.
+
+    C) Si el usuario subió un archivo por <input type="file">, src contiene data:image/...;base64,... → se usa base64 en el shortcode.
+
+    D)Si el usuario escribió una URL pero no marcó la casilla, se usa esa URL (que sigue siendo válida, sólo que no la "declara" explícitamente).
+
+Checkbox MARCADO (solo habilitable cuando src es una URL real, no data URI):
+
+    A) props.useUrlInShortcode = true
+
+    B) El src del <img> es la URL introducida → se usa la URL.
+
+Cambios respecto a la versión anterior:
+
+    1. Restaurada la propiedad useUrlInShortcode en makeObject('image', ...) — por defecto false.
+
+    2. Restaurado el checkbox 🌐 en el panel de propiedades del objeto imagen, con las mismas reglas de habilitación:
+
+        Se habilita solo si props.src es una URL real (isUrlLike()).
+
+        Se deshabilita y desmarca si props.src es un data: URI.
+
+    3. Al subir un archivo (<input type="file">), se resetea useUrlInShortcode = false (porque el src pasa a ser base64).
+
+    4. Al importar un JSON: si useUrlInShortcode === true pero el src no es URL-like, se desmarca automáticamente.
+
+    5. Mensajes informativos en el panel según el caso:
+
+        ✓ verde cuando la URL está marcada → "usará la URL. Sin base64."
+
+        ▣ naranja cuando hay base64 → "usará la imagen en base64 (data URI)".
+
+        ▣ naranja cuando hay URL sin marcar → "usará la URL actual".
+
+    6. Comentario en la cabecera del shortcode generado: indica cuántas imágenes van en base64 y cuántas con URL directa.
+
+    7. JSON de exportación: conserva useUrlInShortcode en cada objeto imagen.
+
+    8. Helper isBase64Like() añadido para detectar data URIs.
+
+Nota técnica importante: en la nueva arquitectura estática, tanto la URL como el data: URI caben perfectamente en src="..." — así que el "uso de base64" cuando la casilla está desmarcada se cumple de forma natural (el data URI se emite íntegro en el atributo src de la etiqueta <img>).
