@@ -1345,7 +1345,8 @@ ${fontLines}
 `;
 }
 
-function phpInt(n){ return '\\'' + String(n).replace(/[^0-9]/g,'') + '\\''; }
+function phpInt(n){ return "'" + String(n).replace(/[^0-9]/g,'') + "'"; }
+function phpSQ(s){ return "'" + String(s).replace(/\\/g,'\\\\').replace(/'/g, "\\'") + "'"; }
 
 function generateSliderShortcode(){
   const name = (app.slider.name || '').trim();

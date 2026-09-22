@@ -14,10 +14,10 @@ Builde de Slider
 2.2:  He añadido el checkbox "Usar URL en shortcode" junto a cada campo de imagen (fondo e imágenes de objetos).
 	  El checkbox solo se habilita si el src es una URL real (no un data: URI). Si es una URL, el shortcode extrae la URL y no incluye ningún base64.
 	  Si el usuario sube un archivo (base64), el checkbox queda deshabilitado y el shortcode usa el base64 como antes.
-2.3:  (Falla) Creamos el shortcode en HTML y CSS reales en el código fuente, sin base64 ni inyección dinámica.
-2.3.1:(Falla) Añadido tres selects por imagen (loading, clase lazy, fetch priority) que se aplican al <img> del shortcode y HTML estático,
+2.3:  Creamos el shortcode en HTML y CSS reales en el código fuente, sin base64 ni inyección dinámica.
+2.3.1:Añadido tres selects por imagen (loading, clase lazy, fetch priority) que se aplican al <img> del shortcode y HTML estático,
       y un botón específico para borrar sólo la imagen de fondo del dispositivo actual sin afectar al resto.
-2.3.2:(Falla) Restaurado checkbox para usar URL en las imágenes.
+2.3.2:Restaurado checkbox para usar URL en las imágenes.
       Opciones del Checkbox:
 	Checkbox desmarcado (por defecto): la imagen se emite con su src tal cual → si es un data: URI (subida como archivo) se usa base64 en el shortcode.
 	Checkbox marcado (solo habilitado si hay URL real): se usa la URL en el shortcode.
@@ -139,7 +139,7 @@ Compatibilidad:
 
 	2. Si el flag no está definido en un objeto/props, no se hace nada especial (comportamiento previo intacto).
 
-Versión 2.3 (Falla):
+Versión 2.3:
 El shortcode crea la salida en HTML y CSS reales en el código fuente, sin base64 ni inyección dinámica. Ahora:
 
     Las imágenes se renderizan como <img src="..."> directamente.
@@ -188,7 +188,7 @@ Mejoras para PageSpeed
 
     5. El único JS (transición del slider) es mínimo y sólo se carga una vez por página.
 
-Versión 2.3.1 (Falla):
+Versión 2.3.1:
 Añadido tres selects por imagen (loading, clase lazy, fetch priority) que se aplican al <img> del shortcode y HTML estático, y un botón específico para borrar sólo la imagen de fondo del dispositivo actual sin afectar al resto.
 
 Cambios realizados
@@ -230,7 +230,7 @@ Cambios realizados
 
     ↺ Limpiar todos los cambios de fondo de este dispositivo: revierte todos los overrides (color, imagen, ajuste, oscurecido) y vuelve a heredar del dispositivo padre.
 
-Versión 2.3.2 (Falla):
+Versión 2.3.2:
 Verificación del comportamiento
 
 Checkbox "Usar URL en shortcode" DESMARCADO (por defecto):
