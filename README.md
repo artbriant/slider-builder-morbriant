@@ -10,8 +10,11 @@ Builder de Slider
 2.0:  Hacemos que el programa tenga más de un slide dentro de pestañas.
 	  Hay un apartado global con los parámetros del slider completo que usa las pestañas como slides.
 	  Shortcode del Slider Principal: [slider_morbriant nombre="..." items="1,2,3"]
-2.1:  Agregado un botón al lado de las imágenes para agregar su URL. 
-Versión: 2.1
+2.1:  Agregado un botón al lado de las imágenes para agregar su URL.
+2.2:  He añadido el checkbox "Usar URL en shortcode" junto a cada campo de imagen (fondo e imágenes de objetos).
+	  El checkbox sólo se habilita si el src es una URL real (no un data: URI). Si es una URL, el shortcode extrae la URL y no incluye ningún base64.
+	  Si el usuario sube un archivo (base64), el checkbox queda deshabilitado y el shortcode usa el base64 como antes.
+Versión: 2.2
 Autor: MorBriant
 ==========================================
 Responsive Editing & Device-Aware Design
@@ -109,3 +112,24 @@ Comportamiento:
 	C) Si se introduce una URL válida, se aplica al dispositivo actual (respetando el sistema de overrides por dispositivo) y se refresca el lienzo.
 
 Todo lo demás (pestañas, configuración global del slider, exports JSON/HTML/Shortcode, sistema de herencia por dispositivo, etc.) permanece intacto y funcional.
+
+Versión 2.2:
+Versión 2.2:
+	1. Nueva utilidad isUrlLike(s) — determina si un string es una URL real (no vacío, no data:). Todo el resto se apoya en ella.
+
+	2. Checkbox solo habilitable con URL real. Tanto en el panel de propiedades de imágenes como en el sidebar del fondo, la habilitación del checkbox usa isUrlLike() en lugar de simplemente "hay texto". Si src/image es un data: URI (imagen subida como archivo), el checkbox queda deshabilitado y se desmarca.
+
+	3. Al subir un archivo se desmarca automáticamente. Al usar el <input type="file"> (que genera un data: URI), se hace setVal(..., 'props.useUrlInShortcode', false) y se refresca el checkbox.
+
+	4. extractUrlsForShortcode solo extrae URLs reales. Si el src/image es un data: URI, no se extrae; el base64 se queda dentro del payload (comportamiento previo). Si es una URL, se extrae al mapa y se reemplaza por placeholder en el payload — con lo que el base64 no se incluye nunca para esas imágenes (porque nunca hubo base64: era una URL).
+
+	5. Nota visual bajo el checkbox. Cuando la marca está activa, se muestra al usuario "✓ El shortcode usará solo esta URL. La imagen no se incluirá en base64." Si la imagen está cargada como base64 y no hay URL, se muestra un aviso sugiriendo introducir una URL para poder usar la opción.
+
+	6. Al importar JSON: se normaliza el flag useUrlInShortcode — si está activo pero el src/image no es una URL real, se desactiva para mantener coherencia.
+
+	7. Comentarios en el PHP describen el nuevo comportamiento: las imágenes con la marca usan solo su URL y no incluyen base64 en ningún sitio.
+
+Compatibilidad:
+	1. Los JSON antiguos sin useUrlInShortcode se importan con el flag por defecto false.
+
+	2. Si el flag no está definido en un objeto/props, no se hace nada especial (comportamiento previo intacto).
