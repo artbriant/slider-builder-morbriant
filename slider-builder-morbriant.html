@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Slider Builder MorBriant (Versión 1.2)</title>
+<title>Slider Builder MorBriant (Versión 1.3.1)</title>
 <style>
 :root{
   --bg:#0b1020; --panel:#121a2e; --panel2:#1a2440; --line:#26314f;
@@ -26,6 +26,8 @@ button{font:inherit;font-size:13px;padding:7px 12px;border-radius:8px;border:1px
 button:hover{background:#243356;border-color:#3a4a78;}
 button.primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);border-color:transparent;font-weight:600;}
 button.primary:hover{filter:brightness(1.12);}
+button.wp{background:linear-gradient(135deg,#21759b,#00a0d2);border-color:transparent;color:#fff;font-weight:600;}
+button.wp:hover{filter:brightness(1.12);}
 button.mob{display:none;}
 
 /* ---------- DEVICE SWITCHER ---------- */
@@ -127,7 +129,6 @@ select option{background:#0d1428;color:#e6ecff;}
 .chk input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;}
 textarea{resize:vertical;min-height:62px;line-height:1.4;}
 
-/* device override dot */
 .devdots{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--dev);
   flex:0 0 6px;box-shadow:0 0 0 2px rgba(79,156,249,.2);}
 button.devdots{border:none;padding:0;cursor:pointer;width:14px;height:14px;background:transparent;
@@ -139,12 +140,10 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
   padding:8px 10px;border-radius:8px;line-height:1.5;margin-bottom:10px;}
 .info-banner b{color:#bfd8ff;}
 
-/* breakpoints preview pill */
 .bp-preview{font-size:10.5px;color:#9fb1dd;background:#0d1428;border:1px solid var(--line);
   border-radius:8px;padding:7px 9px;line-height:1.6;margin-top:8px;}
 .bp-preview span{color:#8fc0ff;font-weight:600;}
 
-/* ---------- MOBILE ---------- */
 @media (max-width:900px){
   .sidebar,.props{position:fixed;top:0;bottom:0;z-index:200;box-shadow:0 0 50px rgba(0,0,0,.7);}
   .sidebar{left:0;transform:translateX(-102%);transition:transform .25s ease;}
@@ -168,7 +167,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
   <button class="mob" id="btnSidebar">☰</button>
   <button class="mob" id="btnPropsPanel">⚙</button>
 
-  <!-- DEVICE SWITCHER -->
   <div class="devswitch" id="devswitch">
     <button data-device="desktop" class="active" title="Escritorio">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
@@ -188,14 +186,13 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
   <button id="btnNew">✨ Nuevo</button>
   <button id="btnImport">📂 Importar</button>
   <button id="btnExportJson">⬇ JSON</button>
+  <button id="btnExportShortcode" class="wp" title="Exportar como shortcode de WordPress">⬇ Shortcode WP</button>
   <button id="btnPreview">▶ Previsualizar</button>
   <button id="btnExportHtml" class="primary">⬇ Exportar HTML</button>
   <input type="file" id="fileImport" accept=".json,application/json" hidden>
 </header>
 
 <div class="layout">
-
-  <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" id="sidebar">
     <div class="sec">
       <h3>Objetos</h3>
@@ -216,7 +213,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
       </div>
     </div>
 
-    <!-- BREAKPOINTS -->
     <div class="sec">
       <h3>Breakpoints</h3>
       <p class="hint">Puntos de ruptura para tablet y móvil (en píxeles). El escritorio es la base.</p>
@@ -248,7 +244,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
     </div>
   </aside>
 
-  <!-- ============ STAGE ============ -->
   <main class="stage" id="stage">
     <div class="devbar" id="devbar">
       <span>Viendo: <b id="devbarName">Escritorio</b></span>
@@ -265,7 +260,6 @@ button.devdots:hover::after{background:#fff;box-shadow:0 0 0 3px rgba(79,156,249
     </div>
   </main>
 
-  <!-- ============ PROPS ============ -->
   <aside class="props" id="propsPanel"></aside>
 </div>
 
@@ -295,7 +289,6 @@ const FONTS = [
   { name:'Righteous',       stack:'Righteous, sans-serif',               google:'Righteous' },
   { name:'Bungee',          stack:'Bungee, sans-serif',                  google:'Bungee' },
   { name:'Anton',           stack:'Anton, sans-serif',                   google:'Anton' },
-  /* Sistema */
   { name:'Georgia (sistema)',    stack:'Georgia, serif' },
   { name:'Times New Roman',      stack:'"Times New Roman", serif' },
   { name:'Courier New',          stack:'"Courier New", monospace' },
@@ -307,7 +300,6 @@ const FONTS = [
 const FONT_BY_STACK = {};
 FONTS.forEach(f => FONT_BY_STACK[f.stack] = f);
 
-/* Cargar todas las Google Fonts en el editor */
 (function loadEditorFonts(){
   const g = FONTS.filter(f => f.google).map(f => 'family=' + f.google).join('&');
   if(!g) return;
@@ -359,7 +351,6 @@ const DEVICE_META = {
   tablet:  { label:'Tablet',     short:'tablet'  },
   mobile:  { label:'Móvil',      short:'mobile'  }
 };
-/* Cadena de herencia: mobile hereda de tablet, tablet de desktop */
 function deviceChain(device){
   if(device === 'desktop') return ['desktop'];
   if(device === 'tablet')  return ['desktop', 'tablet'];
@@ -561,47 +552,49 @@ function makeObject(type, cx, cy, device){
 }
 
 /* =========================================================
-   6. ESTILOS
+   6. ESTILOS  (CORREGIDO: usa getVal para props y animation)
    ========================================================= */
 const cssUrl = u => `url('${String(u).replace(/'/g, '%27')}')`;
 
 function objStyleString(o, device, animate){
   device = device || curDevice();
-  const x  = getVal(o, 'x', device);
-  const y  = getVal(o, 'y', device);
-  const w  = getVal(o, 'w', device);
-  const h  = getVal(o, 'h', device);
+  /* Getter de props con herencia por dispositivo */
+  const gp = (p) => getVal(o, 'props.' + p, device);
+
+  const x   = getVal(o, 'x', device);
+  const y   = getVal(o, 'y', device);
+  const w   = getVal(o, 'w', device);
+  const h   = getVal(o, 'h', device);
   const rot = getVal(o, 'rot', device) || 0;
   let   op  = getVal(o, 'opacity', device); if(op == null) op = 1;
-  const p = o.props;
 
   let s = `position:absolute;left:${x}px;top:${y}px;width:${w}px;height:${h}px;`
         + `z-index:${o.z};opacity:${op};--rot:${rot}deg;--op:${op};`
         + `transform:rotate(${rot}deg);box-sizing:border-box;`;
 
   if(o.type === 'box'){
-    s += `background:${p.bg};border-radius:${p.radius}px;`
-      +  `border:${p.borderW}px solid ${p.borderColor};`
-      +  `box-shadow:${p.shadow ? '0 14px 34px rgba(0,0,0,.4)' : 'none'};`;
+    s += `background:${gp('bg')};border-radius:${gp('radius')}px;`
+      +  `border:${gp('borderW')}px solid ${gp('borderColor')};`
+      +  `box-shadow:${gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none'};`;
   }
   if(o.type === 'text'){
-    s += `display:flex;flex-direction:column;justify-content:center;text-align:${p.align};`
-      +  `color:${p.color};font-size:${p.fontSize}px;font-weight:${p.bold ? 700 : 400};`
-      +  `font-style:${p.italic ? 'italic' : 'normal'};font-family:${p.family};`
-      +  `line-height:${p.lineHeight};letter-spacing:${p.letterSpacing}px;padding:${p.padding}px;`
+    s += `display:flex;flex-direction:column;justify-content:center;text-align:${gp('align')};`
+      +  `color:${gp('color')};font-size:${gp('fontSize')}px;font-weight:${gp('bold') ? 700 : 400};`
+      +  `font-style:${gp('italic') ? 'italic' : 'normal'};font-family:${gp('family')};`
+      +  `line-height:${gp('lineHeight')};letter-spacing:${gp('letterSpacing')}px;padding:${gp('padding')}px;`
       +  `white-space:pre-wrap;word-break:break-word;overflow:hidden;`;
   }
   if(o.type === 'image'){
-    s += `background-image:${cssUrl(p.src)};background-size:${p.fit};background-position:center;`
-      +  `background-repeat:no-repeat;border-radius:${p.radius}px;`
-      +  `box-shadow:${p.shadow ? '0 14px 34px rgba(0,0,0,.4)' : 'none'};`;
+    s += `background-image:${cssUrl(gp('src'))};background-size:${gp('fit')};background-position:center;`
+      +  `background-repeat:no-repeat;border-radius:${gp('radius')}px;`
+      +  `box-shadow:${gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none'};`;
   }
   if(o.type === 'button'){
-    s += `display:flex;align-items:center;justify-content:center;background:${p.bg};color:${p.color};`
-      +  `font-size:${p.fontSize}px;font-weight:600;border-radius:${p.radius}px;`
+    s += `display:flex;align-items:center;justify-content:center;background:${gp('bg')};color:${gp('color')};`
+      +  `font-size:${gp('fontSize')}px;font-weight:600;border-radius:${gp('radius')}px;`
       +  `text-decoration:none;font-family:Inter,system-ui,sans-serif;cursor:pointer;`
       +  `border:none;overflow:hidden;`
-      +  `box-shadow:${p.shadow ? '0 12px 28px rgba(0,0,0,.38)' : 'none'};`;
+      +  `box-shadow:${gp('shadow') ? '0 12px 28px rgba(0,0,0,.38)' : 'none'};`;
   }
 
   if(animate){
@@ -637,7 +630,11 @@ function renderObjects(){
       el.dataset.type = o.type;
       el.setAttribute('style', objStyleString(o, dev, previewing));
 
-      if(o.type === 'text' || o.type === 'button') el.textContent = o.props.text;
+      /* CORREGIDO: usa getVal para el contenido de texto/botón */
+      if(o.type === 'text' || o.type === 'button'){
+        const txt = getVal(o, 'props.text', dev);
+        el.textContent = txt != null ? txt : '';
+      }
 
       if(!previewing && o.id === selectedId){
         el.classList.add('selected');
@@ -1188,7 +1185,6 @@ function syncSidebar(){
     : `El fondo de <b>${DEVICE_META[dev].label}</b> hereda del escritorio. Los cambios aquí solo afectan a este dispositivo.`;
 }
 
-/* ---------- Breakpoints ---------- */
 $('#bpTablet').addEventListener('change', e => {
   let v = parseInt(e.target.value);
   if(isNaN(v)) v = 1024;
@@ -1214,7 +1210,6 @@ $('#btnResetBp').addEventListener('click', () => {
   syncSidebar();
 });
 
-/* ---------- Fondo ---------- */
 $('#bgColor').addEventListener('input', e => {
   setBg('color', e.target.value, curDevice());
   renderBg();
@@ -1382,6 +1377,23 @@ $('#btnExportHtml').addEventListener('click', () => {
   download('slider-morbriant.html', generateHTML(), 'text/html');
 });
 
+$('#btnExportShortcode').addEventListener('click', () => {
+  const raw = prompt(
+    'Introduce el ID del shortcode.\n\n' +
+    'Se generará: [slider_morbriant_item id="N"]\n\n' +
+    'Solo letras, números, guiones y guiones bajos.',
+    '1'
+  );
+  if(raw === null) return;
+  const id = String(raw).trim();
+  if(!id){ alert('El ID no puede estar vacío.'); return; }
+  if(!/^[a-zA-Z0-9_-]+$/.test(id)){
+    alert('El ID solo puede contener letras, números, guiones (-) y guiones bajos (_).');
+    return;
+  }
+  download('slider-morbriant-item-' + id + '.shortcode', generateShortcode(id), 'text/plain');
+});
+
 function download(filename, content, mime){
   const blob = new Blob([content], { type: mime + ';charset=utf-8' });
   const url  = URL.createObjectURL(blob);
@@ -1399,11 +1411,17 @@ function download(filename, content, mime){
 function detectUsedFonts(){
   const used = new Set();
   project.objects.forEach(o => {
-    if(o.type === 'text' || o.type === 'button'){
-      const stack = (o.props && o.props.family) || (o.type === 'button' ? 'Inter, system-ui, sans-serif' : '');
-      if(stack && FONT_BY_STACK[stack] && FONT_BY_STACK[stack].google){
-        used.add(FONT_BY_STACK[stack].google);
+    /* Recorremos todos los dispositivos por si alguna fuente se definió solo en tablet/móvil */
+    const devices = ['desktop','tablet','mobile'];
+    devices.forEach(d => {
+      if(o.type === 'text'){
+        const stack = getVal(o, 'props.family', d);
+        if(stack && FONT_BY_STACK[stack] && FONT_BY_STACK[stack].google) used.add(FONT_BY_STACK[stack].google);
       }
+    });
+    if(o.type === 'text'){
+      const stack = o.props && o.props.family;
+      if(stack && FONT_BY_STACK[stack] && FONT_BY_STACK[stack].google) used.add(FONT_BY_STACK[stack].google);
     }
   });
   if(project.objects.some(o => o.type === 'button')){
@@ -1498,12 +1516,13 @@ const EFFECTS = ${JSON.stringify(EFFECTS)};
   }
   function cssUrl(u){ return "url('" + String(u).replace(/'/g, '%27') + "')"; }
 
+  /* CORREGIDO: usa getVal para props */
   function styleFor(o, d){
+    var gp = function(p){ return getVal(o, 'props.' + p, d); };
     var x = getVal(o,'x',d), y = getVal(o,'y',d);
     var w = getVal(o,'w',d), h = getVal(o,'h',d);
     var rot = getVal(o,'rot',d) || 0;
     var op = getVal(o,'opacity',d); if(op == null) op = 1;
-    var p = o.props;
 
     var s = 'position:absolute;left:' + x + 'px;top:' + y + 'px;'
           + 'width:' + w + 'px;height:' + h + 'px;'
@@ -1512,30 +1531,30 @@ const EFFECTS = ${JSON.stringify(EFFECTS)};
           + 'transform:rotate(' + rot + 'deg);box-sizing:border-box;';
 
     if(o.type === 'box'){
-      s += 'background:' + p.bg + ';border-radius:' + p.radius + 'px;'
-        +  'border:' + p.borderW + 'px solid ' + p.borderColor + ';'
-        +  'box-shadow:' + (p.shadow ? '0 14px 34px rgba(0,0,0,.4)' : 'none') + ';';
+      s += 'background:' + gp('bg') + ';border-radius:' + gp('radius') + 'px;'
+        +  'border:' + gp('borderW') + 'px solid ' + gp('borderColor') + ';'
+        +  'box-shadow:' + (gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none') + ';';
     }
     if(o.type === 'text'){
-      s += 'display:flex;flex-direction:column;justify-content:center;text-align:' + p.align + ';'
-        +  'color:' + p.color + ';font-size:' + p.fontSize + 'px;font-weight:' + (p.bold ? 700 : 400) + ';'
-        +  'font-style:' + (p.italic ? 'italic' : 'normal') + ';font-family:' + p.family + ';'
-        +  'line-height:' + p.lineHeight + ';letter-spacing:' + p.letterSpacing + 'px;'
-        +  'padding:' + p.padding + 'px;white-space:pre-wrap;word-break:break-word;overflow:hidden;';
+      s += 'display:flex;flex-direction:column;justify-content:center;text-align:' + gp('align') + ';'
+        +  'color:' + gp('color') + ';font-size:' + gp('fontSize') + 'px;font-weight:' + (gp('bold') ? 700 : 400) + ';'
+        +  'font-style:' + (gp('italic') ? 'italic' : 'normal') + ';font-family:' + gp('family') + ';'
+        +  'line-height:' + gp('lineHeight') + ';letter-spacing:' + gp('letterSpacing') + 'px;'
+        +  'padding:' + gp('padding') + 'px;white-space:pre-wrap;word-break:break-word;overflow:hidden;';
     }
     if(o.type === 'image'){
-      s += 'background-image:' + cssUrl(p.src) + ';background-size:' + p.fit + ';'
+      s += 'background-image:' + cssUrl(gp('src')) + ';background-size:' + gp('fit') + ';'
         +  'background-position:center;background-repeat:no-repeat;'
-        +  'border-radius:' + p.radius + 'px;'
-        +  'box-shadow:' + (p.shadow ? '0 14px 34px rgba(0,0,0,.4)' : 'none') + ';';
+        +  'border-radius:' + gp('radius') + 'px;'
+        +  'box-shadow:' + (gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none') + ';';
     }
     if(o.type === 'button'){
       s += 'display:flex;align-items:center;justify-content:center;'
-        +  'background:' + p.bg + ';color:' + p.color + ';'
-        +  'font-size:' + p.fontSize + 'px;font-weight:600;border-radius:' + p.radius + 'px;'
+        +  'background:' + gp('bg') + ';color:' + gp('color') + ';'
+        +  'font-size:' + gp('fontSize') + 'px;font-weight:600;border-radius:' + gp('radius') + 'px;'
         +  'text-decoration:none;font-family:Inter,system-ui,sans-serif;cursor:pointer;'
         +  'border:none;overflow:hidden;'
-        +  'box-shadow:' + (p.shadow ? '0 12px 28px rgba(0,0,0,.38)' : 'none') + ';';
+        +  'box-shadow:' + (gp('shadow') ? '0 12px 28px rgba(0,0,0,.38)' : 'none') + ';';
     }
 
     var eff = getVal(o, 'animation.effect', d);
@@ -1571,11 +1590,13 @@ const EFFECTS = ${JSON.stringify(EFFECTS)};
     for(var i = 0; i < objs.length; i++){
       var o = objs[i];
       var st = styleFor(o, d);
+      var txt = getVal(o, 'props.text', d);
+      if(txt == null) txt = '';
       if(o.type === 'button'){
-        html += '<a href="' + escAttr(o.props.href || '#') + '" style="' + st + '">'
-              + esc(o.props.text) + '</a>';
+        var href = getVal(o, 'props.href', d) || '#';
+        html += '<a href="' + escAttr(href) + '" style="' + st + '">' + esc(txt) + '</a>';
       } else if(o.type === 'text'){
-        html += '<div style="' + st + '">' + esc(o.props.text) + '</div>';
+        html += '<div style="' + st + '">' + esc(txt) + '</div>';
       } else {
         html += '<div style="' + st + '"></div>';
       }
@@ -1616,7 +1637,360 @@ const EFFECTS = ${JSON.stringify(EFFECTS)};
 }
 
 /* =========================================================
-   20. PANELES MÓVILES
+   20. GENERADOR DE SHORTCODE PARA WORDPRESS
+   ========================================================= */
+function phpSQ(s){
+  return "'" + String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
+}
+
+function utf8ToBase64(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  const chunk = 0x8000;
+  for(let i = 0; i < bytes.length; i += chunk){
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  return btoa(bin);
+}
+
+function generateShortcode(id){
+  const json = JSON.stringify(project);
+  const b64  = utf8ToBase64(json);
+
+  const usedFonts = detectUsedFonts();
+  const fontQuery = usedFonts.length
+    ? usedFonts.map(f => 'family=' + f).join('&') + '&display=swap'
+    : '';
+
+  const effectsSBM = {
+    none:null, fade:'sbmKFade', left:'sbmKLeft', right:'sbmKRight',
+    up:'sbmKUp', down:'sbmKDown', zoom:'sbmKZoom', rotate:'sbmKRotate', flip:'sbmKFlip'
+  };
+
+  const CSS_RUNTIME = `.sbm-stage{position:relative;width:100%;height:0;overflow:hidden;background:#05070f;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+.sbm-stage *,.sbm-stage *::before,.sbm-stage *::after{box-sizing:border-box;}
+.sbm-slide{position:absolute;top:0;left:0;transform-origin:top left;overflow:hidden;}
+
+@keyframes sbmKFade{from{opacity:0}to{opacity:var(--op,1)}}
+@keyframes sbmKLeft{from{opacity:0;transform:translateX(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}
+                    to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKRight{from{opacity:0;transform:translateX(var(--dist,150px)) rotate(var(--rot,0deg))}
+                     to{opacity:var(--op,1);transform:translateX(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKUp{from{opacity:0;transform:translateY(var(--dist,150px)) rotate(var(--rot,0deg))}
+                  to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKDown{from{opacity:0;transform:translateY(calc(-1 * var(--dist,150px))) rotate(var(--rot,0deg))}
+                    to{opacity:var(--op,1);transform:translateY(0) rotate(var(--rot,0deg))}}
+@keyframes sbmKZoom{from{opacity:0;transform:scale(.5) rotate(var(--rot,0deg))}
+                    to{opacity:var(--op,1);transform:scale(1) rotate(var(--rot,0deg))}}
+@keyframes sbmKRotate{from{opacity:0;transform:rotate(calc(var(--rot,0deg) - 30deg)) scale(.8)}
+                      to{opacity:var(--op,1);transform:rotate(var(--rot,0deg)) scale(1)}}
+@keyframes sbmKFlip{from{opacity:0;transform:perspective(900px) rotateY(90deg)}
+                    to{opacity:var(--op,1);transform:perspective(900px) rotateY(0deg) rotate(var(--rot,0deg))}}`;
+
+  /* CORREGIDO: styleFor usa getVal para props, buildSlide usa getVal para text/href */
+  const JS_RUNTIME = `(function(){
+    var EFFECTS = ${JSON.stringify(effectsSBM)};
+    function getPath(o, p){
+        var parts = p.split('.');
+        var c = o;
+        for (var i = 0; i < parts.length; i++){ if (c == null) return undefined; c = c[parts[i]]; }
+        return c;
+    }
+    function deviceChain(d){
+        if (d === 'desktop') return ['desktop'];
+        if (d === 'tablet') return ['desktop', 'tablet'];
+        return ['desktop', 'tablet', 'mobile'];
+    }
+    function getVal(o, p, d){
+        var ch = deviceChain(d);
+        for (var i = ch.length - 1; i >= 1; i--){
+            var b = o.r && o.r[ch[i]];
+            if (b){ var v = getPath(b, p); if (v !== undefined) return v; }
+        }
+        return getPath(o, p);
+    }
+    function getBg(data, d){
+        var base = (data.devices.desktop.bg || {});
+        var ch = deviceChain(d);
+        var r = {};
+        for (var k in base) r[k] = base[k];
+        for (var i = 1; i < ch.length; i++){
+            var b = data.devices[ch[i]].bg || {};
+            for (var k2 in b) r[k2] = b[k2];
+        }
+        return r;
+    }
+    function pickDevice(w, bp){
+        bp = bp || { tablet:1024, mobile:767 };
+        if (w > bp.tablet) return 'desktop';
+        if (w > bp.mobile) return 'tablet';
+        return 'mobile';
+    }
+    function esc(s){
+        return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function escAttr(s){
+        return String(s == null ? '' : s)
+            .replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function cssUrl(u){ return "url('" + String(u).replace(/'/g, '%27') + "')"; }
+    function styleFor(o, d){
+        var gp = function(p){ return getVal(o, 'props.' + p, d); };
+        var x = getVal(o,'x',d), y = getVal(o,'y',d);
+        var w = getVal(o,'w',d), h = getVal(o,'h',d);
+        var rot = getVal(o,'rot',d) || 0;
+        var op = getVal(o,'opacity',d); if (op == null) op = 1;
+        var s = 'position:absolute;left:' + x + 'px;top:' + y + 'px;'
+              + 'width:' + w + 'px;height:' + h + 'px;'
+              + 'z-index:' + o.z + ';opacity:' + op + ';'
+              + '--rot:' + rot + 'deg;--op:' + op + ';'
+              + 'transform:rotate(' + rot + 'deg);box-sizing:border-box;';
+        if (o.type === 'box'){
+            s += 'background:' + gp('bg') + ';border-radius:' + gp('radius') + 'px;'
+               + 'border:' + gp('borderW') + 'px solid ' + gp('borderColor') + ';'
+               + 'box-shadow:' + (gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none') + ';';
+        }
+        if (o.type === 'text'){
+            s += 'display:flex;flex-direction:column;justify-content:center;text-align:' + gp('align') + ';'
+               + 'color:' + gp('color') + ';font-size:' + gp('fontSize') + 'px;font-weight:' + (gp('bold') ? 700 : 400) + ';'
+               + 'font-style:' + (gp('italic') ? 'italic' : 'normal') + ';font-family:' + gp('family') + ';'
+               + 'line-height:' + gp('lineHeight') + ';letter-spacing:' + gp('letterSpacing') + 'px;'
+               + 'padding:' + gp('padding') + 'px;white-space:pre-wrap;word-break:break-word;overflow:hidden;';
+        }
+        if (o.type === 'image'){
+            s += 'background-image:' + cssUrl(gp('src')) + ';background-size:' + gp('fit') + ';'
+               + 'background-position:center;background-repeat:no-repeat;'
+               + 'border-radius:' + gp('radius') + 'px;'
+               + 'box-shadow:' + (gp('shadow') ? '0 14px 34px rgba(0,0,0,.4)' : 'none') + ';';
+        }
+        if (o.type === 'button'){
+            s += 'display:flex;align-items:center;justify-content:center;'
+               + 'background:' + gp('bg') + ';color:' + gp('color') + ';'
+               + 'font-size:' + gp('fontSize') + 'px;font-weight:600;border-radius:' + gp('radius') + 'px;'
+               + 'text-decoration:none;font-family:Inter,system-ui,sans-serif;cursor:pointer;'
+               + 'border:none;overflow:hidden;'
+               + 'box-shadow:' + (gp('shadow') ? '0 12px 28px rgba(0,0,0,.38)' : 'none') + ';';
+        }
+        var eff = getVal(o, 'animation.effect', d);
+        if (eff && eff !== 'none' && EFFECTS[eff]){
+            var dur  = getVal(o, 'animation.duration', d) || 800;
+            var del  = getVal(o, 'animation.delay', d) || 0;
+            var eas  = getVal(o, 'animation.easing', d) || 'ease-out';
+            var dist = getVal(o, 'animation.distance', d) || 150;
+            s += '--dist:' + dist + 'px;'
+               + 'animation:' + EFFECTS[eff] + ' ' + dur + 'ms ' + eas + ' ' + del + 'ms both;';
+        }
+        return s;
+    }
+    function buildSlide(data, d){
+        var dev = data.devices[d];
+        var bg = getBg(data, d);
+        var html = '';
+        if (bg.image){
+            html += '<div style="position:absolute;inset:0;background-image:' + cssUrl(bg.image) + ';'
+                  + 'background-size:' + bg.fit + ';background-position:center;background-repeat:no-repeat;"></div>';
+        }
+        if (bg.overlay > 0){
+            html += '<div style="position:absolute;inset:0;background:rgba(0,0,0,' + (bg.overlay/100) + ');"></div>';
+        }
+        var objs = data.objects.slice().sort(function(a,b){ return a.z - b.z; });
+        for (var i = 0; i < objs.length; i++){
+            var o = objs[i];
+            var st = styleFor(o, d);
+            var txt = getVal(o, 'props.text', d);
+            if (txt == null) txt = '';
+            if (o.type === 'button'){
+                var href = getVal(o, 'props.href', d) || '#';
+                html += '<a href="' + escAttr(href) + '" style="' + st + '">' + esc(txt) + '</a>';
+            } else if (o.type === 'text'){
+                html += '<div style="' + st + '">' + esc(txt) + '</div>';
+            } else {
+                html += '<div style="' + st + '"></div>';
+            }
+        }
+        return { html: html, bg: bg, dev: dev };
+    }
+    function b64DecodeUnicode(str){
+        var bin = atob(str);
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        if (window.TextDecoder) return new TextDecoder('utf-8').decode(bytes);
+        var s = '';
+        for (var j = 0; j < bytes.length; j++) s += String.fromCharCode(bytes[j]);
+        try { return decodeURIComponent(escape(s)); } catch(e){ return s; }
+    }
+    function initStage(el){
+        if (el.dataset.sbmInit === '1') return;
+        el.dataset.sbmInit = '1';
+        var data;
+        try { data = JSON.parse(b64DecodeUnicode(el.getAttribute('data-sbm-b64'))); }
+        catch(e){ console.error('SBM: error decodificando datos', e); return; }
+
+        var slide = document.createElement('div');
+        slide.className = 'sbm-slide';
+        el.appendChild(slide);
+
+        var lastDevice = null;
+        function render(){
+            var d = pickDevice(window.innerWidth, data.breakpoints);
+            var dev = data.devices[d];
+            if (d !== lastDevice){
+                lastDevice = d;
+                el.style.paddingBottom = (dev.height / dev.width * 100) + '%';
+                var built = buildSlide(data, d);
+                slide.innerHTML = built.html;
+                slide.style.background = built.bg.color;
+            }
+            var w = el.clientWidth || el.offsetWidth || 1;
+            var s = w / dev.width;
+            slide.style.width  = dev.width + 'px';
+            slide.style.height = dev.height + 'px';
+            slide.style.transform = 'scale(' + s + ')';
+        }
+        var t;
+        window.addEventListener('resize', function(){
+            clearTimeout(t);
+            t = setTimeout(render, 120);
+        });
+        render();
+    }
+    function ready(){
+        var stages = document.querySelectorAll('.sbm-stage[data-sbm-b64]');
+        for (var i = 0; i < stages.length; i++) initStage(stages[i]);
+    }
+    if (document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', ready);
+    } else {
+        ready();
+    }
+    setTimeout(ready, 200);
+})();`;
+
+  const phpJS = "    function slider_morbriant_get_js(){\n        return <<<'SBM_JS'\n" + JS_RUNTIME + "\nSBM_JS;\n    }";
+  const phpCSS = "    function slider_morbriant_get_css(){\n        return <<<'SBM_CSS'\n" + CSS_RUNTIME + "\nSBM_CSS;\n    }";
+
+  const phpFontLinks = fontQuery
+    ? "        $out .= '<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">';\n"
+    + "        $out .= '<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>';\n"
+    + "        $out .= '<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?" + fontQuery + "\">';\n"
+    : "        // Este slider no necesita Google Fonts\n";
+
+  /* Shortcode renombrado a slider_morbriant_item */
+  const php = `<?php
+/**
+ * ============================================================
+ *  Slider Builder MorBriant — Shortcode de WordPress
+ * ============================================================
+ *
+ *  Shortcode :  [slider_morbriant_item id="${id}"]
+ *
+ *  CÓMO USARLO
+ *  -----------
+ *  1. Abre el archivo functions.php de tu tema
+ *     (Apariencia > Editor de archivos de temas > functions.php)
+ *     o el de tu tema hijo / plugin personalizado.
+ *
+ *  2. Pega TODO el contenido de este archivo al final.
+ *
+ *  3. Guarda los cambios.
+ *
+ *  4. En cualquier página o entrada escribe:
+ *
+ *         [slider_morbriant_item id="${id}"]
+ *
+ *  NOTAS
+ *  -----
+ *  · Es seguro pegar este archivo varias veces (para varios IDs).
+ *    El framework se registra una sola vez; los datos se añaden por ID.
+ *  · Para crear otro slider, exporta de nuevo con un ID distinto
+ *    (por ejemplo "2") y pega el nuevo bloque debajo de este.
+ *  · El ID solo admite letras, números, guiones y guiones bajos.
+ * ============================================================
+ */
+
+if (!defined('ABSPATH')) { exit; }
+
+/* ============================================================
+   FRAMEWORK (se registra una sola vez)
+   ============================================================ */
+if (!function_exists('slider_morbriant_render')) {
+
+${phpCSS}
+
+${phpJS}
+
+    /**
+     * Renderiza un slide dentro de un shortcode.
+     */
+    function slider_morbriant_render($data, $id) {
+        static $assets_done = false;
+
+        $slug = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $id);
+        if ($slug === '') { $slug = substr(md5((string) $id), 0, 8); }
+        $uid = 'sbm-slider-' . $slug;
+
+        $json = function_exists('wp_json_encode') ? wp_json_encode($data) : json_encode($data);
+        $b64  = base64_encode($json);
+
+        $dw = isset($data['devices']['desktop']['width'])  ? max(1, (int) $data['devices']['desktop']['width'])  : 1280;
+        $dh = isset($data['devices']['desktop']['height']) ? max(1, (int) $data['devices']['desktop']['height']) : 720;
+        $pad = ($dh / $dw) * 100;
+
+        $out = '';
+
+        if (!$assets_done) {
+            $out .= '<style id="sbm-styles">' . slider_morbriant_get_css() . '</style>';
+            $out .= '<script id="sbm-runtime">' . slider_morbriant_get_js() . '</script>';
+            $assets_done = true;
+        }
+
+${phpFontLinks}
+        $out .= '<div class="sbm-stage" id="' . esc_attr($uid) . '"'
+              . ' data-sbm-b64="' . esc_attr($b64) . '"'
+              . ' style="padding-bottom:' . esc_attr(number_format($pad, 4, '.', '')) . '%">'
+              . '</div>';
+
+        return $out;
+    }
+
+    /**
+     * Callback del shortcode [slider_morbriant_item id="N"]
+     */
+    function slider_morbriant_item_shortcode($atts) {
+        $atts = shortcode_atts(array('id' => '1'), $atts, 'slider_morbriant_item');
+        $id   = (string) $atts['id'];
+
+        if (empty($GLOBALS['slider_morbriant_data'][$id])) {
+            if (current_user_can('manage_options')) {
+                return '<!-- Slider MorBriant: no existe el ID "' . esc_html($id) . '" -->';
+            }
+            return '';
+        }
+        return slider_morbriant_render($GLOBALS['slider_morbriant_data'][$id], $id);
+    }
+    add_shortcode('slider_morbriant_item', 'slider_morbriant_item_shortcode');
+}
+
+/* ============================================================
+   DATOS — Slider ID = "${id}"
+   ============================================================
+   Puedes pegar más bloques como este (con otros IDs) debajo.
+   ============================================================ */
+if (!isset($GLOBALS['slider_morbriant_data'])) {
+    $GLOBALS['slider_morbriant_data'] = array();
+}
+
+$GLOBALS['slider_morbriant_data'][${phpSQ(String(id))}] = json_decode(
+    base64_decode('${b64}'),
+    true
+);
+`;
+
+  return php;
+}
+
+/* =========================================================
+   21. PANELES MÓVILES
    ========================================================= */
 $('#btnSidebar').addEventListener('click', () => {
   sidebar.classList.toggle('open');
@@ -1628,7 +2002,7 @@ $('#btnPropsPanel').addEventListener('click', () => {
 });
 
 /* =========================================================
-   21. INICIALIZACIÓN
+   22. INICIALIZACIÓN
    ========================================================= */
 (function init(){
   const t = makeObject('text', 640, 220, 'desktop');
